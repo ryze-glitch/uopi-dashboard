@@ -1,363 +1,728 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UOPI Dashboard • Sistema Operativo</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <meta name="color-scheme" content="dark">
-  <style>
-    :root{
-      --bg1:#0a0f1d; --bg2:#0c1426; --panel:#0e1a34;
-      --stroke:#1b2a4a; --text:#e6ebf4; --muted:#9fb0cc; --strong:#f8fbff;
-      --p1:#4f8cff; --p2:#7a5cff; --acc:#1ee4ff; --ok:#1ad1a5; --warn:#ffb547; --err:#ff6b6b;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-      background:
-        radial-gradient(1100px 540px at -10% -10%,#0b1540 0%,transparent 60%),
-        radial-gradient(900px 520px at 120% 0%,#081233 0%,transparent 60%),
-        linear-gradient(180deg,var(--bg1),var(--bg2));
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UOPI Dashboard • Sistema Operativo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark">
+    <style>
+        :root {
+            --bg1: #0a0f1d; --bg2: #0c1426; --panel: #0e1a34;
+            --stroke: #1b2a4a; --text: #e6ebf4; --muted: #9fb0cc; --strong: #f8fbff;
+            --p1: #4f8cff; --p2: #7a5cff; --acc: #1ee4ff; --ok: #1ad1a5; --warn: #ffb547; --err: #ff6b6b;
+        }
 
-    /* Header */
-    .top{position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
-      background:linear-gradient(180deg,rgba(10,15,29,.85),rgba(10,15,29,.35));
-      border-bottom:1px solid var(--stroke)}
-    .tb{max-width:1280px; margin:0 auto; padding:12px 18px; display:flex; align-items:center; gap:12px}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800}
-    .brand i{background:linear-gradient(135deg,var(--p2),var(--acc)); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
-    .sp{flex:1}
-    .btn{background:#0f1a34; border:1px solid var(--stroke); color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer; transition:.2s; display:inline-flex; align-items:center; gap:10px}
-    .btn:hover{border-color:var(--p1); box-shadow:0 0 0 3px rgba(79,140,255,.25)}
-    .btn.pri{background:linear-gradient(135deg,var(--p1),var(--p2)); border-color:transparent}
+        * { box-sizing: border-box; }
 
-    /* Tabs */
-    .tabs{max-width:1280px; margin:0 auto; padding:18px}
-    .tabbar{display:flex; gap:10px; background:rgba(255,255,255,.03); border:1px solid var(--stroke); border-radius:12px; padding:6px}
-    .tab{flex:1; text-align:center; padding:10px; border-radius:8px; cursor:pointer; color:var(--muted)}
-    .tab.active{color:var(--strong); background:linear-gradient(135deg,rgba(79,140,255,.12),rgba(30,228,255,.10)); border:1px solid rgba(79,140,255,.35)}
+        html, body { height: 100%; margin: 0; }
 
-    /* Main wrapper */
-    .wrap{max-width:1280px; margin:0 auto; padding:20px 18px}
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            color: var(--text);
+            background: 
+                radial-gradient(1100px 540px at -10% -10%, #0b1540 0%, transparent 60%),
+                radial-gradient(800px 400px at 110% 110%, #1a0f2e 0%, transparent 60%),
+                linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            background-attachment: fixed;
+        }
 
-    /* Panels */
-    .panel{display:none}
-    .panel.active{display:block}
+        /* Layout generale */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    /* Cards */
-    .hero{display:grid; grid-template-columns:1.2fr .8fr; gap:22px}
-    .card{background:linear-gradient(180deg,#0f1c3a,#0b1730); border:1px solid var(--stroke); border-radius:16px; padding:24px; position:relative; overflow:hidden}
-    .card:before{content:""; position:absolute; inset:-1px;
-      background:radial-gradient(500px 230px at 8% -10%,rgba(79,140,255,.12),transparent 60%),
-                 radial-gradient(600px 230px at 110% -20%,rgba(30,228,255,.12),transparent 60%)}
-    .h1{font-size:36px; font-weight:800; margin:0 0 8px; background:linear-gradient(135deg,var(--p1),var(--acc)); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
-    .sub{color:var(--muted); margin:0 0 18px}
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
+        .screen.active { display: flex; }
 
-    .stats{margin-top:18px; display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
-    .stat{background:#0e1a34; border:1px solid var(--stroke); border-radius:12px; padding:14px; text-align:center}
-    .n{font-size:24px; font-weight:800; color:var(--p1)}
-    .l{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px}
+        /* SCHERMATA 1: Prima autenticazione */
+        .first-login {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
 
-    .sect{margin-top:30px}
-    .sect h2{margin:0 0 12px; font-size:22px}
-    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
-    .mod{background:linear-gradient(180deg,#0f1c3a,#0b1730); border:1px solid var(--stroke); border-radius:16px; padding:18px; cursor:pointer; transition:.25s; position:relative}
-    .mod:hover{transform:translateY(-4px); border-color:var(--p1)}
-    .ic{width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; background:linear-gradient(135deg,var(--p1),var(--acc)); margin-bottom:12px}
-    .mt{margin:0 0 6px; font-weight:700}
-    .md{margin:0; color:var(--muted)}
+        .login-container {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
 
-    /* Login widgets */
-    .login-actions{display:grid; gap:10px}
-    .alert{background:rgba(255,255,255,.04); border:1px solid var(--stroke); border-radius:12px; padding:12px; color:var(--muted); font-size:14px}
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--p1), var(--p2));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            color: white;
+        }
 
-    /* Modal */
-    .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(7,11,23,.86); backdrop-filter:blur(8px); z-index:100}
-    .modal.show{display:flex}
-    .box{width:min(680px,92vw); background:#0f1c3a; border:1px solid var(--stroke); border-radius:16px; overflow:hidden}
-    .bxh{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--stroke)}
-    .bxt{font-weight:800}
-    .bxc{padding:18px; color:var(--muted); line-height:1.6}
-    .x{background:transparent; border:none; color:var(--muted); font-size:22px; cursor:pointer}
+        .login-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 8px;
+            background: linear-gradient(135deg, var(--strong), var(--muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    /* Responsive */
-    @media(max-width:980px){ 
-      .hero{grid-template-columns:1fr} 
-      .stats{grid-template-columns:repeat(2,1fr)} 
-      .grid{grid-template-columns:1fr 1fr} 
-    }
-    @media(max-width:640px){ 
-      .h1{font-size:28px} 
-      .grid{grid-template-columns:1fr} 
-    }
-  </style>
+        .login-subtitle {
+            color: var(--muted);
+            margin: 0 0 32px;
+            font-size: 16px;
+        }
+
+        .discord-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #5865f2, #4f46e5);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(88, 101, 242, 0.3);
+        }
+
+        /* SCHERMATA 2: Seconda autenticazione */
+        .second-login {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .verification-container {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .verification-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            color: var(--strong);
+        }
+
+        .verification-subtitle {
+            color: var(--muted);
+            margin: 0 0 24px;
+            font-size: 14px;
+        }
+
+        .user-info {
+            background: var(--bg1);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--p1), var(--p2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .user-details h3 {
+            margin: 0 0 4px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .verification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--strong);
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg1);
+            border: 1px solid var(--stroke);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--p1);
+        }
+
+        .access-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--ok), #16a085);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .access-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(26, 209, 165, 0.3);
+        }
+
+        .back-btn {
+            background: var(--bg1);
+            color: var(--muted);
+            border: 1px solid var(--stroke);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+
+        .back-btn:hover {
+            color: var(--text);
+            border-color: var(--p1);
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--panel);
+            border-bottom: 1px solid var(--stroke);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .nav-brand .logo-small {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--p1), var(--p2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-btn {
+            background: var(--bg1);
+            border: 1px solid var(--stroke);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--p1);
+            color: var(--strong);
+        }
+
+        .dashboard-content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .welcome-section {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 8px;
+            background: linear-gradient(135deg, var(--strong), var(--acc));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtitle {
+            color: var(--muted);
+            margin: 0 0 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--acc);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .module-card {
+            background: var(--panel);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            border-color: var(--p1);
+            transform: translateY(-2px);
+        }
+
+        .module-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: var(--acc);
+        }
+
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px;
+            color: var(--strong);
+        }
+
+        .module-desc {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container, .verification-container {
+                padding: 24px;
+                margin: 16px;
+            }
+
+            .dashboard-content {
+                padding: 16px;
+            }
+
+            .welcome-section {
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header class="top">
-    <div class="tb">
-      <div class="brand"><i class="fa-solid fa-shield"></i>UOPI Dashboard</div>
-      <div class="sp"></div>
-      <button class="btn" onclick="openModal('help')"><i class="fa-regular fa-circle-question"></i> Guida</button>
-      <button class="btn pri" id="top-login-btn"><i class="fa-brands fa-discord"></i> Login Discord</button>
-      <button class="btn" id="top-logout-btn" style="display:none"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    <!-- SCHERMATA 1: Prima autenticazione Discord -->
+    <div id="first-login" class="screen first-login active">
+        <div class="login-container">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h1 class="login-title">Accedi a UOPI</h1>
+            <p class="login-subtitle">Sistema Operativo delle Unità Operative Polizia Italiana</p>
+            <button class="discord-btn" onclick="startDiscordAuth()">
+                <i class="fa-brands fa-discord"></i>
+                Continua con Discord
+            </button>
+        </div>
     </div>
-  </header>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tabbar">
-      <div class="tab active" id="tab-login">Login</div>
-      <div class="tab" id="tab-dashboard">Dashboard</div>
+    <!-- SCHERMATA 2: Seconda autenticazione -->
+    <div id="second-login" class="screen second-login">
+        <div class="verification-container">
+            <h1 class="verification-title">Verifica Identità</h1>
+            <p class="verification-subtitle">Completa l'accesso con le tue credenziali operative</p>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <h3 id="discord-username">Utente Discord</h3>
+                    <p id="discord-id">Autenticazione in corso...</p>
+                </div>
+            </div>
+
+            <form class="verification-form" onsubmit="completeAuth(event)">
+                <div class="form-group">
+                    <label for="badge-number">Numero Distintivo</label>
+                    <input type="text" id="badge-number" placeholder="Es: UOPI-2024-001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Dipartimento</label>
+                    <select id="department" required>
+                        <option value="">Seleziona dipartimento</option>
+                        <option value="centrale">Comando Centrale</option>
+                        <option value="territoriale">Territoriale</option>
+                        <option value="investigativo">Investigativo</option>
+                        <option value="antimafia">Antimafia</option>
+                        <option value="stradale">Polizia Stradale</option>
+                        <option value="scientifica">Scientifica</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="access-code">Codice di Accesso</label>
+                    <input type="password" id="access-code" placeholder="Codice sicurezza" required>
+                </div>
+
+                <button type="submit" class="access-btn">
+                    <i class="fa-solid fa-lock-open"></i>
+                    Accedi al Sistema
+                </button>
+
+                <button type="button" class="back-btn" onclick="goBack()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Torna indietro
+                </button>
+            </form>
+        </div>
     </div>
-  </div>
 
-  <main class="wrap">
-    <!-- Panel: LOGIN -->
-    <section id="panel-login" class="panel active">
-      <div class="hero">
-        <div class="card">
-          <h1 class="h1">Accedi a UOPI</h1>
-          <p class="sub">Autenticazione tramite Discord OAuth2 con redirect sicuro. Dopo il login verrai indirizzato alla Dashboard.</p>
-          <div class="login-actions">
-            <button class="btn pri" id="login-btn"><i class="fa-brands fa-discord"></i> Accedi con Discord</button>
-            <button class="btn" id="demo-btn"><i class="fa-regular fa-user"></i> Modalità Demo</button>
-            <div class="alert"><i class="fa-regular fa-circle-check" style="color:var(--ok)"></i> Sicurezza: il Client Secret non è nel client. Serve un piccolo proxy per scambiare il code con il token.</div>
-            <small style="color:var(--muted)">Client ID configurato: 1387801645743869982</small>
-          </div>
-        </div>
-        <div class="card">
-          <h3 style="margin:0 0 10px">Anteprima Funzionalità</h3>
-          <div class="stats">
-            <div class="stat"><div class="n" id="ls1">28</div><div class="l">Operatori</div></div>
-            <div class="stat"><div class="n" id="ls2">12</div><div class="l">Interventi</div></div>
-            <div class="stat"><div class="n" id="ls3">147</div><div class="l">Report</div></div>
-            <div class="stat"><div class="n" id="ls4">99%</div><div class="l">Efficienza</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- DASHBOARD PRINCIPALE -->
+    <div id="dashboard" class="screen dashboard">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="logo-small">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <span>UOPI Dashboard</span>
+            </div>
+            <div class="nav-controls">
+                <button class="nav-btn">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="notifications-count">3</span>
+                </button>
+                <button class="nav-btn">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span id="user-name">Operatore</span>
+                </button>
+                <button class="nav-btn" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Esci
+                </button>
+            </div>
+        </nav>
 
-    <!-- Panel: DASHBOARD -->
-    <section id="panel-dashboard" class="panel">
-      <div class="hero">
-        <div class="card">
-          <h1 class="h1">Sistema UOPI</h1>
-          <p class="sub">Unità Operative Polizia Italiana • Dashboard Centralizzato</p>
-          <div class="actions">
-            <button class="btn pri" onclick="document.getElementById('moduli').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-grip"></i> Apri moduli</button>
-            <button class="btn" onclick="openModal('changelog')"><i class="fa-solid fa-bolt"></i> Novità</button>
-          </div>
-          <div class="stats">
-            <div class="stat"><div class="n" id="st1">28</div><div class="l">Operatori Attivi</div></div>
-            <div class="stat"><div class="n" id="st2">12</div><div class="l">Interventi</div></div>
-            <div class="stat"><div class="n" id="st3">147</div><div class="l">Report Oggi</div></div>
-            <div class="stat"><div class="n" id="st4">99%</div><div class="l">Efficienza</div></div>
-          </div>
-        </div>
-        <div class="card" id="user-card">
-          <h3 style="margin:0 0 8px">Profilo</h3>
-          <p class="sub">Informazioni essenziali dell'utente autenticato.</p>
-          <div id="user-info" class="alert">Nessuna sessione rilevata.</div>
-          <div style="display:flex; gap:10px; margin-top:10px">
-            <button class="btn" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-          </div>
-        </div>
-      </div>
+        <div class="dashboard-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Benvenuto nel Sistema UOPI</h1>
+                <p class="welcome-subtitle">Unità Operative Polizia Italiana • Dashboard Centralizzato</p>
 
-      <section class="sect" id="moduli">
-        <h2>Moduli Operativi</h2>
-        <div class="grid">
-          <div class="mod" data-k="operators"><div class="ic"><i class="fa-solid fa-users"></i></div><h3 class="mt">👮‍♂️ Gestione Operatori</h3><p class="md">Turni, qualifiche, progressioni e assegnazioni territoriali.</p></div>
-          <div class="mod" data-k="interventions"><div class="ic"><i class="fa-solid fa-triangle-exclamation"></i></div><h3 class="mt">🚨 Centro Interventi</h3><p class="md">Coordinamento live, dispatch, priorità e tracciamento unità.</p></div>
-          <div class="mod" data-k="equipment"><div class="ic"><i class="fa-solid fa-car"></i></div><h3 class="mt">🛡️ Equipaggiamenti</h3><p class="md">Inventario mezzi e attrezzature, manutenzioni e disponibilità.</p></div>
-          <div class="mod" data-k="reports"><div class="ic"><i class="fa-solid fa-chart-line"></i></div><h3 class="mt">📊 Analytics & Report</h3><p class="md">KPI operativi, statistiche territoriali e report personalizzati.</p></div>
-          <div class="mod" data-k="comms"><div class="ic"><i class="fa-solid fa-satellite-dish"></i></div><h3 class="mt">📡 Comunicazioni</h3><p class="md">Messaggistica sicura, alert e coordinamento inter-forze.</p></div>
-          <div class="mod" data-k="database"><div class="ic"><i class="fa-solid fa-database"></i></div><h3 class="mt">🗃️ Database Centrale</h3><p class="md">Archivio centralizzato con ricerca avanzata e documenti operativi.</p></div>
-        </div>
-      </section>
-    </section>
-  </main>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-operators">28</div>
+                        <div class="stat-label">Operatori Attivi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-interventions">12</div>
+                        <div class="stat-label">Interventi Oggi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-reports">147</div>
+                        <div class="stat-label">Report Totali</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-efficiency">99%</div>
+                        <div class="stat-label">Efficienza Sistema</div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="box">
-      <div class="bxh"><div class="bxt" id="mt">Dettagli</div><button class="x" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
-      <div class="bxc" id="mb">...</div>
+            <div class="modules-grid">
+                <div class="module-card" onclick="openModule('operators')">
+                    <div class="module-icon">👮♂️</div>
+                    <h3 class="module-title">Gestione Operatori</h3>
+                    <p class="module-desc">Turni, qualifiche, progressioni e assegnazioni territoriali del personale operativo.</p>
+                </div>
+
+                <div class="module-card" onclick="openModule('interventions')">
+                    <div class="module-icon">🚨</div>
+                    <h3 class="module-title">Centro Interventi</h3>
+                    <p class="module-desc">Coordinamento live, dispatch, priorità e tracciamento unità sul territorio.</p>
+                </div>
+
+                <div class="module-card" onclick="openModule('equipment')">
+                    <div class="module-icon">🛡️</div>
+                    <h3 class="module-title">Equipaggiamenti</h3>
+                    <p class="module-desc">Inventario mezzi e attrezzature, manutenzioni e disponibilità operativa.</p>
+                </div>
+
+                <div class="module-card" onclick="openModule('analytics')">
+                    <div class="module-icon">📊</div>
+                    <h3 class="module-title">Analytics & Report</h3>
+                    <p class="module-desc">KPI operativi, statistiche territoriali e report personalizzati per il comando.</p>
+                </div>
+
+                <div class="module-card" onclick="openModule('communications')">
+                    <div class="module-icon">📡</div>
+                    <h3 class="module-title">Comunicazioni</h3>
+                    <p class="module-desc">Messaggistica sicura, alert di sistema e coordinamento inter-forze.</p>
+                </div>
+
+                <div class="module-card" onclick="openModule('database')">
+                    <div class="module-icon">🗃️</div>
+                    <h3 class="module-title">Database Centrale</h3>
+                    <p class="module-desc">Archivio centralizzato con ricerca avanzata e documenti operativi.</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // CONFIG Discord OAuth
-    const CONFIG = {
-      discord: {
-        client_id: '1387801645743869982',
-        redirect_uri: 'https://ryze-glitch.github.io/uopi-dashboard/',
-        scope: 'identify'
-      }
-    };
+    <script>
+        // Dati di autenticazione simulati
+        const authData = {
+            discordUser: null,
+            operatorData: null,
+            isAuthenticated: false
+        };
 
-    // Tabs management
-    const tabLogin = document.getElementById('tab-login');
-    const tabDash = document.getElementById('tab-dashboard');
-    const panelLogin = document.getElementById('panel-login');
-    const panelDash = document.getElementById('panel-dashboard');
+        // Codici di accesso validi (in produzione dovrebbero essere su server)
+        const validAccessCodes = [
+            'UOPI2024!',
+            'COMANDO01',
+            'SICUREZZA2024',
+            'OPERATIVO123'
+        ];
 
-    function setTab(tab){
-      if(tab==='login'){
-        tabLogin.classList.add('active'); tabDash.classList.remove('active');
-        panelLogin.classList.add('active'); panelDash.classList.remove('active');
-      }else{
-        tabDash.classList.add('active'); tabLogin.classList.remove('active');
-        panelDash.classList.add('active'); panelLogin.classList.remove('active');
-      }
-    }
+        // FASE 1: Autenticazione Discord
+        function startDiscordAuth() {
+            // Simula autenticazione Discord
+            showLoading('Connessione con Discord...');
 
-    tabLogin.addEventListener('click', ()=> setTab('login'));
-    tabDash.addEventListener('click', ()=> {
-      const sess = getSession();
-      if(!sess){ setTab('login'); openModal('need-login'); return; }
-      setTab('dashboard');
-    });
+            setTimeout(() => {
+                // Simula dati utente Discord
+                authData.discordUser = {
+                    username: 'Operatore_' + Math.floor(Math.random() * 1000),
+                    discriminator: '#' + Math.floor(Math.random() * 9999).toString().padStart(4, '0'),
+                    id: '1387801645743869982',
+                    avatar: null
+                };
 
-    // Session management
-    function setSession(data){ localStorage.setItem('uopi_session', JSON.stringify(data)); }
-    function getSession(){ try{return JSON.parse(localStorage.getItem('uopi_session')||'null')}catch{return null} }
-    function clearSession(){ localStorage.removeItem('uopi_session'); }
+                // Aggiorna UI con dati Discord
+                document.getElementById('discord-username').textContent = 
+                    authData.discordUser.username + authData.discordUser.discriminator;
+                document.getElementById('discord-id').textContent = 
+                    'Discord ID: ' + authData.discordUser.id;
 
-    // Discord OAuth
-    function startDiscordOAuth(){
-      const { client_id, redirect_uri, scope } = CONFIG.discord;
-      const url = `https://discord.com/oauth2/authorize?response_type=code&client_id=${encodeURIComponent(client_id)}&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`;
-      window.location.href = url;
-    }
+                hideLoading();
+                switchScreen('first-login', 'second-login');
+            }, 2000);
+        }
 
-    // Check URL params for OAuth code
-    (function checkOAuthCode(){
-      const params = new URLSearchParams(location.search);
-      const code = params.get('code');
-      if(code){
-        // Per sicurezza, in produzione il code va scambiato con access_token via proxy server
-        // Qui simuliamo un login demo
-        const profile = { id:'oauth_user', username:'DiscordUser', avatar:null, role:'Operatore' };
-        setSession({ access_token:'demo_token', user:profile });
-        renderUser({ user:profile });
-        setTab('dashboard');
-        showTopLogout(true);
-        history.replaceState({},'',location.pathname);
-      }
-    })();
+        // FASE 2: Completamento autenticazione
+        function completeAuth(event) {
+            event.preventDefault();
 
-    // Demo login
-    function demoLogin(){
-      const profile = { id:'demo', username:'DemoUser', avatar:null, role:'Comandante' };
-      setSession({ access_token:'demo', user:profile });
-      renderUser({ user:profile });
-      setTab('dashboard');
-      showTopLogout(true);
-    }
+            const badgeNumber = document.getElementById('badge-number').value;
+            const department = document.getElementById('department').value;
+            const accessCode = document.getElementById('access-code').value;
 
-    // UI Elements
-    const loginBtn = document.getElementById('login-btn');
-    const demoBtn = document.getElementById('demo-btn');
-    const topLoginBtn = document.getElementById('top-login-btn');
-    const topLogoutBtn = document.getElementById('top-logout-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userInfo = document.getElementById('user-info');
+            if (!validAccessCodes.includes(accessCode)) {
+                showError('Codice di accesso non valido');
+                return;
+            }
 
-    loginBtn.addEventListener('click', startDiscordOAuth);
-    topLoginBtn.addEventListener('click', startDiscordOAuth);
-    demoBtn.addEventListener('click', demoLogin);
+            showLoading('Verifica credenziali...');
 
-    function showTopLogout(state){
-      topLogoutBtn.style.display = state ? 'inline-flex' : 'none';
-      topLoginBtn.style.display = state ? 'none' : 'inline-flex';
-    }
+            setTimeout(() => {
+                // Salva dati operatore
+                authData.operatorData = {
+                    badgeNumber,
+                    department,
+                    accessGranted: true,
+                    loginTime: new Date()
+                };
 
-    logoutBtn.addEventListener('click', doLogout);
-    topLogoutBtn.addEventListener('click', doLogout);
-    function doLogout(){
-      clearSession();
-      userInfo.textContent = 'Nessuna sessione rilevata.';
-      showTopLogout(false);
-      setTab('login');
-    }
+                authData.isAuthenticated = true;
 
-    function renderUser(session){
-      const u = session.user || {};
-      const avatar = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : null;
-      userInfo.innerHTML = `
-        <div style="display:flex;align-items:center;gap:12px">
-          ${avatar ? `<img src="${avatar}" alt="avatar" style="width:44px;height:44px;border-radius:50%;border:2px solid var(--p1)">` : `<div style="width:44px;height:44px;border-radius:50%;background:var(--p1);display:flex;align-items:center;justify-content:center"><i class="fa-regular fa-user"></i></div>`}
-          <div>
-            <div style="font-weight:700">${u.username || 'Utente'}</div>
-            <div style="color:var(--muted);font-size:12px">${u.role || 'Ruolo'}</div>
-          </div>
-        </div>
-      `;
-    }
+                // Aggiorna UI dashboard
+                document.getElementById('user-name').textContent = 
+                    badgeNumber || 'Operatore';
 
-    // Modal system
-    const modal = document.getElementById('modal');
-    const mt = document.getElementById('mt');
-    const mb = document.getElementById('mb');
+                hideLoading();
+                switchScreen('second-login', 'dashboard');
 
-    function openModal(kind){
-      const map = {
-        'help':{t:'Guida Rapida', b:'Tab Login per autenticarsi con Discord. La Dashboard è accessibile solo dopo il login. Usa Demo per test.'},
-        'need-login':{t:'Autenticazione richiesta', b:'Aprire la scheda Login e autenticarsi con Discord prima di accedere alla Dashboard.'},
-        'changelog':{t:'Novità v3.0', b:'UI moderna con tabs, gestione sessione, login Discord, profilo utente, moduli interattivi.'}
-      };
-      const x = map[kind] || {t:'Info', b:'Contenuto in sviluppo.'};
-      mt.textContent = x.t; mb.textContent = x.b; modal.classList.add('show');
-    }
-    function closeModal(){ modal.classList.remove('show'); }
-    modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
-    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+                // Avvia animazioni statistiche
+                startStatsAnimation();
+            }, 1500);
+        }
 
-    // Module cards interaction
-    document.querySelectorAll('.mod').forEach(c=>{
-      c.addEventListener('click', ()=>{
-        const title = c.querySelector('.mt').textContent;
-        mt.textContent = title;
-        mb.innerHTML = `<p>Anteprima del modulo <b>${title}</b> con interfaccia completa.</p>
-        <ul style="margin:0;padding-left:18px;color:var(--muted)">
-          <li>Toolbar con ricerca e filtri</li>
-          <li>Tabella virtualizzata ad alte prestazioni</li>
-          <li>Drawer laterale per dettagli</li>
-          <li>Azioni: crea, modifica, archivia, esporta</li>
-        </ul>`;
-        modal.classList.add('show');
-      });
-    });
+        // Utility functions
+        function switchScreen(from, to) {
+            document.getElementById(from).classList.remove('active');
+            document.getElementById(to).classList.add('active');
+        }
 
-    // Check for existing session on load
-    (function initSession(){
-      const sess = getSession();
-      if(sess){
-        renderUser(sess);
-        setTab('dashboard');
-        showTopLogout(true);
-      }
-    })();
+        function goBack() {
+            switchScreen('second-login', 'first-login');
+            authData.discordUser = null;
+        }
 
-    // Stats animation
-    setInterval(()=>{
-      ['ls1','ls2','ls3'].forEach(id=>{
-        const el=document.getElementById(id);
-        const v=parseInt(el.textContent)||0;
-        el.textContent=Math.max(0, v+(Math.random()<0.5?-1:1));
-      });
-      ['st1','st2','st3'].forEach(id=>{
-        const el=document.getElementById(id);
-        const v=parseInt(el.textContent)||0;
-        el.textContent=Math.max(0, v+(Math.random()<0.5?-1:1));
-      });
-    }, 25000);
-  </script>
+        function logout() {
+            authData.discordUser = null;
+            authData.operatorData = null;
+            authData.isAuthenticated = false;
+
+            // Reset form
+            document.getElementById('badge-number').value = '';
+            document.getElementById('department').value = '';
+            document.getElementById('access-code').value = '';
+
+            switchScreen('dashboard', 'first-login');
+        }
+
+        function openModule(moduleName) {
+            if (!authData.isAuthenticated) {
+                showError('Accesso non autorizzato');
+                return;
+            }
+
+            showInfo(`Apertura modulo: ${moduleName}`);
+            // Qui implementare la logica per aprire i moduli specifici
+        }
+
+        function showLoading(message) {
+            // Implementa un loader
+            console.log('Loading:', message);
+        }
+
+        function hideLoading() {
+            console.log('Loading nascosto');
+        }
+
+        function showError(message) {
+            alert('Errore: ' + message);
+        }
+
+        function showInfo(message) {
+            console.log('Info:', message);
+        }
+
+        function startStatsAnimation() {
+            // Animazione delle statistiche
+            setInterval(() => {
+                const stats = ['stat-operators', 'stat-interventions', 'stat-reports'];
+                stats.forEach(statId => {
+                    const el = document.getElementById(statId);
+                    if (el && statId !== 'stat-efficiency') {
+                        const current = parseInt(el.textContent) || 0;
+                        const change = Math.random() < 0.5 ? -1 : 1;
+                        el.textContent = Math.max(0, current + change);
+                    }
+                });
+            }, 30000);
+        }
+
+        // Controllo sessione al caricamento
+        document.addEventListener('DOMContentLoaded', function() {
+            // Qui si potrebbe controllare se esiste già una sessione valida
+            console.log('UOPI Dashboard caricato');
+        });
+    </script>
 </body>
 </html>
