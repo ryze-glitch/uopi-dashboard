@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UOPI - Dashboard Operativo</title>
+    
+    <!-- Favicon UOPI -->
+    <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
+    <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/B6E4u1X.png">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -69,23 +75,37 @@
         }
 
         .logo {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            position: relative;
             border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+            animation: pulse 2s infinite;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2.5rem;
-            color: white;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-            animation: pulse 2s infinite;
+            padding: 10px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
         }
 
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3); }
-            50% { box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5); }
+            0%, 100% { 
+                box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 20px 50px rgba(59, 130, 246, 0.6);
+                transform: scale(1.02);
+            }
         }
 
         .login-title {
@@ -255,13 +275,20 @@
         .brand-icon {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: white;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.3rem;
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
         }
 
         .brand-text {
@@ -823,6 +850,11 @@
                 max-width: 420px;
                 padding: 2rem;
             }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
         }
     </style>
 </head>
@@ -839,7 +871,7 @@
         <div class="login-card">
             <div class="logo-section">
                 <div class="logo">
-                    <i class="fas fa-shield-alt"></i>
+                    <img src="https://i.imgur.com/B6E4u1X.png" alt="UOPI Logo" loading="eager">
                 </div>
                 <h1 class="login-title">UOPI</h1>
                 <p class="login-subtitle">Unità Operative Polizia Italiana</p>
@@ -864,7 +896,7 @@
             <div class="topbar-left">
                 <div class="brand">
                     <div class="brand-icon">
-                        <i class="fas fa-shield-alt"></i>
+                        <img src="https://i.imgur.com/B6E4u1X.png" alt="UOPI Logo" loading="lazy">
                     </div>
                     <div class="brand-text">UOPI Dashboard</div>
                     <div id="adminBadge" class="admin-badge">
@@ -1619,7 +1651,7 @@
         // Console info
         console.log('%c🚁 UOPI Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
         console.log('%cSistema Operativo delle Unità Operative Polizia Italiana', 'color: #94a3b8; font-size: 12px;');
-        console.log('%c⚠️ VERSIONE STANDALONE - SENZA APPS SCRIPT', 'color: #f59e0b; font-size: 12px; font-weight: bold;');
+        console.log('%c⚠️ VERSIONE STANDALONE - LOGO UOPI INTEGRATO', 'color: #f59e0b; font-size: 12px; font-weight: bold;');
     </script>
 </body>
 </html>
