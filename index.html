@@ -143,7 +143,60 @@
             box-shadow: 0 15px 30px rgba(88, 101, 242, 0.4);
         }
 
-        /* DASHBOARD STYLES */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--surface);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* DASHBOARD STYLES - Same as before */
         .dashboard {
             display: none;
             min-height: 100vh;
@@ -195,26 +248,29 @@
             font-weight: 700;
         }
 
-        .search-box {
-            position: relative;
-            margin-left: 2rem;
+        .admin-badge {
+            background: linear-gradient(135deg, var(--warning), #fb923c);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 1rem;
         }
 
-        .search-input {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 0.7rem 1rem 0.7rem 3rem;
-            color: var(--text);
-            width: 300px;
-            font-size: 0.9rem;
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-rank {
+            font-size: 0.8rem;
             color: var(--text-muted);
         }
 
@@ -222,33 +278,6 @@
             display: flex;
             align-items: center;
             gap: 1.5rem;
-        }
-
-        .notifications {
-            position: relative;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-
-        .notifications:hover {
-            background: var(--surface);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .user-menu {
@@ -293,6 +322,34 @@
             background: #dc2626;
         }
 
+        /* Admin Panel Styles */
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.show {
+            display: block;
+        }
+
+        .admin-panel {
+            background: var(--card);
+            border: 1px solid var(--warning);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-title {
+            color: var(--warning);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Rest of the styles remain the same as previous version */
         .main-layout {
             display: flex;
         }
@@ -441,32 +498,10 @@
         .stat-icon.warning { background: var(--warning); }
         .stat-icon.danger { background: var(--danger); }
 
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.8rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-        }
-
-        .stat-trend.up {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
-        }
-
-        .stat-trend.down {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
         .stat-value {
             font-size: 2.8rem;
             font-weight: 800;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--text), var(--text-muted));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .stat-label {
@@ -474,158 +509,7 @@
             font-weight: 500;
         }
 
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .chart-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .chart-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .chart-period {
-            display: flex;
-            background: var(--surface);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .period-btn {
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .period-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .data-table {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .table-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1rem 2rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background: rgba(59, 130, 246, 0.05);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        tbody tr {
-            transition: background 0.2s;
-        }
-
-        tbody tr:hover {
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .status-badge {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-online {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
-        }
-
-        .status-offline {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .status-busy {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
         /* Responsive */
-        @media (max-width: 1024px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         @media (max-width: 768px) {
             .main-layout {
                 flex-direction: column;
@@ -639,14 +523,16 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .search-input {
-                width: 200px;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Verifica autorizzazioni...</div>
+    </div>
+
     <!-- LOGIN PAGE -->
     <div id="loginPage" class="login-container">
         <div class="login-card">
@@ -656,6 +542,11 @@
                 </div>
                 <h1 class="login-title">UOPI</h1>
                 <p class="login-subtitle">Unità Operative Polizia Italiana</p>
+            </div>
+            
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorText">Errore durante l'autenticazione</span>
             </div>
             
             <button id="discordBtn" class="discord-btn">
@@ -675,22 +566,17 @@
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <div class="brand-text">UOPI Dashboard</div>
-                </div>
-                <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Cerca...">
-                    <i class="fas fa-search search-icon"></i>
+                    <div id="adminBadge" class="admin-badge" style="display: none;">
+                        <i class="fas fa-crown"></i> Amministratore
+                    </div>
                 </div>
             </div>
             <div class="topbar-right">
-                <div class="notifications">
-                    <i class="fas fa-bell"></i>
-                    <div class="notification-badge">3</div>
-                </div>
                 <div class="user-menu">
                     <div class="user-avatar" id="userAvatar">U</div>
-                    <div>
-                        <div id="userName" style="font-weight: 600;">Utente</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Operatore</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Utente</div>
+                        <div class="user-rank" id="userRank">Operatore</div>
                     </div>
                 </div>
                 <button id="logoutBtn" class="logout-btn">
@@ -741,6 +627,11 @@
                         <i class="fas fa-archive nav-icon"></i>
                         <span>Archivio</span>
                     </button>
+                    <!-- Admin Section -->
+                    <button class="nav-item admin-section" data-page="admin" style="display: none;">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span>Amministrazione</span>
+                    </button>
                 </div>
             </div>
 
@@ -748,6 +639,15 @@
             <div class="content-area">
                 <!-- Dashboard Page -->
                 <div id="page-dashboard" class="page active">
+                    <!-- Admin Panel -->
+                    <div id="adminPanel" class="admin-panel admin-section">
+                        <div class="admin-title">
+                            <i class="fas fa-crown"></i>
+                            Pannello Amministratore
+                        </div>
+                        <p>Hai privilegi di amministratore. Puoi accedere a tutte le funzioni del sistema.</p>
+                    </div>
+
                     <div class="page-header">
                         <h1 class="page-title">Panoramica Operativa</h1>
                         <p class="page-subtitle">Monitoraggio in tempo reale delle operazioni</p>
@@ -760,10 +660,6 @@
                                 <div class="stat-icon primary">
                                     <i class="fas fa-users"></i>
                                 </div>
-                                <div class="stat-trend up">
-                                    <i class="fas fa-arrow-up"></i>
-                                    +5.2%
-                                </div>
                             </div>
                             <div class="stat-value" id="totalPersonnel">156</div>
                             <div class="stat-label">Personale Totale</div>
@@ -773,10 +669,6 @@
                             <div class="stat-header">
                                 <div class="stat-icon success">
                                     <i class="fas fa-user-check"></i>
-                                </div>
-                                <div class="stat-trend up">
-                                    <i class="fas fa-arrow-up"></i>
-                                    +2.1%
                                 </div>
                             </div>
                             <div class="stat-value" id="activePersonnel">47</div>
@@ -788,10 +680,6 @@
                                 <div class="stat-icon warning">
                                     <i class="fas fa-car"></i>
                                 </div>
-                                <div class="stat-trend down">
-                                    <i class="fas fa-arrow-down"></i>
-                                    -1.8%
-                                </div>
                             </div>
                             <div class="stat-value" id="availableVehicles">23</div>
                             <div class="stat-label">Mezzi Disponibili</div>
@@ -802,188 +690,88 @@
                                 <div class="stat-icon danger">
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </div>
-                                <div class="stat-trend up">
-                                    <i class="fas fa-arrow-up"></i>
-                                    +12.5%
-                                </div>
                             </div>
                             <div class="stat-value" id="activeIncidents">8</div>
                             <div class="stat-label">Incidenti Attivi</div>
                         </div>
                     </div>
-
-                    <!-- Charts Section -->
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <h3 class="chart-title">Attività Operativa</h3>
-                                <div class="chart-period">
-                                    <button class="period-btn">24h</button>
-                                    <button class="period-btn active">7d</button>
-                                    <button class="period-btn">30d</button>
-                                </div>
-                            </div>
-                            <canvas id="activityChart" width="400" height="200"></canvas>
-                        </div>
-
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <h3 class="chart-title">Distribuzione Personale</h3>
-                            </div>
-                            <canvas id="personnelChart" width="200" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Data Table -->
-                    <div class="data-table">
-                        <div class="table-header">
-                            <h3 class="table-title">Personale in Servizio</h3>
-                            <div class="table-actions">
-                                <button class="btn btn-secondary">
-                                    <i class="fas fa-download"></i> Esporta
-                                </button>
-                                <button class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Aggiungi
-                                </button>
-                            </div>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Grado</th>
-                                    <th>Unità</th>
-                                    <th>Stato</th>
-                                    <th>Ultima Attività</th>
-                                    <th>Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody id="personnelTable">
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">MR</div>
-                                            <div>Marco Rossi</div>
-                                        </div>
-                                    </td>
-                                    <td>Brigadiere Capo</td>
-                                    <td>Volante Alpha-1</td>
-                                    <td><span class="status-badge status-online">Operativo</span></td>
-                                    <td>2 minuti fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">GB</div>
-                                            <div>Giulia Bianchi</div>
-                                        </div>
-                                    </td>
-                                    <td>Appuntato</td>
-                                    <td>Volante Beta-2</td>
-                                    <td><span class="status-badge status-busy">Occupato</span></td>
-                                    <td>15 minuti fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--warning); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">AV</div>
-                                            <div>Alessandro Verdi</div>
-                                        </div>
-                                    </td>
-                                    <td>Brigadiere</td>
-                                    <td>Moto Pattuglia</td>
-                                    <td><span class="status-badge status-online">Operativo</span></td>
-                                    <td>1 minuto fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
 
-                <!-- Personnel Page -->
+                <!-- Other pages remain the same -->
                 <div id="page-personnel" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Personale</h1>
                         <p class="page-subtitle">Anagrafica e gestione delle risorse umane</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Sezione Personale - In Sviluppo</h3>
                         <p>Qui saranno gestiti tutti gli aspetti del personale operativo.</p>
                     </div>
                 </div>
 
-                <!-- Operations Page -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Coordinamento Operativo</h1>
                         <p class="page-subtitle">Centro di controllo operazioni</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Centro Operativo - In Sviluppo</h3>
                         <p>Dashboard per il coordinamento delle operazioni sul territorio.</p>
                     </div>
                 </div>
 
-                <!-- Vehicles Page -->
                 <div id="page-vehicles" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Mezzi</h1>
                         <p class="page-subtitle">Flotta veicoli e attrezzature</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Gestione Flotta - In Sviluppo</h3>
                         <p>Monitoraggio e gestione dei mezzi operativi.</p>
                     </div>
                 </div>
 
-                <!-- Incidents Page -->
                 <div id="page-incidents" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Incidenti</h1>
                         <p class="page-subtitle">Monitoraggio emergenze e interventi</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Centro Incidenti - In Sviluppo</h3>
                         <p>Sistema di gestione emergenze e coordinamento interventi.</p>
                     </div>
                 </div>
 
-                <!-- Reports Page -->
                 <div id="page-reports" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Report & Analytics</h1>
                         <p class="page-subtitle">Analisi dati e reportistica</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Sistema Reportistica - In Sviluppo</h3>
                         <p>Analytics avanzati e generazione report automatici.</p>
                     </div>
                 </div>
 
-                <!-- Archive Page -->
                 <div id="page-archive" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Archivio</h1>
                         <p class="page-subtitle">Documenti e storico operazioni</p>
                     </div>
-                    <div class="chart-card">
+                    <div class="stat-card">
                         <h3>Sistema Archivio - In Sviluppo</h3>
                         <p>Gestione documentale e archivio storico operazioni.</p>
+                    </div>
+                </div>
+
+                <div id="page-admin" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Amministrazione Sistema</h1>
+                        <p class="page-subtitle">Configurazione e gestione utenti</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pannello Amministrazione - In Sviluppo</h3>
+                        <p>Gestione utenti, permessi e configurazioni di sistema.</p>
                     </div>
                 </div>
             </div>
@@ -995,6 +783,33 @@
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const SCOPES = 'identify';
+        
+        // Google Sheets Configuration
+        const SHEET_ID = '10qZh8NbJx2qputVETQ3kEtIQJLf9n8OK7-l93FowdBM';
+        const SHEET_GID = '0';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&tq&gid=${SHEET_GID}`;
+
+        // Admin ranks
+        const ADMIN_RANKS = [
+            'Comandante Generale',
+            'Vice Comandante Generale', 
+            'Comandante',
+            'Vice Comandante',
+            'Sostituto Vice Comandante'
+        ];
+
+        // Regular user ranks
+        const USER_RANKS = [
+            'Capitano', 'Vice Capitano', 'Caposquadra', 'Vice Caposquadra',
+            'Coordinatore', 'Vice Coordinatore', 'Tecnico Esperto',
+            'Tecnico Specializzato', 'Tecnico', 'Operatore Qualificato',
+            'Operatore Scelto', 'Operatore', 'Operatore in Prova'
+        ];
+
+        // Global variables
+        let currentUser = null;
+        let isAdmin = false;
+        let userPermissions = null;
 
         // DOM Elements
         const loginPage = document.getElementById('loginPage');
@@ -1003,8 +818,165 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const userName = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
+        const userRank = document.getElementById('userRank');
+        const adminBadge = document.getElementById('adminBadge');
+        const adminPanel = document.getElementById('adminPanel');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         const navItems = document.querySelectorAll('.nav-item');
         const pages = document.querySelectorAll('.page');
+        const adminSections = document.querySelectorAll('.admin-section');
+
+        // Utility Functions
+        function showLoading(show = true) {
+            if (show) {
+                loadingOverlay.classList.add('show');
+            } else {
+                loadingOverlay.classList.remove('show');
+            }
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        // Google Sheets Access
+        async function checkUserPermissions(discordId) {
+            try {
+                showLoading(true);
+                
+                const response = await fetch(SHEET_URL);
+                const text = await response.text();
+                
+                // Parse Google Sheets JSON response
+                const jsonText = text.substring(47).slice(0, -2);
+                const data = JSON.parse(jsonText);
+                
+                if (!data.table || !data.table.rows) {
+                    throw new Error('Formato dati non valido');
+                }
+
+                // Check if Discord ID exists in Column A
+                const rows = data.table.rows;
+                let userFound = false;
+                let userRankValue = '';
+
+                for (let row of rows) {
+                    if (row.c && row.c[0] && row.c[0].v) {
+                        const sheetDiscordId = row.c[0].v.toString();
+                        
+                        if (sheetDiscordId === discordId) {
+                            userFound = true;
+                            // Get rank from Column B
+                            if (row.c[1] && row.c[1].v) {
+                                userRankValue = row.c[1].v.toString();
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!userFound) {
+                    throw new Error('Accesso negato: Discord ID non autorizzato');
+                }
+
+                // Check admin permissions
+                const isAdminUser = ADMIN_RANKS.includes(userRankValue);
+                const isRegularUser = USER_RANKS.includes(userRankValue);
+
+                if (!isAdminUser && !isRegularUser) {
+                    throw new Error('Accesso negato: Ruolo non riconosciuto');
+                }
+
+                return {
+                    authorized: true,
+                    rank: userRankValue,
+                    isAdmin: isAdminUser
+                };
+
+            } catch (error) {
+                console.error('Errore verifica permessi:', error);
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Discord OAuth
+        discordBtn.addEventListener('click', () => {
+            hideError();
+            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${encodeURIComponent(SCOPES)}`;
+            window.location.href = oauthUrl;
+        });
+
+        // Handle Discord Token
+        async function handleDiscordToken(token) {
+            try {
+                showLoading(true);
+                
+                // Get Discord user info
+                const response = await fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                const user = await response.json();
+                
+                if (!user.id) {
+                    throw new Error('Errore nel recupero dati Discord');
+                }
+
+                // Check permissions in Google Sheet
+                const permissions = await checkUserPermissions(user.id);
+                
+                if (!permissions.authorized) {
+                    throw new Error('Accesso negato');
+                }
+
+                // Set user data
+                currentUser = user;
+                userPermissions = permissions;
+                isAdmin = permissions.isAdmin;
+
+                // Update UI
+                loginPage.style.display = 'none';
+                dashboard.classList.add('active');
+                
+                userName.textContent = user.username;
+                userRank.textContent = permissions.rank;
+                
+                if (user.avatar) {
+                    userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png)`;
+                    userAvatar.textContent = '';
+                } else {
+                    userAvatar.textContent = user.username.charAt(0).toUpperCase();
+                }
+
+                // Show admin elements if user is admin
+                if (isAdmin) {
+                    adminBadge.style.display = 'flex';
+                    adminPanel.classList.add('show');
+                    adminSections.forEach(section => {
+                        section.style.display = 'block';
+                    });
+                }
+
+                animateStats();
+                
+            } catch (error) {
+                console.error('Errore autenticazione:', error);
+                showError(error.message);
+                showLoading(false);
+            }
+        }
 
         // Navigation
         navItems.forEach(item => {
@@ -1017,54 +989,40 @@
                 
                 // Update pages
                 pages.forEach(page => page.classList.remove('active'));
-                document.getElementById(`page-${targetPage}`).classList.add('active');
+                const targetPageElement = document.getElementById(`page-${targetPage}`);
+                if (targetPageElement) {
+                    targetPageElement.classList.add('active');
+                }
             });
         });
 
-        // Login/Logout
-        discordBtn.addEventListener('click', () => {
-            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${encodeURIComponent(SCOPES)}`;
-            window.location.href = oauthUrl;
-        });
-
+        // Logout
         logoutBtn.addEventListener('click', () => {
+            // Reset all variables
+            currentUser = null;
+            userPermissions = null;
+            isAdmin = false;
+            
+            // Reset UI
             loginPage.style.display = 'flex';
             dashboard.classList.remove('active');
             userName.textContent = 'Utente';
+            userRank.textContent = 'Operatore';
             userAvatar.textContent = 'U';
             userAvatar.style.backgroundImage = '';
+            
+            // Hide admin elements
+            adminBadge.style.display = 'none';
+            adminPanel.classList.remove('show');
+            adminSections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Clear URL
             window.history.replaceState({}, document.title, window.location.pathname);
         });
 
-        // Handle OAuth callback
-        function handleDiscordToken(token) {
-            fetch('https://discord.com/api/users/@me', {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then(response => response.json())
-            .then(user => {
-                if (user.id) {
-                    loginPage.style.display = 'none';
-                    dashboard.classList.add('active');
-                    userName.textContent = user.username;
-                    
-                    if (user.avatar) {
-                        userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png)`;
-                        userAvatar.textContent = '';
-                    } else {
-                        userAvatar.textContent = user.username.charAt(0).toUpperCase();
-                    }
-                    
-                    initializeCharts();
-                    animateStats();
-                }
-            })
-            .catch(() => {
-                alert('Errore durante l\'autenticazione Discord');
-            });
-        }
-
-        // Check for Discord token
+        // Check for Discord token on load
         window.addEventListener('load', () => {
             const hash = window.location.hash;
             if (hash && hash.includes('access_token=')) {
@@ -1086,96 +1044,25 @@
 
             stats.forEach(stat => {
                 const element = document.getElementById(stat.id);
-                let current = 0;
-                const increment = stat.value / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= stat.value) {
-                        current = stat.value;
-                        clearInterval(timer);
-                    }
-                    element.textContent = Math.floor(current);
-                }, 30);
-            });
-        }
-
-        // Initialize Charts
-        function initializeCharts() {
-            // Activity Chart
-            const activityCtx = document.getElementById('activityChart').getContext('2d');
-            new Chart(activityCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
-                    datasets: [{
-                        label: 'Interventi',
-                        data: [12, 19, 3, 5, 2, 3, 15],
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
+                if (element) {
+                    let current = 0;
+                    const increment = stat.value / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= stat.value) {
+                            current = stat.value;
+                            clearInterval(timer);
                         }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#475569'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: '#475569'
-                            },
-                            ticks: {
-                                color: '#94a3b8'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Personnel Chart
-            const personnelCtx = document.getElementById('personnelChart').getContext('2d');
-            new Chart(personnelCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['In Servizio', 'Riposo', 'Ferie'],
-                    datasets: [{
-                        data: [47, 89, 20],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#94a3b8',
-                                padding: 20
-                            }
-                        }
-                    }
+                        element.textContent = Math.floor(current);
+                    }, 30);
                 }
             });
         }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('UOPI Dashboard inizializzato');
             animateStats();
-            setTimeout(initializeCharts, 500);
         });
     </script>
 </body>
