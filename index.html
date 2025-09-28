@@ -1,88 +1,661 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UOPI - Dashboard Operativo</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    /* ...Stili CSS come sopra per login, dashboard, responsività... */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UOPI - Dashboard Operativo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* LOGIN PAGE STYLES */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-badge {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .discord-login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #5865F2;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .discord-login-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);
+        }
+
+        .discord-login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-top: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.5);
+            padding: 0.8rem 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .feature-icon {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.1rem;
+            font-size: 0.86rem;
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.71rem;
+            line-height: 1.2;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* DASHBOARD STYLES */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .header-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: var(--danger-color);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--secondary-color);
+            border-right: 3px solid var(--secondary-color);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: var(--primary-color); }
+        .stat-icon.success { background: var(--accent-color); }
+        .stat-icon.warning { background: var(--warning-color); }
+        .stat-icon.danger { background: var(--danger-color); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 1rem 0;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="loginPage" class="login-container">
-    <div class="login-card">
-      <div class="logo-container">
-        <div class="logo-badge">
-          <i class="fas fa-shield-alt"></i>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="logo-container">
+                <div class="logo-badge">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="login-title">UOPI Dashboard</h1>
+                <p class="login-subtitle">Accesso Unità Operative Polizia Italiana</p>
+            </div>
+
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorText">Errore durante l'autenticazione</span>
+            </div>
+
+            <button id="discordLoginBtn" class="discord-login-btn">
+                <i class="fab fa-discord"></i>
+                Accedi tramite Discord
+            </button>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <div class="feature-title">Personale</div>
+                    <div class="feature-desc">Turni, ruoli</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-radio"></i></div>
+                    <div class="feature-title">Operativo</div>
+                    <div class="feature-desc">Dispatch</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-car"></i></div>
+                    <div class="feature-title">Mezzi</div>
+                    <div class="feature-desc">Flotta</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="feature-title">Report</div>
+                    <div class="feature-desc">Statistiche</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                    <div class="feature-title">Messaggi</div>
+                    <div class="feature-desc">Alert</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-archive"></i></div>
+                    <div class="feature-title">Archivio</div>
+                    <div class="feature-desc">Documenti</div>
+                </div>
+            </div>
         </div>
-        <h1 class="login-title">UOPI Dashboard</h1>
-        <p class="login-subtitle">Accesso Unità Operative Polizia Italiana</p>
-      </div>
-      <div id="errorMessage" class="error-message" style="display:none;">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span id="errorText">Errore durante l'autenticazione</span>
-      </div>
-      <button id="discordLoginBtn" class="discord-login-btn">
-        <i class="fab fa-discord"></i>
-        Accedi tramite Discord
-      </button>
-      <div class="features-grid">
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-users"></i></div><span class="feature-title">Personale</span><div class="feature-desc">Turni, ruoli</div></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-radio"></i></div><span class="feature-title">Operativo</span><div class="feature-desc">Dispatch</div></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-car"></i></div><span class="feature-title">Mezzi</span><div class="feature-desc">Flotta</div></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-bar"></i></div><span class="feature-title">Report</span><div class="feature-desc">Statistiche</div></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-comments"></i></div><span class="feature-title">Messaggi</span><div class="feature-desc">Alert</div></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-archive"></i></div><span class="feature-title">Archivio</span><div class="feature-desc">Documenti</div></div>
-      </div>
     </div>
-  </div>
-  <div id="dashboard" class="dashboard" style="display:none;">
-    <header>
-      <h2>Dashboard UOPI</h2>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
-    </header>
-    <main>
-      <p>Benvenuto nella dashboard della Polizia Italiana. Tutte le funzioni sono dimostrative!</p>
-      <!-- Più pannelli qui -->
-    </main>
-  </div>
-  <script>
-    // Config Discord solo per redirection
-    const CLIENT_ID = '1387801645743869982';
-    const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
-    const SCOPES = 'identify';
 
-    const loginPage = document.getElementById('loginPage');
-    const dashboard = document.getElementById('dashboard');
-    const discordLoginBtn = document.getElementById('discordLoginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <header class="header">
+            <div class="header-left">
+                <div class="header-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="header-title">UOPI Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span id="userName">Utente Demo</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
 
-    // Clic su login: simula successo login e mostra dashboard
-    discordLoginBtn.onclick = function () {
-      // COMMENTA queste due righe se vuoi solo demo senza OAuth
-      // const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${SCOPES}`;
-      // window.location.href = url;
+        <div class="main-container">
+            <nav class="sidebar">
+                <button class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="personnel">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span>Personale</span>
+                </button>
+                <button class="nav-item" data-page="operations">
+                    <i class="fas fa-radio nav-icon"></i>
+                    <span>Operazioni</span>
+                </button>
+                <button class="nav-item" data-page="vehicles">
+                    <i class="fas fa-car nav-icon"></i>
+                    <span>Mezzi</span>
+                </button>
+                <button class="nav-item" data-page="reports">
+                    <i class="fas fa-chart-bar nav-icon"></i>
+                    <span>Report</span>
+                </button>
+            </nav>
 
-      // Solo demo: mostra dashboard
-      loginPage.style.display = 'none';
-      dashboard.style.display = 'block';
-    };
+            <main class="content">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page-section active">
+                    <div class="page-header">
+                        <h2 class="page-title">Panoramica Operativa</h2>
+                        <p class="page-subtitle">Stato generale delle operazioni in tempo reale</p>
+                    </div>
 
-    logoutBtn.onclick = function () {
-      dashboard.style.display = 'none';
-      loginPage.style.display = 'flex';
-    };
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon primary">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Personale Totale</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">In Servizio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Mezzi Disponibili</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Allerte Attive</div>
+                        </div>
+                    </div>
+                </div>
 
-    // OPTIONAL: se vuoi gestire il token Discord per fare demo, puoi aggiungere qui
-    /*
-    window.onload = function() {
-      if(window.location.hash){
-        dashboard.style.display = 'block';
-        loginPage.style.display = 'none';
-      }
-    }
-    */
-  </script>
+                <!-- Personnel Page -->
+                <div id="page-personnel" class="page-section">
+                    <div class="page-header">
+                        <h2 class="page-title">Gestione Personale</h2>
+                        <p class="page-subtitle">Anagrafica, turni e qualifiche del personale operativo</p>
+                    </div>
+                    <p>Sezione Personale - In sviluppo</p>
+                </div>
+
+                <!-- Operations Page -->
+                <div id="page-operations" class="page-section">
+                    <div class="page-header">
+                        <h2 class="page-title">Coordinamento Operativo</h2>
+                        <p class="page-subtitle">Gestione operazioni e dispatch centralizzato</p>
+                    </div>
+                    <p>Sezione Operazioni - In sviluppo</p>
+                </div>
+
+                <!-- Vehicles Page -->
+                <div id="page-vehicles" class="page-section">
+                    <div class="page-header">
+                        <h2 class="page-title">Gestione Mezzi</h2>
+                        <p class="page-subtitle">Inventario e stato mezzi operativi</p>
+                    </div>
+                    <p>Sezione Mezzi - In sviluppo</p>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="page-reports" class="page-section">
+                    <div class="page-header">
+                        <h2 class="page-title">Report e Analytics</h2>
+                        <p class="page-subtitle">Statistiche operative e report personalizzati</p>
+                    </div>
+                    <p>Sezione Report - In sviluppo</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Configurazione
+        const CLIENT_ID = '1387801645743869982';
+        const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
+
+        // Elementi DOM
+        const loginPage = document.getElementById('loginPage');
+        const dashboard = document.getElementById('dashboard');
+        const discordLoginBtn = document.getElementById('discordLoginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const navItems = document.querySelectorAll('.nav-item');
+        const pageSection = document.querySelectorAll('.page-section');
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('UOPI Dashboard caricato');
+        });
+
+        // Login handler
+        discordLoginBtn.addEventListener('click', function() {
+            console.log('Login clicked');
+            showDashboard();
+        });
+
+        // Logout handler  
+        logoutBtn.addEventListener('click', function() {
+            console.log('Logout clicked');
+            showLogin();
+        });
+
+        // Navigazione
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const pageName = this.getAttribute('data-page');
+                navigateToPage(pageName);
+            });
+        });
+
+        // Funzioni utility
+        function showLogin() {
+            loginPage.style.display = 'flex';
+            dashboard.classList.remove('active');
+        }
+
+        function showDashboard() {
+            loginPage.style.display = 'none';
+            dashboard.classList.add('active');
+        }
+
+        function navigateToPage(pageName) {
+            // Rimuovi active da tutti i nav items
+            navItems.forEach(item => item.classList.remove('active'));
+
+            // Nascondi tutte le sezioni
+            pageSection.forEach(section => section.classList.remove('active'));
+
+            // Attiva il nav item corrente
+            const currentNavItem = document.querySelector(`[data-page="${pageName}"]`);
+            if (currentNavItem) {
+                currentNavItem.classList.add('active');
+            }
+
+            // Mostra la sezione corrente
+            const currentSection = document.getElementById(`page-${pageName}`);
+            if (currentSection) {
+                currentSection.classList.add('active');
+            }
+
+            console.log(`Navigazione a: ${pageName}`);
+        }
+
+        console.log('UOPI Dashboard Script caricato');
+    </script>
 </body>
 </html>
