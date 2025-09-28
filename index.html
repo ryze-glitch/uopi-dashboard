@@ -1212,19 +1212,26 @@
         </div>
     </div>
 
-    <script>
-        // Configuration - AGGIORNA QUESTI VALORI
+ <script>
+        // Configuration - VERSIONE DEMO SENZA APPS SCRIPT
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const SCOPES = 'identify';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUskKLkLPpqYAH_ZkSE0rWCfWBR-Gn7t2X3K4g5H1DUi5Jq32WjVazSTPub3XNHSIbTw/exec'; // SOSTITUISCI CON IL TUO URL
+        
+        // Demo users database (simula il Google Sheet)
+        const DEMO_USERS = {
+            // Aggiungi qui i Discord ID dal tuo sheet
+            '123456789012345678': { rank: 'Comandante Generale', isAdmin: true },
+            '987654321012345678': { rank: 'Operatore', isAdmin: false },
+            // Aggiungi altri utenti...
+        };
 
         // Global variables
         let currentUser = null;
         let isAdmin = false;
         let userPermissions = null;
 
-        // DOM Elements
+        // DOM Elements (stessi di prima)
         const loginPage = document.getElementById('loginPage');
         const dashboard = document.getElementById('dashboard');
         const discordBtn = document.getElementById('discordBtn');
@@ -1269,14 +1276,32 @@
             errorMessage.classList.remove('show');
         }
 
-        function updateLoadingSteps(step) {
-            const steps = {
-                'discord': 'Connessione a Discord...',
-                'validation': 'Validazione credenziali...',
-                'permissions': 'Controllo permessi nel database...',
-                'finalizing': 'Finalizzazione accesso...'
+        // Check user permissions (demo version)
+        function checkUserPermissions(discordId) {
+            const user = DEMO_USERS[discordId];
+            if (!user) {
+                return {
+                    authorized: false,
+                    reason: 'Discord ID non autorizzato'
+                };
+            }
+
+            return {
+                authorized: true,
+                rank: user.rank,
+                isAdmin: user.isAdmin,
+                permissions: {
+                    canViewDashboard: true,
+                    canViewPersonnel: true,
+                    canViewOperations: true,
+                    canViewVehicles: true,
+                    canViewReports: true,
+                    canViewArchive: true,
+                    canAccessAdmin: user.isAdmin,
+                    canManageUsers: user.isAdmin,
+                    canModifyData: user.isAdmin
+                }
             };
-            loadingSteps.textContent = steps[step] || step;
         }
 
         // Discord OAuth
@@ -1284,60 +1309,53 @@
             hideError();
             showLoading(true, 'Reindirizzamento a Discord...', 'Preparazione autenticazione...');
             
-            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPES)}`;
+            const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${encodeURIComponent(SCOPES)}`;
             
             setTimeout(() => {
                 window.location.href = oauthUrl;
             }, 1000);
         });
 
-        // Handle Discord Code
-        async function handleDiscordCode(code) {
+        // Handle Discord Token (versione semplificata)
+        async function handleDiscordToken(token) {
             try {
-                showLoading(true, 'Autenticazione in corso...', 'Validazione codice Discord...');
-                updateLoadingSteps('validation');
+                showLoading(true, 'Autenticazione in corso...', 'Validazione token Discord...');
                 
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'validateDiscordCode',
-                        code: code,
-                        redirect_uri: REDIRECT_URI
-                    })
+                // Get Discord user info
+                const response = await fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-
-                const data = await response.json();
                 
-                if (!data.success) {
-                    throw new Error(data.error || 'Errore durante l\'autenticazione');
+                const user = await response.json();
+                
+                if (!user.id) {
+                    throw new Error('Errore nel recupero dati Discord');
                 }
 
-                updateLoadingSteps('permissions');
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Check permissions (demo version)
+                const permissions = checkUserPermissions(user.id);
+                
+                if (!permissions.authorized) {
+                    throw new Error('Accesso negato: ' + permissions.reason);
+                }
 
                 // Set user data and permissions
-                currentUser = data.user;
-                userPermissions = data.permissions;
-                isAdmin = data.permissions.isAdmin;
-
-                updateLoadingSteps('finalizing');
-                await new Promise(resolve => setTimeout(resolve, 800));
+                currentUser = user;
+                userPermissions = permissions;
+                isAdmin = permissions.isAdmin;
 
                 // Update UI
                 loginPage.style.display = 'none';
                 dashboard.classList.add('active');
                 
-                userName.textContent = data.user.username;
-                userRank.textContent = data.permissions.rank;
+                userName.textContent = user.username;
+                userRank.textContent = permissions.rank;
                 
-                if (data.user.avatar) {
-                    userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png)`;
+                if (user.avatar) {
+                    userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png)`;
                     userAvatar.textContent = '';
                 } else {
-                    userAvatar.textContent = data.user.username.charAt(0).toUpperCase();
+                    userAvatar.textContent = user.username.charAt(0).toUpperCase();
                 }
 
                 // Show admin elements if user is admin
@@ -1348,9 +1366,9 @@
                 }
 
                 // Save session data
-                localStorage.setItem('uopi_access_token', data.access_token);
-                localStorage.setItem('uopi_user_data', JSON.stringify(data.user));
-                localStorage.setItem('uopi_permissions', JSON.stringify(data.permissions));
+                localStorage.setItem('uopi_access_token', token);
+                localStorage.setItem('uopi_user_data', JSON.stringify(user));
+                localStorage.setItem('uopi_permissions', JSON.stringify(permissions));
 
                 // Initialize dashboard
                 setTimeout(() => {
@@ -1371,48 +1389,46 @@
             try {
                 showLoading(true, 'Ripristino sessione...', 'Validazione token salvato...');
                 
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'validateToken',
-                        access_token: token
-                    })
+                const response = await fetch('https://discord.com/api/users/@me', {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
 
-                const data = await response.json();
+                const user = await response.json();
                 
-                if (data.success) {
-                    // Restore session
-                    currentUser = data.user;
-                    userPermissions = data.permissions;
-                    isAdmin = data.permissions.isAdmin;
+                if (user.id) {
+                    const permissions = checkUserPermissions(user.id);
                     
-                    // Update UI
-                    loginPage.style.display = 'none';
-                    dashboard.classList.add('active');
-                    userName.textContent = data.user.username;
-                    userRank.textContent = data.permissions.rank;
-                    
-                    if (data.user.avatar) {
-                        userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png)`;
-                        userAvatar.textContent = '';
+                    if (permissions.authorized) {
+                        // Restore session
+                        currentUser = user;
+                        userPermissions = permissions;
+                        isAdmin = permissions.isAdmin;
+                        
+                        // Update UI
+                        loginPage.style.display = 'none';
+                        dashboard.classList.add('active');
+                        userName.textContent = user.username;
+                        userRank.textContent = permissions.rank;
+                        
+                        if (user.avatar) {
+                            userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png)`;
+                            userAvatar.textContent = '';
+                        } else {
+                            userAvatar.textContent = user.username.charAt(0).toUpperCase();
+                        }
+
+                        if (isAdmin) {
+                            adminBadge.style.display = 'flex';
+                            adminPanel.classList.add('show');
+                            adminNavItem.style.display = 'block';
+                        }
+
+                        animateStats();
+                        setTimeout(initializeCharts, 500);
                     } else {
-                        userAvatar.textContent = data.user.username.charAt(0).toUpperCase();
+                        clearSession();
                     }
-
-                    if (isAdmin) {
-                        adminBadge.style.display = 'flex';
-                        adminPanel.classList.add('show');
-                        adminNavItem.style.display = 'block';
-                    }
-
-                    animateStats();
-                    setTimeout(initializeCharts, 500);
                 } else {
-                    // Token invalid, clear storage
                     clearSession();
                 }
                 
@@ -1431,16 +1447,14 @@
             localStorage.removeItem('uopi_permissions');
         }
 
-        // Navigation
+        // Navigation (stesso codice di prima)
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 const targetPage = item.getAttribute('data-page');
                 
-                // Update nav items
                 navItems.forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
                 
-                // Update pages
                 pages.forEach(page => page.classList.remove('active'));
                 const targetPageElement = document.getElementById(`page-${targetPage}`);
                 if (targetPageElement) {
@@ -1449,15 +1463,13 @@
             });
         });
 
-        // Logout
+        // Logout (stesso codice di prima)
         logoutBtn.addEventListener('click', () => {
             if (confirm('Sei sicuro di voler uscire dal sistema?')) {
-                // Reset all variables
                 currentUser = null;
                 userPermissions = null;
                 isAdmin = false;
                 
-                // Reset UI
                 loginPage.style.display = 'flex';
                 dashboard.classList.remove('active');
                 userName.textContent = 'Utente';
@@ -1465,41 +1477,30 @@
                 userAvatar.textContent = 'U';
                 userAvatar.style.backgroundImage = '';
                 
-                // Hide admin elements
                 adminBadge.style.display = 'none';
                 adminPanel.classList.remove('show');
                 adminNavItem.style.display = 'none';
                 
-                // Reset navigation
                 navItems.forEach(nav => nav.classList.remove('active'));
                 pages.forEach(page => page.classList.remove('active'));
                 document.querySelector('[data-page="dashboard"]').classList.add('active');
                 document.getElementById('page-dashboard').classList.add('active');
                 
-                // Clear session
                 clearSession();
-                
-                // Clear URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
         });
 
-        // Check for Discord code on load
+        // Check for Discord token on load
         window.addEventListener('load', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const error = urlParams.get('error');
-
-            if (error) {
-                showError('Accesso negato o errore durante l\'autenticazione Discord');
-                return;
-            }
-
-            if (code) {
-                // Clean URL immediately
-                window.history.replaceState({}, document.title, window.location.pathname);
-                handleDiscordCode(code);
-                return;
+            const hash = window.location.hash;
+            if (hash && hash.includes('access_token=')) {
+                const token = new URLSearchParams(hash.substr(1)).get('access_token');
+                if (token) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    handleDiscordToken(token);
+                    return;
+                }
             }
 
             // Check for saved token
@@ -1509,7 +1510,7 @@
             }
         });
 
-        // Animate statistics
+        // Animate statistics (stesso codice di prima)
         function animateStats() {
             const stats = [
                 { id: 'totalPersonnel', value: 156 },
@@ -1535,10 +1536,9 @@
             });
         }
 
-        // Initialize Charts
+        // Initialize Charts (stesso codice di prima)
         function initializeCharts() {
             try {
-                // Activity Chart
                 const activityCtx = document.getElementById('activityChart');
                 if (activityCtx) {
                     new Chart(activityCtx, {
@@ -1557,37 +1557,22 @@
                         },
                         options: {
                             responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            },
+                            plugins: { legend: { display: false } },
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    grid: {
-                                        color: '#475569',
-                                        drawBorder: false
-                                    },
-                                    ticks: {
-                                        color: '#94a3b8'
-                                    }
+                                    grid: { color: '#475569', drawBorder: false },
+                                    ticks: { color: '#94a3b8' }
                                 },
                                 x: {
-                                    grid: {
-                                        color: '#475569',
-                                        drawBorder: false
-                                    },
-                                    ticks: {
-                                        color: '#94a3b8'
-                                    }
+                                    grid: { color: '#475569', drawBorder: false },
+                                    ticks: { color: '#94a3b8' }
                                 }
                             }
                         }
                     });
                 }
 
-                // Personnel Chart
                 const personnelCtx = document.getElementById('personnelChart');
                 if (personnelCtx) {
                     new Chart(personnelCtx, {
@@ -1606,11 +1591,7 @@
                             plugins: {
                                 legend: {
                                     position: 'bottom',
-                                    labels: {
-                                        color: '#94a3b8',
-                                        padding: 20,
-                                        usePointStyle: true
-                                    }
+                                    labels: { color: '#94a3b8', padding: 20, usePointStyle: true }
                                 }
                             }
                         }
@@ -1631,25 +1612,12 @@
                 });
             });
 
-            // Initialize charts after DOM is loaded
             setTimeout(() => {
                 animateStats();
                 initializeCharts();
             }, 1000);
         });
 
-        // Search functionality
-        const searchInput = document.querySelector('.search-input');
-        searchInput?.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            // Implement search functionality here
-            console.log('Ricerca:', query);
-        });
-
-        // Console info
-        console.log('%c🚁 UOPI Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
-        console.log('%cSistema Operativo delle Unità Operative Polizia Italiana', 'color: #94a3b8; font-size: 12px;');
-        console.log('%cPer supporto tecnico: sviluppato con ❤️', 'color: #10b981; font-size: 10px;');
-    </script>
-</body>
-</html>
+        console.log('🚁 UOPI Dashboard - Versione Demo');
+        console.log('Per testare: aggiungi il tuo Discord ID in DEMO_USERS');
+</script>
