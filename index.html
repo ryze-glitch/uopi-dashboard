@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UOPI - Dashboard Operativo</title>
+    <title>U.O.P.I. - Dashboard Operativo</title>
     
     <!-- Favicon UOPI -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
@@ -109,18 +109,20 @@
         }
 
         .login-title {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary-light), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.1em;
         }
 
         .login-subtitle {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-bottom: 2rem;
+            line-height: 1.5;
         }
 
         .discord-btn {
@@ -319,6 +321,7 @@
             font-weight: 600;
             margin-left: 1rem;
             display: none;
+            white-space: nowrap;
         }
 
         .admin-badge {
@@ -775,6 +778,11 @@
             color: white;
         }
 
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
@@ -784,6 +792,13 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* Button small variant */
+        .btn-sm {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
         }
 
         table {
@@ -967,6 +982,13 @@
             opacity: 0.5;
         }
 
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .charts-grid {
@@ -1043,6 +1065,18 @@
             .modal-footer {
                 flex-direction: column;
             }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-sm {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -1061,8 +1095,8 @@
                 <div class="logo">
                     <img src="https://i.imgur.com/B6E4u1X.png" alt="UOPI Logo" loading="eager">
                 </div>
-                <h1 class="login-title">UOPI</h1>
-                <p class="login-subtitle">Unità Operative Polizia Italiana</p>
+                <h1 class="login-title">U.O.P.I.</h1>
+                <p class="login-subtitle">Clicca il pulsante quà sotto, per autenticarti con Discord ed accedere alla Dashboard U.O.P.I.</p>
             </div>
             
             <div id="errorMessage" class="error-message">
@@ -1629,14 +1663,16 @@
                                 <td>${person.additionalRole || '<span style="color: var(--text-muted);">Nessuno</span>'}</td>
                                 <td>${person.callSign || '<span style="color: var(--text-muted);">Non assegnato</span>'}</td>
                                 <td>
-                                    <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="viewPersonnel(${index})">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    ${canAddPersonnel ? `
-                                        <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-left: 0.5rem;" onclick="removePersonnel(${index})">
-                                            <i class="fas fa-trash"></i>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-secondary btn-sm" onclick="viewPersonnel(${index})">
+                                            <i class="fas fa-eye"></i>
                                         </button>
-                                    ` : ''}
+                                        ${canAddPersonnel ? `
+                                            <button class="btn btn-danger btn-sm" onclick="removePersonnel(${index})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}
@@ -1659,64 +1695,110 @@
         }
 
         function addPersonnel(personnelData) {
-            // Add to personnel database
-            personnelDatabase.push({
-                ...personnelData,
-                addedBy: currentUser.username,
-                addedDate: new Date().toISOString(),
-                id: Date.now()
-            });
+            try {
+                // Validate data
+                if (!personnelData.qualification || !personnelData.fullName || !personnelData.discordId) {
+                    throw new Error('Dati mancanti per l\'aggiunta dell\'operatore');
+                }
 
-            // Add to authorized users if not exists
-            if (!AUTHORIZED_USERS[personnelData.discordId]) {
-                const isAdminRank = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante'].includes(personnelData.qualification);
-                const canAddPeople = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante', 'Membro Della Dirigenza'].includes(personnelData.qualification);
-                
-                AUTHORIZED_USERS[personnelData.discordId] = {
-                    rank: personnelData.qualification,
-                    isAdmin: isAdminRank,
-                    canAddPersonnel: canAddPeople
+                // Check for duplicates
+                const existingPerson = personnelDatabase.find(p => p.discordId === personnelData.discordId);
+                if (existingPerson) {
+                    throw new Error('Discord ID già presente nel database');
+                }
+
+                // Add unique ID
+                const newPersonnel = {
+                    ...personnelData,
+                    id: Date.now() + Math.random(), // Ensure unique ID
+                    addedBy: currentUser ? currentUser.username : 'Sistema',
+                    addedDate: new Date().toISOString()
                 };
-            }
 
-            // Save to localStorage
-            localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
-            localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
+                // Add to personnel database
+                personnelDatabase.push(newPersonnel);
 
-            // Update UI
-            renderPersonnelTable();
-            updatePersonnelStats();
-            
-            showSuccess(`Operatore ${personnelData.fullName} aggiunto con successo!`);
-            console.log('👤 Nuovo operatore aggiunto:', personnelData);
-        }
+                // Add to authorized users if not exists
+                if (!AUTHORIZED_USERS[personnelData.discordId]) {
+                    const isAdminRank = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante'].includes(personnelData.qualification);
+                    const canAddPeople = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante', 'Membro Della Dirigenza'].includes(personnelData.qualification);
+                    
+                    AUTHORIZED_USERS[personnelData.discordId] = {
+                        rank: personnelData.qualification,
+                        isAdmin: isAdminRank,
+                        canAddPersonnel: canAddPeople
+                    };
+                }
 
-        function removePersonnel(index) {
-            const person = personnelDatabase[index];
-            
-            if (confirm(`Sei sicuro di voler rimuovere ${person.fullName} dal database?`)) {
-                // Remove from database
-                personnelDatabase.splice(index, 1);
-                
-                // Remove from authorized users
-                delete AUTHORIZED_USERS[person.discordId];
-                
-                // Save to localStorage
-                localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
-                localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
-                
+                // Save to localStorage with error handling
+                try {
+                    localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
+                    localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
+                } catch (storageError) {
+                    console.warn('Errore nel salvataggio localStorage:', storageError);
+                }
+
                 // Update UI
                 renderPersonnelTable();
                 updatePersonnelStats();
                 
-                showSuccess(`Operatore ${person.fullName} rimosso dal sistema.`);
-                console.log('🗑️ Operatore rimosso:', person);
+                showSuccess(`Operatore ${personnelData.fullName} aggiunto con successo!`);
+                console.log('👤 Nuovo operatore aggiunto:', newPersonnel);
+
+                return true;
+            } catch (error) {
+                console.error('❌ Errore aggiunta operatore:', error);
+                showError(error.message);
+                return false;
+            }
+        }
+
+        function removePersonnel(index) {
+            try {
+                if (index < 0 || index >= personnelDatabase.length) {
+                    throw new Error('Indice operatore non valido');
+                }
+
+                const person = personnelDatabase[index];
+                
+                if (confirm(`Sei sicuro di voler rimuovere ${person.fullName} dal database?`)) {
+                    // Remove from database
+                    personnelDatabase.splice(index, 1);
+                    
+                    // Remove from authorized users
+                    if (AUTHORIZED_USERS[person.discordId]) {
+                        delete AUTHORIZED_USERS[person.discordId];
+                    }
+                    
+                    // Save to localStorage
+                    try {
+                        localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
+                        localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
+                    } catch (storageError) {
+                        console.warn('Errore nel salvataggio dopo rimozione:', storageError);
+                    }
+                    
+                    // Update UI
+                    renderPersonnelTable();
+                    updatePersonnelStats();
+                    
+                    showSuccess(`Operatore ${person.fullName} rimosso dal sistema.`);
+                    console.log('🗑️ Operatore rimosso:', person);
+                }
+            } catch (error) {
+                console.error('❌ Errore rimozione operatore:', error);
+                showError(error.message);
             }
         }
 
         function viewPersonnel(index) {
-            const person = personnelDatabase[index];
-            alert(`
+            try {
+                if (index < 0 || index >= personnelDatabase.length) {
+                    throw new Error('Operatore non trovato');
+                }
+
+                const person = personnelDatabase[index];
+                alert(`
 📋 DETTAGLI OPERATORE
 
 🏅 Qualifica: ${person.qualification}
@@ -1726,9 +1808,13 @@
 🎭 Nominativo: ${person.callSign || 'Non assegnato'}
 📝 Note: ${person.notes || 'Nessuna nota'}
 
-➕ Aggiunto da: ${person.addedBy}
-📅 Data aggiunta: ${new Date(person.addedDate).toLocaleDateString('it-IT')}
-            `);
+➕ Aggiunto da: ${person.addedBy || 'Sistema'}
+📅 Data aggiunta: ${person.addedDate ? new Date(person.addedDate).toLocaleDateString('it-IT') : 'Non disponibile'}
+                `);
+            } catch (error) {
+                console.error('❌ Errore visualizzazione operatore:', error);
+                showError(error.message);
+            }
         }
 
         // Load saved data
@@ -1738,17 +1824,24 @@
                 const savedUsers = localStorage.getItem('uopi_authorized_users');
                 
                 if (savedPersonnel) {
-                    personnelDatabase = JSON.parse(savedPersonnel);
-                    console.log('📁 Caricati', personnelDatabase.length, 'operatori salvati');
+                    const loadedPersonnel = JSON.parse(savedPersonnel);
+                    if (Array.isArray(loadedPersonnel)) {
+                        personnelDatabase = loadedPersonnel;
+                        console.log('📁 Caricati', personnelDatabase.length, 'operatori salvati');
+                    }
                 }
                 
                 if (savedUsers) {
                     const loadedUsers = JSON.parse(savedUsers);
-                    Object.assign(AUTHORIZED_USERS, loadedUsers);
-                    console.log('👥 Caricati utenti autorizzati:', Object.keys(AUTHORIZED_USERS).length);
+                    if (typeof loadedUsers === 'object' && loadedUsers !== null) {
+                        Object.assign(AUTHORIZED_USERS, loadedUsers);
+                        console.log('👥 Caricati utenti autorizzati:', Object.keys(AUTHORIZED_USERS).length);
+                    }
                 }
             } catch (error) {
                 console.error('❌ Errore caricamento dati salvati:', error);
+                // Reset to default state on error
+                personnelDatabase = [];
             }
         }
 
@@ -1761,55 +1854,78 @@
         function closeModalFn() {
             addPersonnelModal.classList.remove('show');
             document.body.style.overflow = 'auto';
-            addPersonnelForm.reset();
+            if (addPersonnelForm) {
+                addPersonnelForm.reset();
+            }
         }
 
         // Event Listeners
-        addPersonnelBtn?.addEventListener('click', openModal);
-        closeModal?.addEventListener('click', closeModalFn);
-        cancelBtn?.addEventListener('click', closeModalFn);
+        if (addPersonnelBtn) {
+            addPersonnelBtn.addEventListener('click', openModal);
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', closeModalFn);
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', closeModalFn);
+        }
 
         // Close modal on outside click
-        addPersonnelModal?.addEventListener('click', (e) => {
-            if (e.target === addPersonnelModal) {
-                closeModalFn();
-            }
-        });
+        if (addPersonnelModal) {
+            addPersonnelModal.addEventListener('click', (e) => {
+                if (e.target === addPersonnelModal) {
+                    closeModalFn();
+                }
+            });
+        }
 
         // Form submission
-        savePersonnelBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                qualification: document.getElementById('qualification').value,
-                fullName: document.getElementById('fullName').value,
-                discordId: document.getElementById('discordId').value,
-                additionalRole: document.getElementById('additionalRole').value,
-                callSign: document.getElementById('callSign').value,
-                notes: document.getElementById('notes').value
-            };
+        if (savePersonnelBtn) {
+            savePersonnelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                try {
+                    const formData = {
+                        qualification: document.getElementById('qualification')?.value || '',
+                        fullName: document.getElementById('fullName')?.value || '',
+                        discordId: document.getElementById('discordId')?.value || '',
+                        additionalRole: document.getElementById('additionalRole')?.value || '',
+                        callSign: document.getElementById('callSign')?.value || '',
+                        notes: document.getElementById('notes')?.value || ''
+                    };
 
-            // Validation
-            if (!formData.qualification || !formData.fullName || !formData.discordId) {
-                showError('Per favore compila tutti i campi obbligatori!');
-                return;
-            }
+                    // Validation
+                    if (!formData.qualification || !formData.fullName || !formData.discordId) {
+                        throw new Error('Per favore compila tutti i campi obbligatori!');
+                    }
 
-            // Check if Discord ID already exists
-            if (AUTHORIZED_USERS[formData.discordId] || personnelDatabase.some(p => p.discordId === formData.discordId)) {
-                showError('Questo Discord ID è già presente nel sistema!');
-                return;
-            }
+                    // Check if Discord ID already exists
+                    if (AUTHORIZED_USERS[formData.discordId] || personnelDatabase.some(p => p.discordId === formData.discordId)) {
+                        throw new Error('Questo Discord ID è già presente nel sistema!');
+                    }
 
-            // Discord ID format validation
-            if (!/^\d{17,19}$/.test(formData.discordId)) {
-                showError('Il Discord ID deve essere composto da 17-19 cifre!');
-                return;
-            }
+                    // Discord ID format validation
+                    if (!/^\d{17,19}$/.test(formData.discordId)) {
+                        throw new Error('Il Discord ID deve essere composto da 17-19 cifre!');
+                    }
 
-            addPersonnel(formData);
-            closeModalFn();
-        });
+                    // Try to add personnel
+                    const success = addPersonnel(formData);
+                    if (success) {
+                        closeModalFn();
+                    }
+                } catch (error) {
+                    console.error('❌ Errore nel form:', error);
+                    showError(error.message);
+                }
+            });
+        }
+
+        // Make functions globally accessible for onclick handlers
+        window.viewPersonnel = viewPersonnel;
+        window.removePersonnel = removePersonnel;
 
         // Discord OAuth
         discordBtn.addEventListener('click', () => {
@@ -1853,8 +1969,8 @@
 
                 // Set user data
                 currentUser = user;
-                isAdmin = userPermissions.isAdmin;
-                canAddPersonnel = userPermissions.canAddPersonnel;
+                isAdmin = userPermissions.isAdmin || false;
+                canAddPersonnel = userPermissions.canAddPersonnel || false;
 
                 // Update UI
                 showLoading(true, 'Accesso concesso...', 'Inizializzazione dashboard...');
@@ -1885,7 +2001,7 @@
                     }
 
                     // Show add personnel button if user can add
-                    if (canAddPersonnel) {
+                    if (canAddPersonnel && addPersonnelBtn) {
                         addPersonnelBtn.style.display = 'flex';
                     }
 
@@ -1954,7 +2070,9 @@
                 leadershipBadge.style.display = 'none';
                 adminPanel.classList.remove('show');
                 adminNavItem.style.display = 'none';
-                addPersonnelBtn.style.display = 'none';
+                if (addPersonnelBtn) {
+                    addPersonnelBtn.style.display = 'none';
+                }
                 
                 // Reset navigation
                 navItems.forEach(nav => nav.classList.remove('active'));
@@ -2018,15 +2136,18 @@
             stats.forEach(stat => {
                 const element = document.getElementById(stat.id);
                 if (element) {
-                    let current = 0;
-                    const increment = stat.value / 60;
+                    let current = parseInt(element.textContent) || 0;
+                    const target = stat.value;
+                    const increment = Math.max(1, Math.ceil((target - current) / 60));
+                    
                     const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= stat.value) {
-                            current = stat.value;
+                        if (current < target) {
+                            current += increment;
+                            if (current > target) current = target;
+                            element.textContent = current;
+                        } else {
                             clearInterval(timer);
                         }
-                        element.textContent = Math.floor(current);
                     }, 25);
                 }
             });
@@ -2136,6 +2257,7 @@
 
             // Initialize charts after DOM is loaded
             setTimeout(() => {
+                updatePersonnelStats();
                 animateStats();
                 initializeCharts();
             }, 1000);
@@ -2143,15 +2265,17 @@
 
         // Search functionality
         const searchInput = document.querySelector('.search-input');
-        searchInput?.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            console.log('🔍 Ricerca:', query);
-        });
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                console.log('🔍 Ricerca:', query);
+            });
+        }
 
         // Console info
-        console.log('%c🚁 UOPI Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
+        console.log('%c🚁 U.O.P.I. Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
         console.log('%cSistema Operativo delle Unità Operative Polizia Italiana', 'color: #94a3b8; font-size: 12px;');
-        console.log('%c📋 GESTIONE PERSONALE ATTIVATA', 'color: #10b981; font-size: 12px; font-weight: bold;');
+        console.log('%c📋 GESTIONE PERSONALE CORRETTA', 'color: #10b981; font-size: 12px; font-weight: bold;');
     </script>
 </body>
 </html>
