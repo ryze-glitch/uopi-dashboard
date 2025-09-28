@@ -253,7 +253,7 @@
             display: block;
         }
 
-        /* DASHBOARD STYLES (uguale a prima) */
+        /* DASHBOARD STYLES */
         .dashboard {
             display: none;
             min-height: 100vh;
@@ -316,6 +316,68 @@
             display: none;
         }
 
+        .search-box {
+            position: relative;
+            margin-left: 2rem;
+        }
+
+        .search-input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 3rem;
+            color: var(--text);
+            width: 300px;
+            font-size: 0.9rem;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .notifications {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+            color: var(--text-muted);
+        }
+
+        .notifications:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .user-menu {
             display: flex;
             align-items: center;
@@ -325,6 +387,10 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
+        }
+
+        .user-menu:hover {
+            background: rgba(59, 130, 246, 0.2);
         }
 
         .user-avatar {
@@ -374,6 +440,426 @@
             background: #dc2626;
             transform: translateY(-1px);
         }
+
+        .main-layout {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 2rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-right: 3px solid transparent;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item.active {
+            color: var(--primary-light);
+            background: rgba(59, 130, 246, 0.15);
+            border-right-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.5);
+            min-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: var(--card);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-title {
+            color: var(--warning);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-content {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.primary { background: var(--primary); }
+        .stat-icon.success { background: var(--accent); }
+        .stat-icon.warning { background: var(--warning); }
+        .stat-icon.danger { background: var(--danger); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .stat-trend.up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .stat-trend.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .chart-period {
+            display: flex;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .period-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .period-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .period-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .data-table {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem 2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(59, 130, 246, 0.05);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .status-offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .status-busy {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .topbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .topbar-left, .topbar-right {
+                flex-wrap: wrap;
+            }
+            
+            .search-box {
+                margin-left: 0;
+                order: 3;
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+            
+            .login-card {
+                width: 100%;
+                max-width: 420px;
+                padding: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -417,8 +903,9 @@
         </div>
     </div>
 
-    <!-- DASHBOARD (versione semplificata per il test) -->
+    <!-- DASHBOARD -->
     <div id="dashboard" class="dashboard">
+        <!-- Topbar -->
         <div class="topbar">
             <div class="topbar-left">
                 <div class="brand">
@@ -430,8 +917,16 @@
                         <i class="fas fa-crown"></i> Amministratore
                     </div>
                 </div>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Cerca nel sistema...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
             </div>
             <div class="topbar-right">
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <div class="notification-badge">3</div>
+                </div>
                 <div class="user-menu">
                     <div class="user-avatar" id="userAvatar">U</div>
                     <div class="user-info">
@@ -444,18 +939,332 @@
                 </button>
             </div>
         </div>
-        <div style="padding: 2rem; text-align: center;">
-            <h1>🚁 Dashboard UOPI Attivata!</h1>
-            <p style="margin-top: 1rem; color: var(--text-muted);">Benvenuto nel sistema operativo della Polizia Italiana</p>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="nav-section">
+                    <div class="nav-title">Principale</div>
+                    <button class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-item" data-page="personnel">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span>Personale</span>
+                    </button>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Operazioni</div>
+                    <button class="nav-item" data-page="operations">
+                        <i class="fas fa-radio nav-icon"></i>
+                        <span>Coordinamento</span>
+                    </button>
+                    <button class="nav-item" data-page="vehicles">
+                        <i class="fas fa-car nav-icon"></i>
+                        <span>Mezzi</span>
+                    </button>
+                    <button class="nav-item" data-page="incidents">
+                        <i class="fas fa-exclamation-triangle nav-icon"></i>
+                        <span>Incidenti</span>
+                    </button>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">Gestione</div>
+                    <button class="nav-item" data-page="reports">
+                        <i class="fas fa-chart-bar nav-icon"></i>
+                        <span>Report</span>
+                    </button>
+                    <button class="nav-item" data-page="archive">
+                        <i class="fas fa-archive nav-icon"></i>
+                        <span>Archivio</span>
+                    </button>
+                    <!-- Admin Section -->
+                    <button class="nav-item" data-page="admin" id="adminNavItem" style="display: none;">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span>Amministrazione</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page active">
+                    <!-- Admin Panel -->
+                    <div id="adminPanel" class="admin-panel">
+                        <div class="admin-title">
+                            <i class="fas fa-crown"></i>
+                            Pannello Amministratore
+                        </div>
+                        <div class="admin-content">
+                            Hai privilegi di amministratore. Puoi accedere a tutte le funzioni del sistema, gestire utenti e modificare le configurazioni.
+                        </div>
+                    </div>
+
+                    <div class="page-header">
+                        <h1 class="page-title">Panoramica Operativa</h1>
+                        <p class="page-subtitle">Monitoraggio in tempo reale delle operazioni UOPI</p>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon primary">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-trend up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +5.2%
+                                </div>
+                            </div>
+                            <div class="stat-value" id="totalPersonnel">156</div>
+                            <div class="stat-label">Personale Totale</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon success">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-trend up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +2.1%
+                                </div>
+                            </div>
+                            <div class="stat-value" id="activePersonnel">47</div>
+                            <div class="stat-label">In Servizio</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="stat-trend down">
+                                    <i class="fas fa-arrow-down"></i>
+                                    -1.8%
+                                </div>
+                            </div>
+                            <div class="stat-value" id="availableVehicles">23</div>
+                            <div class="stat-label">Mezzi Disponibili</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-trend up">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +12.5%
+                                </div>
+                            </div>
+                            <div class="stat-value" id="activeIncidents">8</div>
+                            <div class="stat-label">Incidenti Attivi</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Attività Operativa</h3>
+                                <div class="chart-period">
+                                    <button class="period-btn">24h</button>
+                                    <button class="period-btn active">7d</button>
+                                    <button class="period-btn">30d</button>
+                                </div>
+                            </div>
+                            <canvas id="activityChart" width="400" height="200"></canvas>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Distribuzione Personale</h3>
+                            </div>
+                            <canvas id="personnelChart" width="200" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Personale in Servizio</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Esporta
+                                </button>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Aggiungi
+                                </button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Grado</th>
+                                    <th>Unità</th>
+                                    <th>Stato</th>
+                                    <th>Ultima Attività</th>
+                                    <th>Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personnelTable">
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">MR</div>
+                                            <div>Marco Rossi</div>
+                                        </div>
+                                    </td>
+                                    <td>Brigadiere Capo</td>
+                                    <td>Volante Alpha-1</td>
+                                    <td><span class="status-badge status-online">Operativo</span></td>
+                                    <td>2 minuti fa</td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">GB</div>
+                                            <div>Giulia Bianchi</div>
+                                        </div>
+                                    </td>
+                                    <td>Appuntato</td>
+                                    <td>Volante Beta-2</td>
+                                    <td><span class="status-badge status-busy">Occupato</span></td>
+                                    <td>15 minuti fa</td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--warning); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">AV</div>
+                                            <div>Alessandro Verdi</div>
+                                        </div>
+                                    </td>
+                                    <td>Brigadiere</td>
+                                    <td>Moto Pattuglia</td>
+                                    <td><span class="status-badge status-online">Operativo</span></td>
+                                    <td>1 minuto fa</td>
+                                    <td>
+                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Personnel Page -->
+                <div id="page-personnel" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Gestione Personale</h1>
+                        <p class="page-subtitle">Anagrafica e gestione delle risorse umane</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sezione Personale - In Sviluppo</h3>
+                        <p>Qui saranno gestiti tutti gli aspetti del personale operativo, inclusi turni, qualifiche e assegnazioni.</p>
+                    </div>
+                </div>
+
+                <!-- Operations Page -->
+                <div id="page-operations" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Coordinamento Operativo</h1>
+                        <p class="page-subtitle">Centro di controllo operazioni</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Centro Operativo - In Sviluppo</h3>
+                        <p>Dashboard per il coordinamento delle operazioni sul territorio e dispatch centralizzato.</p>
+                    </div>
+                </div>
+
+                <!-- Vehicles Page -->
+                <div id="page-vehicles" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Gestione Mezzi</h1>
+                        <p class="page-subtitle">Flotta veicoli e attrezzature</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Gestione Flotta - In Sviluppo</h3>
+                        <p>Monitoraggio e gestione dei mezzi operativi, manutenzioni e disponibilità.</p>
+                    </div>
+                </div>
+
+                <!-- Incidents Page -->
+                <div id="page-incidents" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Gestione Incidenti</h1>
+                        <p class="page-subtitle">Monitoraggio emergenze e interventi</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Centro Incidenti - In Sviluppo</h3>
+                        <p>Sistema di gestione emergenze e coordinamento interventi sul territorio.</p>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="page-reports" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Report & Analytics</h1>
+                        <p class="page-subtitle">Analisi dati e reportistica</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sistema Reportistica - In Sviluppo</h3>
+                        <p>Analytics avanzati e generazione report automatici per il comando.</p>
+                    </div>
+                </div>
+
+                <!-- Archive Page -->
+                <div id="page-archive" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Archivio</h1>
+                        <p class="page-subtitle">Documenti e storico operazioni</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Sistema Archivio - In Sviluppo</h3>
+                        <p>Gestione documentale e archivio storico delle operazioni UOPI.</p>
+                    </div>
+                </div>
+
+                <!-- Admin Page -->
+                <div id="page-admin" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Amministrazione Sistema</h1>
+                        <p class="page-subtitle">Configurazione e gestione utenti</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Pannello Amministrazione - In Sviluppo</h3>
+                        <p>Gestione utenti, permessi e configurazioni di sistema. Accesso riservato agli amministratori.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Configuration CON IL TUO TOKEN
+        // Configuration CON IL NUOVO URL
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const SCOPES = 'identify';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/F9KXc9fDEwndahIkz5Oi65lA6YavVJ-A/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz43GJHibiVpwnUee3Ri3y3pYsfivxBfbV6ZxXFMiAiovm1_QFBwI-RhOBd1yLC6qhl4g/exec';
 
         // Global variables
         let currentUser = null;
@@ -472,6 +1281,8 @@
         const userAvatar = document.getElementById('userAvatar');
         const userRank = document.getElementById('userRank');
         const adminBadge = document.getElementById('adminBadge');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminNavItem = document.getElementById('adminNavItem');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const loadingText = document.getElementById('loadingText');
         const loadingSteps = document.getElementById('loadingSteps');
@@ -479,6 +1290,8 @@
         const errorText = document.getElementById('errorText');
         const successMessage = document.getElementById('successMessage');
         const successText = document.getElementById('successText');
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
 
         // Utility Functions
         function showLoading(show = true, text = 'Verifica autorizzazioni...', steps = '') {
@@ -525,6 +1338,7 @@
         async function testAppsScript() {
             try {
                 console.log('🔍 Test connessione Apps Script...');
+                console.log('🔗 URL:', APPS_SCRIPT_URL);
                 showLoading(true, 'Test connessione...', 'Invio richiesta di test...');
                 
                 const response = await fetch(APPS_SCRIPT_URL, {
@@ -537,7 +1351,7 @@
                     })
                 });
 
-                console.log('📡 Risposta ricevuta:', response.status);
+                console.log('📡 Risposta ricevuta:', response.status, response.statusText);
                 
                 if (!response.ok) {
                     throw new Error(`Errore HTTP: ${response.status} - ${response.statusText}`);
@@ -547,7 +1361,7 @@
                 console.log('📦 Dati ricevuti:', data);
                 
                 if (data.success) {
-                    showSuccess(`Apps Script funziona! Messaggio: ${data.message}`);
+                    showSuccess(`✅ Apps Script funziona! Messaggio: ${data.message}`);
                     console.log('✅ Apps Script OK:', data);
                     return true;
                 } else {
@@ -556,7 +1370,7 @@
                 
             } catch (error) {
                 console.error('❌ Errore test Apps Script:', error);
-                showError(`Errore connessione: ${error.message}`);
+                showError(`❌ Errore connessione: ${error.message}`);
                 return false;
             } finally {
                 showLoading(false);
@@ -596,7 +1410,7 @@
                     })
                 });
 
-                console.log('📡 Risposta validazione:', response.status);
+                console.log('📡 Risposta validazione:', response.status, response.statusText);
                 
                 if (!response.ok) {
                     throw new Error(`Errore server: ${response.status} - ${response.statusText}`);
@@ -633,6 +1447,8 @@
                 // Show admin elements if user is admin
                 if (isAdmin) {
                     adminBadge.style.display = 'flex';
+                    adminPanel.classList.add('show');
+                    adminNavItem.style.display = 'block';
                     console.log('👑 Privilegi amministratore attivati');
                 }
 
@@ -641,15 +1457,102 @@
                 localStorage.setItem('uopi_user_data', JSON.stringify(data.user));
                 localStorage.setItem('uopi_permissions', JSON.stringify(data.permissions));
 
-                console.log('✅ Login completato con successo!');
+                // Initialize dashboard
+                setTimeout(() => {
+                    animateStats();
+                    initializeCharts();
+                }, 500);
                 
             } catch (error) {
                 console.error('❌ Errore autenticazione:', error);
-                showError(`Errore autenticazione: ${error.message}`);
+                showError(`❌ Errore autenticazione: ${error.message}`);
             } finally {
                 showLoading(false);
             }
         }
+
+        // Validate saved token
+        async function validateSavedToken(token) {
+            try {
+                showLoading(true, 'Ripristino sessione...', 'Validazione token salvato...');
+                
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'validateDiscordToken',
+                        access_token: token
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Restore session
+                    currentUser = data.user;
+                    userPermissions = data.permissions;
+                    isAdmin = data.permissions.isAdmin;
+                    
+                    // Update UI
+                    loginPage.style.display = 'none';
+                    dashboard.classList.add('active');
+                    userName.textContent = data.user.username;
+                    userRank.textContent = data.permissions.rank;
+                    
+                    if (data.user.avatar) {
+                        userAvatar.style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png)`;
+                        userAvatar.textContent = '';
+                    } else {
+                        userAvatar.textContent = data.user.username.charAt(0).toUpperCase();
+                    }
+
+                    if (isAdmin) {
+                        adminBadge.style.display = 'flex';
+                        adminPanel.classList.add('show');
+                        adminNavItem.style.display = 'block';
+                    }
+
+                    animateStats();
+                    setTimeout(initializeCharts, 500);
+                } else {
+                    // Token invalid, clear storage
+                    clearSession();
+                }
+                
+            } catch (error) {
+                console.error('❌ Errore validazione token:', error);
+                clearSession();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Clear session data
+        function clearSession() {
+            localStorage.removeItem('uopi_access_token');
+            localStorage.removeItem('uopi_user_data');
+            localStorage.removeItem('uopi_permissions');
+        }
+
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetPage = item.getAttribute('data-page');
+                
+                // Update nav items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Update pages
+                pages.forEach(page => page.classList.remove('active'));
+                const targetPageElement = document.getElementById(`page-${targetPage}`);
+                if (targetPageElement) {
+                    targetPageElement.classList.add('active');
+                }
+            });
+        });
 
         // Logout
         logoutBtn.addEventListener('click', () => {
@@ -669,16 +1572,20 @@
                 
                 // Hide admin elements
                 adminBadge.style.display = 'none';
+                adminPanel.classList.remove('show');
+                adminNavItem.style.display = 'none';
+                
+                // Reset navigation
+                navItems.forEach(nav => nav.classList.remove('active'));
+                pages.forEach(page => page.classList.remove('active'));
+                document.querySelector('[data-page="dashboard"]').classList.add('active');
+                document.getElementById('page-dashboard').classList.add('active');
                 
                 // Clear session
-                localStorage.removeItem('uopi_access_token');
-                localStorage.removeItem('uopi_user_data');
-                localStorage.removeItem('uopi_permissions');
+                clearSession();
                 
                 // Clear URL
                 window.history.replaceState({}, document.title, window.location.pathname);
-                
-                console.log('👋 Logout completato');
             }
         });
 
@@ -703,7 +1610,7 @@
             const savedToken = localStorage.getItem('uopi_access_token');
             if (savedToken) {
                 console.log('💾 Token salvato trovato, validazione...');
-                handleDiscordToken(savedToken);
+                validateSavedToken(savedToken);
             } else {
                 console.log('📭 Nessun token salvato, mostra login');
             }
@@ -715,10 +1622,146 @@
             testAppsScript();
         }, 2000);
 
+        // Animate statistics
+        function animateStats() {
+            const stats = [
+                { id: 'totalPersonnel', value: 156 },
+                { id: 'activePersonnel', value: 47 },
+                { id: 'availableVehicles', value: 23 },
+                { id: 'activeIncidents', value: 8 }
+            ];
+
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                if (element) {
+                    let current = 0;
+                    const increment = stat.value / 60;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= stat.value) {
+                            current = stat.value;
+                            clearInterval(timer);
+                        }
+                        element.textContent = Math.floor(current);
+                    }, 25);
+                }
+            });
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            try {
+                // Activity Chart
+                const activityCtx = document.getElementById('activityChart');
+                if (activityCtx) {
+                    new Chart(activityCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+                            datasets: [{
+                                label: 'Interventi',
+                                data: [12, 19, 8, 15, 7, 9, 18],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: {
+                                        color: '#475569',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8'
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        color: '#475569',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Personnel Chart
+                const personnelCtx = document.getElementById('personnelChart');
+                if (personnelCtx) {
+                    new Chart(personnelCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['In Servizio', 'Riposo', 'Ferie', 'Formazione'],
+                            datasets: [{
+                                data: [47, 89, 15, 5],
+                                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                                borderWidth: 0,
+                                cutout: '60%'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: '#94a3b8',
+                                        padding: 20,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Errore inizializzazione grafici:', error);
+            }
+        }
+
+        // Period buttons functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const periodBtns = document.querySelectorAll('.period-btn');
+            periodBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    periodBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+
+            // Initialize charts after DOM is loaded
+            setTimeout(() => {
+                animateStats();
+                initializeCharts();
+            }, 1000);
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput?.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            console.log('🔍 Ricerca:', query);
+        });
+
         // Console info
         console.log('%c🚁 UOPI Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
         console.log('%cSistema Operativo delle Unità Operative Polizia Italiana', 'color: #94a3b8; font-size: 12px;');
-        console.log('%cApps Script URL: ' + APPS_SCRIPT_URL, 'color: #10b981; font-size: 10px;');
+        console.log('%c🔗 Apps Script URL: ' + APPS_SCRIPT_URL, 'color: #10b981; font-size: 10px;');
     </script>
 </body>
 </html>
