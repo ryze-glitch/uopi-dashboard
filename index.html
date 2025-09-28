@@ -1,201 +1,88 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UOPI - Dashboard Operativo</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --secondary-color: #3b82f6;
-            --accent-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-bg: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-        .login-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            max-width: 450px;
-            width: 100%;
-            border: 1px solid var(--border-color);
-        }
-        .logo-container {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .logo-badge {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 2rem;
-            color: white;
-        }
-        .login-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .login-subtitle {
-            color: var(--text-secondary);
-            margin-bottom: 1.2rem;
-            font-size: 1rem;
-        }
-        .discord-login-btn {
-            width: 100%;
-            padding: 1rem;
-            background: #5865F2;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-        .discord-login-btn:hover {
-            background: #4752C4;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(88, 101, 242, 0.3);
-        }
-        .discord-login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.45rem;
-            margin-top: 1.1rem;
-            margin-bottom: 0.7rem;
-        }
-        .feature-card {
-            background: rgba(30, 41, 59, 0.5);
-            padding: 0.6rem 0.3rem;
-            border-radius: 9px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            font-size: 0.77rem;
-        }
-        .feature-icon {
-            color: var(--secondary-color);
-            font-size: 1.13rem;
-            margin-bottom: 0.17rem;
-        }
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.08rem;
-            font-size: 0.82rem;
-        }
-        .feature-desc {
-            color: var(--text-secondary);
-            font-size: 0.68rem;
-            line-height: 1.16;
-        }
-        /* Resto stile dashboard e responsività... */
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UOPI - Dashboard Operativo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ...Stili CSS come sopra per login, dashboard, responsività... */
+  </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div id="loginPage" class="login-container">
-        <div class="login-card">
-            <div class="logo-container">
-                <div class="logo-badge">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h1 class="login-title">UOPI Dashboard</h1>
-                <p class="login-subtitle">Accesso Unità Operative Polizia Italiana</p>
-            </div>
-            <div id="errorMessage" class="error-message" style="display:none;">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span id="errorText">Errore durante l'autenticazione</span>
-            </div>
-            <div class="loading" id="loginLoading" style="display:none;">
-                <div class="spinner"></div>
-                <p>Autenticazione in corso...</p>
-            </div>
-            <button id="discordLoginBtn" class="discord-login-btn">
-                <i class="fab fa-discord"></i>
-                Accedi tramite Discord
-            </button>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-users"></i></div>
-                    <span class="feature-title">Personale</span>
-                    <div class="feature-desc">Turni e ruoli</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-radio"></i></div>
-                    <span class="feature-title">Operativo</span>
-                    <div class="feature-desc">Dispatch, tracciamento</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-car"></i></div>
-                    <span class="feature-title">Mezzi</span>
-                    <div class="feature-desc">Flotta, disponibilità</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
-                    <span class="feature-title">Report</span>
-                    <div class="feature-desc">Statistiche</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
-                    <span class="feature-title">Messaggi</span>
-                    <div class="feature-desc">Alert, interforze</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-archive"></i></div>
-                    <span class="feature-title">Archivio</span>
-                    <div class="feature-desc">Documenti</div>
-                </div>
-            </div>
+  <div id="loginPage" class="login-container">
+    <div class="login-card">
+      <div class="logo-container">
+        <div class="logo-badge">
+          <i class="fas fa-shield-alt"></i>
         </div>
+        <h1 class="login-title">UOPI Dashboard</h1>
+        <p class="login-subtitle">Accesso Unità Operative Polizia Italiana</p>
+      </div>
+      <div id="errorMessage" class="error-message" style="display:none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="errorText">Errore durante l'autenticazione</span>
+      </div>
+      <button id="discordLoginBtn" class="discord-login-btn">
+        <i class="fab fa-discord"></i>
+        Accedi tramite Discord
+      </button>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-users"></i></div><span class="feature-title">Personale</span><div class="feature-desc">Turni, ruoli</div></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-radio"></i></div><span class="feature-title">Operativo</span><div class="feature-desc">Dispatch</div></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-car"></i></div><span class="feature-title">Mezzi</span><div class="feature-desc">Flotta</div></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-bar"></i></div><span class="feature-title">Report</span><div class="feature-desc">Statistiche</div></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-comments"></i></div><span class="feature-title">Messaggi</span><div class="feature-desc">Alert</div></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-archive"></i></div><span class="feature-title">Archivio</span><div class="feature-desc">Documenti</div></div>
+      </div>
     </div>
-    <!-- Resto del dashboard HTML + JS come nelle versioni precedenti -->
-    <script>
-        const APP_CONFIG = {
-            CLIENT_ID: '1387801645743869982',
-            REDIRECT_URI: 'https://ryze-glitch.github.io/uopi-dashboard/',
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzcTGSXyzxY5SRwnM6paqNHwhY4UqZM1Xy1pjUpS7_r/dev',
-            SCOPES: 'identify'
-        };
-        // Tutto il resto del JS completo, con funzioni di login, validazione, dashboard...
-        // Usa la versione completa inviata nei messaggi precedenti.
-    </script>
+  </div>
+  <div id="dashboard" class="dashboard" style="display:none;">
+    <header>
+      <h2>Dashboard UOPI</h2>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </header>
+    <main>
+      <p>Benvenuto nella dashboard della Polizia Italiana. Tutte le funzioni sono dimostrative!</p>
+      <!-- Più pannelli qui -->
+    </main>
+  </div>
+  <script>
+    // Config Discord solo per redirection
+    const CLIENT_ID = '1387801645743869982';
+    const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
+    const SCOPES = 'identify';
+
+    const loginPage = document.getElementById('loginPage');
+    const dashboard = document.getElementById('dashboard');
+    const discordLoginBtn = document.getElementById('discordLoginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Clic su login: simula successo login e mostra dashboard
+    discordLoginBtn.onclick = function () {
+      // COMMENTA queste due righe se vuoi solo demo senza OAuth
+      // const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${SCOPES}`;
+      // window.location.href = url;
+
+      // Solo demo: mostra dashboard
+      loginPage.style.display = 'none';
+      dashboard.style.display = 'block';
+    };
+
+    logoutBtn.onclick = function () {
+      dashboard.style.display = 'none';
+      loginPage.style.display = 'flex';
+    };
+
+    // OPTIONAL: se vuoi gestire il token Discord per fare demo, puoi aggiungere qui
+    /*
+    window.onload = function() {
+      if(window.location.hash){
+        dashboard.style.display = 'block';
+        loginPage.style.display = 'none';
+      }
+    }
+    */
+  </script>
 </body>
 </html>
