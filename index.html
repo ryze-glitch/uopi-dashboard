@@ -237,6 +237,22 @@
             margin-right: 0.5rem;
         }
 
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
         /* DASHBOARD STYLES */
         .dashboard {
             display: none;
@@ -296,15 +312,23 @@
             font-weight: 700;
         }
 
-        .admin-badge {
-            background: linear-gradient(135deg, var(--warning), #fb923c);
-            color: white;
+        .admin-badge, .leadership-badge {
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
             margin-left: 1rem;
             display: none;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .leadership-badge {
+            background: linear-gradient(135deg, var(--warning), #fb923c);
+            color: white;
         }
 
         .search-box {
@@ -731,6 +755,9 @@
             font-size: 0.9rem;
             font-weight: 500;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
@@ -743,9 +770,20 @@
             color: var(--text);
         }
 
+        .btn-success {
+            background: var(--accent);
+            color: white;
+        }
+
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         table {
@@ -796,6 +834,139 @@
             color: var(--warning);
         }
 
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input, .form-select {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .charts-grid {
@@ -804,6 +975,10 @@
             
             .search-input {
                 width: 200px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -855,6 +1030,19 @@
                 width: 100px;
                 height: 100px;
             }
+
+            .modal {
+                margin: 1rem;
+                max-width: none;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -901,6 +1089,9 @@
                     <div class="brand-text">UOPI Dashboard</div>
                     <div id="adminBadge" class="admin-badge">
                         <i class="fas fa-crown"></i> Amministratore
+                    </div>
+                    <div id="leadershipBadge" class="leadership-badge">
+                        <i class="fas fa-star"></i> Dirigenza
                     </div>
                 </div>
                 <div class="search-box">
@@ -1008,7 +1199,7 @@
                                     +5.2%
                                 </div>
                             </div>
-                            <div class="stat-value" id="totalPersonnel">156</div>
+                            <div class="stat-value" id="totalPersonnel">0</div>
                             <div class="stat-label">Personale Totale</div>
                         </div>
 
@@ -1022,7 +1213,7 @@
                                     +2.1%
                                 </div>
                             </div>
-                            <div class="stat-value" id="activePersonnel">47</div>
+                            <div class="stat-value" id="activePersonnel">0</div>
                             <div class="stat-label">In Servizio</div>
                         </div>
 
@@ -1076,101 +1267,45 @@
                             <canvas id="personnelChart" width="200" height="200"></canvas>
                         </div>
                     </div>
-
-                    <!-- Data Table -->
-                    <div class="data-table">
-                        <div class="table-header">
-                            <h3 class="table-title">Personale in Servizio</h3>
-                            <div class="table-actions">
-                                <button class="btn btn-secondary">
-                                    <i class="fas fa-download"></i> Esporta
-                                </button>
-                                <button class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Aggiungi
-                                </button>
-                            </div>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Grado</th>
-                                    <th>Unità</th>
-                                    <th>Stato</th>
-                                    <th>Ultima Attività</th>
-                                    <th>Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody id="personnelTable">
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">MR</div>
-                                            <div>Marco Rossi</div>
-                                        </div>
-                                    </td>
-                                    <td>Brigadiere Capo</td>
-                                    <td>Volante Alpha-1</td>
-                                    <td><span class="status-badge status-online">Operativo</span></td>
-                                    <td>2 minuti fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">GB</div>
-                                            <div>Giulia Bianchi</div>
-                                        </div>
-                                    </td>
-                                    <td>Appuntato</td>
-                                    <td>Volante Beta-2</td>
-                                    <td><span class="status-badge status-busy">Occupato</span></td>
-                                    <td>15 minuti fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 0.8rem;">
-                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--warning); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">AV</div>
-                                            <div>Alessandro Verdi</div>
-                                        </div>
-                                    </td>
-                                    <td>Brigadiere</td>
-                                    <td>Moto Pattuglia</td>
-                                    <td><span class="status-badge status-online">Operativo</span></td>
-                                    <td>1 minuto fa</td>
-                                    <td>
-                                        <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
 
                 <!-- Personnel Page -->
                 <div id="page-personnel" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Personale</h1>
-                        <p class="page-subtitle">Anagrafica e gestione delle risorse umane</p>
+                        <p class="page-subtitle">Anagrafica e gestione delle risorse umane UOPI</p>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sezione Personale - In Sviluppo</h3>
-                        <p>Qui saranno gestiti tutti gli aspetti del personale operativo, inclusi turni, qualifiche e assegnazioni.</p>
+
+                    <!-- Success Message -->
+                    <div id="successMessage" class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="successText">Operazione completata con successo!</span>
+                    </div>
+
+                    <!-- Personnel Data Table -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">Database Personale</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Esporta CSV
+                                </button>
+                                <button class="btn btn-success" id="addPersonnelBtn" style="display: none;">
+                                    <i class="fas fa-plus"></i> Aggiungi Operatore
+                                </button>
+                            </div>
+                        </div>
+                        <div id="personnelTableContainer">
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h3>Nessun operatore presente</h3>
+                                <p>Il database del personale è vuoto. I membri della dirigenza possono aggiungere operatori.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Operations Page -->
+                <!-- Other Pages (Same as before) -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Coordinamento Operativo</h1>
@@ -1182,7 +1317,6 @@
                     </div>
                 </div>
 
-                <!-- Vehicles Page -->
                 <div id="page-vehicles" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Mezzi</h1>
@@ -1194,7 +1328,6 @@
                     </div>
                 </div>
 
-                <!-- Incidents Page -->
                 <div id="page-incidents" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Gestione Incidenti</h1>
@@ -1206,7 +1339,6 @@
                     </div>
                 </div>
 
-                <!-- Reports Page -->
                 <div id="page-reports" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Report & Analytics</h1>
@@ -1218,7 +1350,6 @@
                     </div>
                 </div>
 
-                <!-- Archive Page -->
                 <div id="page-archive" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Archivio</h1>
@@ -1230,7 +1361,6 @@
                     </div>
                 </div>
 
-                <!-- Admin Page -->
                 <div id="page-admin" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Amministrazione Sistema</h1>
@@ -1245,52 +1375,135 @@
         </div>
     </div>
 
+    <!-- Add Personnel Modal -->
+    <div id="addPersonnelModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-user-plus"></i>
+                    Aggiungi Nuovo Operatore
+                </h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addPersonnelForm">
+                    <div class="form-grid">
+                        <!-- Qualifica -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                🏅 Qualifica <span class="required">*</span>
+                            </label>
+                            <select class="form-select" id="qualification" required>
+                                <option value="">Seleziona qualifica...</option>
+                                <option value="Comandante Generale">Comandante Generale</option>
+                                <option value="Vice Comandante Generale">Vice Comandante Generale</option>
+                                <option value="Comandante">Comandante</option>
+                                <option value="Vice Comandante">Vice Comandante</option>
+                                <option value="Sostituto Vice Comandante">Sostituto Vice Comandante</option>
+                                <option value="Capitano">Capitano</option>
+                                <option value="Vice Capitano">Vice Capitano</option>
+                                <option value="Caposquadra">Caposquadra</option>
+                                <option value="Vice Caposquadra">Vice Caposquadra</option>
+                                <option value="Coordinatore">Coordinatore</option>
+                                <option value="Vice Coordinatore">Vice Coordinatore</option>
+                                <option value="Tecnico Esperto">Tecnico Esperto</option>
+                                <option value="Tecnico Specializzato">Tecnico Specializzato</option>
+                                <option value="Tecnico">Tecnico</option>
+                                <option value="Operatore Qualificato">Operatore Qualificato</option>
+                                <option value="Operatore Scelto">Operatore Scelto</option>
+                                <option value="Operatore">Operatore</option>
+                                <option value="Operatore in Prova">Operatore in Prova</option>
+                            </select>
+                        </div>
+
+                        <!-- Nome e Cognome -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                🏛️ Nome e Cognome <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="fullName" placeholder="Es: Mario Rossi" required>
+                        </div>
+
+                        <!-- ID Discord -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                💬 ID Discord <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="discordId" placeholder="Es: 123456789012345678" required>
+                        </div>
+
+                        <!-- Ruolo Aggiuntivo -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                📋 Ruolo Aggiuntivo
+                            </label>
+                            <select class="form-select" id="additionalRole">
+                                <option value="">Nessun ruolo aggiuntivo</option>
+                                <option value="Istruttore">Istruttore</option>
+                                <option value="Specialista IT">Specialista IT</option>
+                                <option value="Responsabile Flotta">Responsabile Flotta</option>
+                                <option value="Coordinatore Turni">Coordinatore Turni</option>
+                                <option value="Responsabile Formazione">Responsabile Formazione</option>
+                                <option value="Analista">Analista</option>
+                                <option value="Supervisore">Supervisore</option>
+                            </select>
+                        </div>
+
+                        <!-- Nominativo -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                🎭 Nominativo (Call Sign)
+                            </label>
+                            <input type="text" class="form-input" id="callSign" placeholder="Es: Alpha-1, Bravo-2">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            📝 Note Aggiuntive
+                        </label>
+                        <textarea class="form-input" id="notes" placeholder="Eventuali note o informazioni aggiuntive..." rows="3" style="resize: vertical; min-height: 80px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i> Annulla
+                </button>
+                <button type="submit" class="btn btn-success" id="savePersonnelBtn">
+                    <i class="fas fa-save"></i> Salva Operatore
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const SCOPES = 'identify';
 
-        // DATABASE UTENTI AUTORIZZATI CON SEPARAZIONE PER RUOLI
+        // DATABASE UTENTI AUTORIZZATI - PULITO DAGLI ESEMPI
         const AUTHORIZED_USERS = {
             // === DIRIGENZA SUPERIORE === (Amministratori)
-            'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', isAdmin: true },
+            'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', isAdmin: true, canAddPersonnel: true },
             
             // === MEMBRI DELLA DIRIGENZA === (I DUE ID CHE HAI FORNITO)
-            '1387684968536477756': { rank: 'Membro Della Dirigenza', isAdmin: false },
-            '1249738701081153658': { rank: 'Membro Della Dirigenza', isAdmin: false },
+            '1387684968536477756': { rank: 'Membro Della Dirigenza', isAdmin: false, canAddPersonnel: true },
+            '1249738701081153658': { rank: 'Membro Della Dirigenza', isAdmin: false, canAddPersonnel: true },
             
-            // === COMANDANTI === (Amministratori)
-            // 'DISCORD_ID': { rank: 'Vice Comandante Generale', isAdmin: true },
-            // 'DISCORD_ID': { rank: 'Comandante', isAdmin: true },
-            // 'DISCORD_ID': { rank: 'Vice Comandante', isAdmin: true },
-            // 'DISCORD_ID': { rank: 'Sostituto Vice Comandante', isAdmin: true },
-            
-            // === UFFICIALI SUPERIORI === (Utenti Standard)
-            // 'DISCORD_ID': { rank: 'Capitano', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Vice Capitano', isAdmin: false },
-            
-            // === SOTTUFFICIALI === (Utenti Standard)
-            // 'DISCORD_ID': { rank: 'Caposquadra', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Vice Caposquadra', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Coordinatore', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Vice Coordinatore', isAdmin: false },
-            
-            // === TECNICI === (Utenti Standard)
-            // 'DISCORD_ID': { rank: 'Tecnico Esperto', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Tecnico Specializzato', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Tecnico', isAdmin: false },
-            
-            // === OPERATORI === (Utenti Standard)
-            // 'DISCORD_ID': { rank: 'Operatore Qualificato', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Operatore Scelto', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Operatore', isAdmin: false },
-            // 'DISCORD_ID': { rank: 'Operatore in Prova', isAdmin: false },
+            // === ALTRI RUOLI SARANNO AGGIUNTI TRAMITE IL MODULO ===
         };
+
+        // Database del personale (inizialmente vuoto)
+        let personnelDatabase = [];
 
         // Global variables
         let currentUser = null;
         let isAdmin = false;
+        let canAddPersonnel = false;
 
         // DOM Elements
         const loginPage = document.getElementById('loginPage');
@@ -1301,6 +1514,7 @@
         const userAvatar = document.getElementById('userAvatar');
         const userRank = document.getElementById('userRank');
         const adminBadge = document.getElementById('adminBadge');
+        const leadershipBadge = document.getElementById('leadershipBadge');
         const adminPanel = document.getElementById('adminPanel');
         const adminNavItem = document.getElementById('adminNavItem');
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1308,8 +1522,19 @@
         const loadingSteps = document.getElementById('loadingSteps');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
         const navItems = document.querySelectorAll('.nav-item');
         const pages = document.querySelectorAll('.page');
+
+        // Personnel Modal Elements
+        const addPersonnelBtn = document.getElementById('addPersonnelBtn');
+        const addPersonnelModal = document.getElementById('addPersonnelModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const savePersonnelBtn = document.getElementById('savePersonnelBtn');
+        const addPersonnelForm = document.getElementById('addPersonnelForm');
+        const personnelTableContainer = document.getElementById('personnelTableContainer');
 
         // Utility Functions
         function showLoading(show = true, text = 'Verifica autorizzazioni...', steps = '') {
@@ -1334,9 +1559,257 @@
             }, 10000);
         }
 
+        function showSuccess(message) {
+            console.log('✅ Successo:', message);
+            successText.textContent = message;
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+        }
+
         function hideError() {
             errorMessage.classList.remove('show');
         }
+
+        // Personnel Management Functions
+        function updatePersonnelStats() {
+            const totalPersonnel = personnelDatabase.length;
+            const activePersonnel = Math.floor(totalPersonnel * 0.3); // Simulazione
+            
+            document.getElementById('totalPersonnel').textContent = totalPersonnel;
+            document.getElementById('activePersonnel').textContent = activePersonnel;
+        }
+
+        function renderPersonnelTable() {
+            if (personnelDatabase.length === 0) {
+                personnelTableContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h3>Nessun operatore presente</h3>
+                        <p>Il database del personale è vuoto. I membri della dirigenza possono aggiungere operatori.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>🏅 Qualifica</th>
+                            <th>🏛️ Nome e Cognome</th>
+                            <th>💬 Discord</th>
+                            <th>📋 Ruolo Aggiuntivo</th>
+                            <th>🎭 Nominativo</th>
+                            <th>⚡ Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${personnelDatabase.map((person, index) => `
+                            <tr>
+                                <td>
+                                    <span class="status-badge ${getQualificationColor(person.qualification)}">
+                                        ${person.qualification}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem;">
+                                            ${person.fullName ? person.fullName.split(' ').map(n => n[0]).join('').slice(0, 2) : 'UN'}
+                                        </div>
+                                        <div>${person.fullName}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <code style="background: var(--surface); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        ${person.discordId}
+                                    </code>
+                                </td>
+                                <td>${person.additionalRole || '<span style="color: var(--text-muted);">Nessuno</span>'}</td>
+                                <td>${person.callSign || '<span style="color: var(--text-muted);">Non assegnato</span>'}</td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="viewPersonnel(${index})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    ${canAddPersonnel ? `
+                                        <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-left: 0.5rem;" onclick="removePersonnel(${index})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    ` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            personnelTableContainer.innerHTML = tableHTML;
+        }
+
+        function getQualificationColor(qualification) {
+            const adminRanks = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante'];
+            const officerRanks = ['Capitano', 'Vice Capitano'];
+            const techRanks = ['Tecnico Esperto', 'Tecnico Specializzato', 'Tecnico'];
+            
+            if (adminRanks.includes(qualification)) return 'status-offline'; // Red
+            if (officerRanks.includes(qualification)) return 'status-busy'; // Orange
+            if (techRanks.includes(qualification)) return 'status-online'; // Green
+            return 'status-busy'; // Default orange
+        }
+
+        function addPersonnel(personnelData) {
+            // Add to personnel database
+            personnelDatabase.push({
+                ...personnelData,
+                addedBy: currentUser.username,
+                addedDate: new Date().toISOString(),
+                id: Date.now()
+            });
+
+            // Add to authorized users if not exists
+            if (!AUTHORIZED_USERS[personnelData.discordId]) {
+                const isAdminRank = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante'].includes(personnelData.qualification);
+                const canAddPeople = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante', 'Membro Della Dirigenza'].includes(personnelData.qualification);
+                
+                AUTHORIZED_USERS[personnelData.discordId] = {
+                    rank: personnelData.qualification,
+                    isAdmin: isAdminRank,
+                    canAddPersonnel: canAddPeople
+                };
+            }
+
+            // Save to localStorage
+            localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
+            localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
+
+            // Update UI
+            renderPersonnelTable();
+            updatePersonnelStats();
+            
+            showSuccess(`Operatore ${personnelData.fullName} aggiunto con successo!`);
+            console.log('👤 Nuovo operatore aggiunto:', personnelData);
+        }
+
+        function removePersonnel(index) {
+            const person = personnelDatabase[index];
+            
+            if (confirm(`Sei sicuro di voler rimuovere ${person.fullName} dal database?`)) {
+                // Remove from database
+                personnelDatabase.splice(index, 1);
+                
+                // Remove from authorized users
+                delete AUTHORIZED_USERS[person.discordId];
+                
+                // Save to localStorage
+                localStorage.setItem('uopi_personnel_database', JSON.stringify(personnelDatabase));
+                localStorage.setItem('uopi_authorized_users', JSON.stringify(AUTHORIZED_USERS));
+                
+                // Update UI
+                renderPersonnelTable();
+                updatePersonnelStats();
+                
+                showSuccess(`Operatore ${person.fullName} rimosso dal sistema.`);
+                console.log('🗑️ Operatore rimosso:', person);
+            }
+        }
+
+        function viewPersonnel(index) {
+            const person = personnelDatabase[index];
+            alert(`
+📋 DETTAGLI OPERATORE
+
+🏅 Qualifica: ${person.qualification}
+🏛️ Nome: ${person.fullName}
+💬 Discord ID: ${person.discordId}
+📋 Ruolo Aggiuntivo: ${person.additionalRole || 'Nessuno'}
+🎭 Nominativo: ${person.callSign || 'Non assegnato'}
+📝 Note: ${person.notes || 'Nessuna nota'}
+
+➕ Aggiunto da: ${person.addedBy}
+📅 Data aggiunta: ${new Date(person.addedDate).toLocaleDateString('it-IT')}
+            `);
+        }
+
+        // Load saved data
+        function loadSavedData() {
+            try {
+                const savedPersonnel = localStorage.getItem('uopi_personnel_database');
+                const savedUsers = localStorage.getItem('uopi_authorized_users');
+                
+                if (savedPersonnel) {
+                    personnelDatabase = JSON.parse(savedPersonnel);
+                    console.log('📁 Caricati', personnelDatabase.length, 'operatori salvati');
+                }
+                
+                if (savedUsers) {
+                    const loadedUsers = JSON.parse(savedUsers);
+                    Object.assign(AUTHORIZED_USERS, loadedUsers);
+                    console.log('👥 Caricati utenti autorizzati:', Object.keys(AUTHORIZED_USERS).length);
+                }
+            } catch (error) {
+                console.error('❌ Errore caricamento dati salvati:', error);
+            }
+        }
+
+        // Modal Functions
+        function openModal() {
+            addPersonnelModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFn() {
+            addPersonnelModal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            addPersonnelForm.reset();
+        }
+
+        // Event Listeners
+        addPersonnelBtn?.addEventListener('click', openModal);
+        closeModal?.addEventListener('click', closeModalFn);
+        cancelBtn?.addEventListener('click', closeModalFn);
+
+        // Close modal on outside click
+        addPersonnelModal?.addEventListener('click', (e) => {
+            if (e.target === addPersonnelModal) {
+                closeModalFn();
+            }
+        });
+
+        // Form submission
+        savePersonnelBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                qualification: document.getElementById('qualification').value,
+                fullName: document.getElementById('fullName').value,
+                discordId: document.getElementById('discordId').value,
+                additionalRole: document.getElementById('additionalRole').value,
+                callSign: document.getElementById('callSign').value,
+                notes: document.getElementById('notes').value
+            };
+
+            // Validation
+            if (!formData.qualification || !formData.fullName || !formData.discordId) {
+                showError('Per favore compila tutti i campi obbligatori!');
+                return;
+            }
+
+            // Check if Discord ID already exists
+            if (AUTHORIZED_USERS[formData.discordId] || personnelDatabase.some(p => p.discordId === formData.discordId)) {
+                showError('Questo Discord ID è già presente nel sistema!');
+                return;
+            }
+
+            // Discord ID format validation
+            if (!/^\d{17,19}$/.test(formData.discordId)) {
+                showError('Il Discord ID deve essere composto da 17-19 cifre!');
+                return;
+            }
+
+            addPersonnel(formData);
+            closeModalFn();
+        });
 
         // Discord OAuth
         discordBtn.addEventListener('click', () => {
@@ -1381,6 +1854,7 @@
                 // Set user data
                 currentUser = user;
                 isAdmin = userPermissions.isAdmin;
+                canAddPersonnel = userPermissions.canAddPersonnel;
 
                 // Update UI
                 showLoading(true, 'Accesso concesso...', 'Inizializzazione dashboard...');
@@ -1399,18 +1873,30 @@
                         userAvatar.textContent = user.username.charAt(0).toUpperCase();
                     }
 
-                    // Show admin badge and panel if user is admin
+                    // Show appropriate badge
                     if (isAdmin) {
                         adminBadge.style.display = 'flex';
                         adminPanel.classList.add('show');
                         adminNavItem.style.display = 'block';
                         console.log('👑 Privilegi amministratore attivati');
+                    } else if (canAddPersonnel) {
+                        leadershipBadge.style.display = 'flex';
+                        console.log('⭐ Privilegi dirigenza attivati');
+                    }
+
+                    // Show add personnel button if user can add
+                    if (canAddPersonnel) {
+                        addPersonnelBtn.style.display = 'flex';
                     }
 
                     // Save session
                     localStorage.setItem('uopi_access_token', token);
                     localStorage.setItem('uopi_user_data', JSON.stringify(user));
                     localStorage.setItem('uopi_permissions', JSON.stringify(userPermissions));
+
+                    // Load personnel data and update UI
+                    renderPersonnelTable();
+                    updatePersonnelStats();
 
                     // Initialize dashboard
                     setTimeout(() => {
@@ -1453,6 +1939,7 @@
                 // Reset all variables
                 currentUser = null;
                 isAdmin = false;
+                canAddPersonnel = false;
                 
                 // Reset UI
                 loginPage.style.display = 'flex';
@@ -1462,10 +1949,12 @@
                 userAvatar.textContent = 'U';
                 userAvatar.style.backgroundImage = '';
                 
-                // Hide admin elements
+                // Hide badges
                 adminBadge.style.display = 'none';
+                leadershipBadge.style.display = 'none';
                 adminPanel.classList.remove('show');
                 adminNavItem.style.display = 'none';
+                addPersonnelBtn.style.display = 'none';
                 
                 // Reset navigation
                 navItems.forEach(nav => nav.classList.remove('active'));
@@ -1473,7 +1962,7 @@
                 document.querySelector('[data-page="dashboard"]').classList.add('active');
                 document.getElementById('page-dashboard').classList.add('active');
                 
-                // Clear session
+                // Clear session (keep personnel data)
                 localStorage.removeItem('uopi_access_token');
                 localStorage.removeItem('uopi_user_data');
                 localStorage.removeItem('uopi_permissions');
@@ -1488,7 +1977,12 @@
         // Check for Discord token on load
         window.addEventListener('load', () => {
             console.log('🚁 UOPI Dashboard caricato');
+            
+            // Load saved data first
+            loadSavedData();
+            
             console.log('👥 Utenti autorizzati:', Object.keys(AUTHORIZED_USERS).length);
+            console.log('📊 Operatori nel database:', personnelDatabase.length);
             
             const hash = window.location.hash;
             if (hash && hash.includes('access_token=')) {
@@ -1515,8 +2009,8 @@
         // Animate statistics
         function animateStats() {
             const stats = [
-                { id: 'totalPersonnel', value: 156 },
-                { id: 'activePersonnel', value: 47 },
+                { id: 'totalPersonnel', value: personnelDatabase.length },
+                { id: 'activePersonnel', value: Math.floor(personnelDatabase.length * 0.3) },
                 { id: 'availableVehicles', value: 23 },
                 { id: 'activeIncidents', value: 8 }
             ];
@@ -1590,15 +2084,21 @@
                     });
                 }
 
-                // Personnel Chart
+                // Personnel Chart - Dynamic based on actual data
                 const personnelCtx = document.getElementById('personnelChart');
                 if (personnelCtx) {
+                    const totalPersonnel = personnelDatabase.length;
+                    const inService = Math.floor(totalPersonnel * 0.3);
+                    const onBreak = Math.floor(totalPersonnel * 0.5);
+                    const onLeave = Math.floor(totalPersonnel * 0.15);
+                    const training = totalPersonnel - inService - onBreak - onLeave;
+
                     new Chart(personnelCtx, {
                         type: 'doughnut',
                         data: {
                             labels: ['In Servizio', 'Riposo', 'Ferie', 'Formazione'],
                             datasets: [{
-                                data: [47, 89, 15, 5],
+                                data: [inService, onBreak, onLeave, Math.max(0, training)],
                                 backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
                                 borderWidth: 0,
                                 cutout: '60%'
@@ -1651,7 +2151,7 @@
         // Console info
         console.log('%c🚁 UOPI Dashboard', 'color: #3b82f6; font-size: 18px; font-weight: bold;');
         console.log('%cSistema Operativo delle Unità Operative Polizia Italiana', 'color: #94a3b8; font-size: 12px;');
-        console.log('%c⚠️ VERSIONE STANDALONE - LOGO UOPI INTEGRATO', 'color: #f59e0b; font-size: 12px; font-weight: bold;');
+        console.log('%c📋 GESTIONE PERSONALE ATTIVATA', 'color: #10b981; font-size: 12px; font-weight: bold;');
     </script>
 </body>
 </html>
