@@ -60,6 +60,78 @@
             background: var(--border);
         }
 
+        /* STATUS INDICATOR */
+        .status-indicator {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--card);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .status-dot.online {
+            background: var(--accent);
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .status-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-text.online {
+            color: var(--accent);
+        }
+
+        .status-text.offline {
+            color: var(--danger);
+        }
+
         /* LOGIN STYLES */
         .login-container {
             min-height: 100vh;
@@ -770,30 +842,66 @@
             border-radius: 8px;
         }
 
-        /* FORM CARDS */
-        .form-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
+        /* COMPACT FORMS GRID */
+        .compact-forms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .form-card-header {
+        .compact-form-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .compact-form-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .compact-form-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
         }
 
-        .form-card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .compact-form-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .compact-form-icon.success { background: var(--accent); }
+        .compact-form-icon.primary { background: var(--primary); }
+        .compact-form-icon.danger { background: var(--danger); }
+        .compact-form-icon.warning { background: var(--warning); }
+
+        .compact-form-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .compact-form-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
         }
 
         .leadership-info {
@@ -801,7 +909,7 @@
             border: 1px solid var(--warning);
             border-radius: 12px;
             padding: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.8rem;
@@ -1045,7 +1153,7 @@
 
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
         }
 
         .modal-footer {
@@ -1056,6 +1164,12 @@
         }
 
         /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .compact-forms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 1024px) {
             .charts-grid {
                 grid-template-columns: 1fr;
@@ -1082,10 +1196,21 @@
                 width: calc(100vw - 2rem);
                 right: 1rem;
             }
+            .status-indicator {
+                top: auto;
+                bottom: 1rem;
+                right: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Status Indicator -->
+    <div id="statusIndicator" class="status-indicator" style="display: none;">
+        <div class="status-dot offline" id="statusDot"></div>
+        <div class="status-text offline" id="statusText">Fuori Servizio</div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
@@ -1185,14 +1310,10 @@
                 
                 <!-- ATTIVAZIONI REPARTO -->
                 <div class="nav-section">
-                    <div class="nav-title">📋 ATTIVAZIONI</div>
-                    <button class="nav-item" onclick="showPage('shifts')">
-                        <span class="nav-item-icon">📝</span>
-                        <span>Turni Servizio</span>
-                    </button>
-                    <button class="nav-item" onclick="showPage('activation')">
+                    <div class="nav-title">📋 OPERAZIONI</div>
+                    <button class="nav-item" onclick="showPage('operations')">
                         <span class="nav-item-icon">🚨</span>
-                        <span>Attivazioni</span>
+                        <span>Centro Operativo</span>
                     </button>
                     <button class="nav-item" onclick="showPage('vehicles')">
                         <span class="nav-item-icon">🚓</span>
@@ -1352,57 +1473,175 @@
                     </div>
                 </div>
 
-                <!-- Shifts Page (TURNI SERVIZIO) -->
-                <div id="page-shifts" class="page">
+                <!-- Operations Page (CENTRO OPERATIVO UNICO) -->
+                <div id="page-operations" class="page">
                     <div class="page-header">
-                        <h1 class="page-title">Turni di Servizio</h1>
-                        <p class="page-subtitle">Compila il turno quando inizi il servizio</p>
+                        <h1 class="page-title">Centro Operativo</h1>
+                        <p class="page-subtitle">Gestione completa turni, attivazioni e operazioni</p>
                     </div>
 
-                    <div class="form-card">
-                        <div class="form-card-header">
-                            <h3 class="form-card-title">
-                                <i class="fas fa-clock"></i>
-                                Nuovo Turno di Servizio
-                            </h3>
+                    <!-- COMPACT FORMS GRID -->
+                    <div class="compact-forms-grid">
+                        <!-- TURNO SERVIZIO -->
+                        <div class="compact-form-card">
+                            <div class="compact-form-header">
+                                <div class="compact-form-icon success">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="compact-form-title">Turno Servizio</div>
+                            </div>
+                            <form id="shiftForm" class="compact-form-body">
+                                <div class="form-group">
+                                    <label class="form-label">👮 Operatore</label>
+                                    <input type="text" class="form-input" id="shiftOperator" readonly>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">🕐 Ora Inizio</label>
+                                        <input type="time" class="form-input" id="shiftStartTime" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">🕐 Ora Fine</label>
+                                        <input type="time" class="form-input" id="shiftEndTime">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">📝 Note</label>
+                                    <textarea class="form-textarea" id="shiftNotes" placeholder="Attività svolte..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success" style="width: 100%;">
+                                    <i class="fas fa-play"></i> Inizia Turno
+                                </button>
+                            </form>
                         </div>
 
-                        <form id="shiftForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">👮 Operatore <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="shiftOperator" readonly placeholder="Il tuo nome">
+                        <!-- ATTIVAZIONE REPARTO -->
+                        <div class="compact-form-card">
+                            <div class="compact-form-header">
+                                <div class="compact-form-icon primary">
+                                    <i class="fas fa-plus-circle"></i>
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Inizio Turno <span class="required">*</span></label>
-                                    <input type="time" class="form-input" id="shiftStartTime" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Fine Turno</label>
-                                    <input type="time" class="form-input" id="shiftEndTime">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">📅 Data <span class="required">*</span></label>
-                                    <input type="date" class="form-input" id="shiftDate" required>
-                                </div>
+                                <div class="compact-form-title">Attivazione Reparto</div>
                             </div>
+                            <form id="activationForm" class="compact-form-body">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">👤 Autorizzato Da</label>
+                                        <input type="text" class="form-input" id="activationAuthorized" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">📋 Coordinatore</label>
+                                        <input type="text" class="form-input" id="activationCoordinator" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">💼 Op. Contrattazione</label>
+                                    <input type="text" class="form-input" id="activationNegotiator" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🚨 Tipo Intervento</label>
+                                    <select class="form-select" id="activationIntervention" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Rapina Banca">Rapina Banca</option>
+                                        <option value="Rapina Gioielleria">Rapina Gioielleria</option>
+                                        <option value="Emergenza">Emergenza</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-check"></i> Attiva
+                                </button>
+                            </form>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="form-label">📝 Note e Attività</label>
-                                <textarea class="form-textarea" id="shiftNotes" placeholder="Descrivi le attività svolte durante il turno..."></textarea>
+                        <!-- ATTIVAZIONE PATTUGLIA -->
+                        <div class="compact-form-card">
+                            <div class="compact-form-header">
+                                <div class="compact-form-icon primary">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="compact-form-title">Attivazione Pattuglia</div>
                             </div>
+                            <form id="patrolForm" class="compact-form-body">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">👤 Gestito Da</label>
+                                        <input type="text" class="form-input" id="patrolManager" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">🚓 Veicolo</label>
+                                        <input type="text" class="form-input" id="patrolVehicle" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori</label>
+                                    <input type="text" class="form-input" id="patrolOperators" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-play"></i> Avvia
+                                </button>
+                            </form>
+                        </div>
 
-                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                                <i class="fas fa-save"></i> Registra Turno
-                            </button>
-                        </form>
+                        <!-- DISATTIVAZIONE REPARTO -->
+                        <div class="compact-form-card">
+                            <div class="compact-form-header">
+                                <div class="compact-form-icon danger">
+                                    <i class="fas fa-stop-circle"></i>
+                                </div>
+                                <div class="compact-form-title">Disattivazione</div>
+                            </div>
+                            <form id="deactivationForm" class="compact-form-body">
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori Rientro</label>
+                                    <textarea class="form-textarea" id="deactivationOperators" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora</label>
+                                    <input type="time" class="form-input" id="deactivationTime" required>
+                                </div>
+                                <button type="submit" class="btn btn-danger" style="width: 100%;">
+                                    <i class="fas fa-power-off"></i> Disattiva
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- ISTANZA ATTIVAZIONE -->
+                        <div class="compact-form-card" style="grid-column: span 2;">
+                            <div class="compact-form-header">
+                                <div class="compact-form-icon warning">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="compact-form-title">Istanza per Attivazione (Richiede Approvazione)</div>
+                            </div>
+                            <form id="requestForm" class="compact-form-body">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">🎯 Tipo Rapina</label>
+                                        <select class="form-select" id="requestRobberyType" required>
+                                            <option value="">Seleziona...</option>
+                                            <option value="Banca Centrale">Banca Centrale</option>
+                                            <option value="Gioielleria">Gioielleria</option>
+                                            <option value="Negozio 24/7">Negozio 24/7</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">👤 Gestore</label>
+                                        <input type="text" class="form-input" id="requestManager" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">👔 Dirigenza (non modificabile)</label>
+                                    <input type="text" class="form-input" value="Tonino Frasca, Gabriel Martinelli, Matteo Rossi, Simone Sottaceto, Diego Bianchi, Franco Costa, Simone Brighella" readonly style="background: var(--dark); cursor: not-allowed; font-size: 0.8rem;">
+                                </div>
+                                <button type="submit" class="btn btn-warning" style="width: 100%;">
+                                    <i class="fas fa-paper-plane"></i> Invia Istanza
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
-                    <!-- Shifts History -->
-                    <div class="data-table">
+                    <!-- Storico Turni -->
+                    <div class="data-table" style="margin-top: 2rem;">
                         <div class="table-header">
                             <h3 class="table-title">Storico Turni</h3>
                         </div>
@@ -1413,199 +1652,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Activation Page (ATTIVAZIONI REPARTO) -->
-                <div id="page-activation" class="page">
-                    <div class="page-header">
-                        <h1 class="page-title">Attivazioni Reparto</h1>
-                        <p class="page-subtitle">Gestione attivazioni e pattuglie operative</p>
-                    </div>
-
-                    <!-- ATTIVAZIONE REPARTO -->
-                    <div class="form-card">
-                        <div class="form-card-header">
-                            <h3 class="form-card-title">
-                                <i class="fas fa-plus-circle"></i>
-                                Attivazione Reparto
-                            </h3>
-                        </div>
-
-                        <form id="activationForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">👤 Autorizzato Da <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="activationAuthorized" required placeholder="Nome autorizzatore">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">📋 Coordinatore <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="activationCoordinator" required placeholder="Nome coordinatore">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">💼 Operatore Contrattazione <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="activationNegotiator" required placeholder="Nome operatore">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
-                                    <select class="form-select" id="activationIntervention" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="Rapina Banca">Rapina Banca</option>
-                                        <option value="Rapina Gioielleria">Rapina Gioielleria</option>
-                                        <option value="Rapina Negozio">Rapina Negozio</option>
-                                        <option value="Emergenza">Emergenza</option>
-                                        <option value="Operazione Speciale">Operazione Speciale</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">👥 Operatori Coinvolti <span class="required">*</span></label>
-                                <textarea class="form-textarea" id="activationOperators" required placeholder="Elenco operatori coinvolti (separati da virgola)"></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 1rem;">
-                                <i class="fas fa-check"></i> Attiva Reparto
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- ATTIVAZIONE PATTUGLIE -->
-                    <div class="form-card">
-                        <div class="form-card-header">
-                            <h3 class="form-card-title">
-                                <i class="fas fa-car"></i>
-                                Attivazione Pattuglia
-                            </h3>
-                        </div>
-
-                        <form id="patrolForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">👤 Gestito Da <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="patrolManager" required placeholder="Nome gestore">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
-                                    <select class="form-select" id="patrolIntervention" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="Pattugliamento">Pattugliamento</option>
-                                        <option value="Inseguimento">Inseguimento</option>
-                                        <option value="Controllo Territorio">Controllo Territorio</option>
-                                        <option value="Emergenza">Emergenza</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🚓 Veicolo Utilizzato <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="patrolVehicle" required placeholder="Codice mezzo">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">👥 Operatori in Uscita <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="patrolOperators" required placeholder="Nomi operatori">
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                                <i class="fas fa-play"></i> Avvia Pattuglia
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- DISATTIVAZIONE REPARTO -->
-                    <div class="form-card">
-                        <div class="form-card-header">
-                            <h3 class="form-card-title">
-                                <i class="fas fa-stop-circle"></i>
-                                Disattivazione Reparto
-                            </h3>
-                        </div>
-
-                        <form id="deactivationForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">👥 Operatori in Rientro <span class="required">*</span></label>
-                                    <textarea class="form-textarea" id="deactivationOperators" required placeholder="Elenco operatori (separati da virgola)"></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Disattivazione <span class="required">*</span></label>
-                                    <input type="time" class="form-input" id="deactivationTime" required>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-danger" style="width: 100%; margin-top: 1rem;">
-                                <i class="fas fa-power-off"></i> Disattiva Reparto
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- ISTANZA ATTIVAZIONE -->
-                    <div class="form-card">
-                        <div class="form-card-header">
-                            <h3 class="form-card-title">
-                                <i class="fas fa-file-alt"></i>
-                                Istanza per Attivazione Reparto
-                            </h3>
-                        </div>
-
-                        <div class="leadership-info">
-                            <i class="fas fa-info-circle"></i>
-                            <div>
-                                <strong>Richiede Approvazione Dirigenza</strong><br>
-                                L'istanza verrà inviata alla dirigenza per l'approvazione.
-                            </div>
-                        </div>
-
-                        <form id="requestForm">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">🎯 Tipo di Rapina <span class="required">*</span></label>
-                                    <select class="form-select" id="requestRobberyType" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="Banca Centrale">Banca Centrale</option>
-                                        <option value="Banca Periferica">Banca Periferica</option>
-                                        <option value="Gioielleria">Gioielleria</option>
-                                        <option value="Negozio 24/7">Negozio 24/7</option>
-                                        <option value="Altro">Altro</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">👤 Operatore che Gestirà <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="requestManager" required placeholder="Nome operatore">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">👔 Tag Dirigenza (non modificabile)</label>
-                                <textarea class="form-textarea" id="requestLeadership" readonly style="background: var(--dark); cursor: not-allowed;">Tonino Frasca, Gabriel Martinelli, Matteo Rossi, Simone Sottaceto, Diego Bianchi, Franco Costa, Simone Brighella</textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">📝 Note Aggiuntive</label>
-                                <textarea class="form-textarea" id="requestNotes" placeholder="Eventuali dettagli aggiuntivi..."></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-warning" style="width: 100%; margin-top: 1rem;">
-                                <i class="fas fa-paper-plane"></i> Invia Istanza alla Dirigenza
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Pending Requests (Solo Dirigenza) -->
-                    <div class="data-table" id="pendingRequestsTable" style="display: none;">
+                    <!-- Istanze Pending (Solo Dirigenza) -->
+                    <div class="data-table" id="pendingRequestsTable" style="display: none; margin-top: 2rem;">
                         <div class="table-header">
-                            <h3 class="table-title">Istanze in Attesa di Approvazione</h3>
+                            <h3 class="table-title">Istanze in Attesa</h3>
                         </div>
                         <div id="pendingRequestsContainer">
                             <div class="empty-state">
                                 <i class="fas fa-inbox"></i>
-                                <h3>Nessuna istanza in attesa</h3>
+                                <h3>Nessuna istanza</h3>
                             </div>
                         </div>
                     </div>
@@ -1615,66 +1671,60 @@
                 <div id="page-vehicles" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Mezzi Utilizzabili</h1>
-                        <p class="page-subtitle">Flotta veicoli disponibili per le operazioni</p>
+                        <p class="page-subtitle">Flotta veicoli disponibili</p>
                     </div>
                     <div class="chart-card">
                         <h3>Gestione Flotta - In Sviluppo</h3>
-                        <p>Monitoraggio mezzi operativi, disponibilità e manutenzione.</p>
                     </div>
                 </div>
 
                 <div id="page-uniforms" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Divise Reparto</h1>
-                        <p class="page-subtitle">Catalogo e gestione divise operative</p>
+                        <p class="page-subtitle">Catalogo divise operative</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Divise - In Sviluppo</h3>
-                        <p>Gestione divise, equipaggiamento e dotazioni personali.</p>
                     </div>
                 </div>
 
                 <div id="page-promotions" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Promozioni Operatori</h1>
-                        <p class="page-subtitle">Sistema di gestione promozioni e avanzamenti</p>
+                        <p class="page-subtitle">Gestione promozioni</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Promozioni - In Sviluppo</h3>
-                        <p>Gestione promozioni, avanzamenti di grado e riconoscimenti.</p>
                     </div>
                 </div>
 
                 <div id="page-warnings" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Richiami Operatori</h1>
-                        <p class="page-subtitle">Gestione provvedimenti disciplinari</p>
+                        <p class="page-subtitle">Gestione provvedimenti</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Richiami - In Sviluppo</h3>
-                        <p>Gestione richiami, sanzioni e provvedimenti disciplinari.</p>
                     </div>
                 </div>
 
                 <div id="page-activation-code" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Codice D'Attivazione</h1>
-                        <p class="page-subtitle">Attiva nuove funzionalità con il codice fornito</p>
+                        <p class="page-subtitle">Attiva funzionalità</p>
                     </div>
                     <div class="chart-card">
-                        <h3>Sistema Codici Attivazione - In Sviluppo</h3>
-                        <p>Inserisci il codice di attivazione per sbloccare funzionalità premium.</p>
+                        <h3>Sistema Codici - In Sviluppo</h3>
                     </div>
                 </div>
 
                 <div id="page-system-status" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Status Sistema</h1>
-                        <p class="page-subtitle">Monitoraggio sistema e aggiornamenti</p>
+                        <p class="page-subtitle">Monitoraggio</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Aggiornamenti - In Sviluppo</h3>
-                        <p>Status sistema, changelog e notifiche aggiornamenti.</p>
                     </div>
                 </div>
             </div>
@@ -1698,59 +1748,26 @@
                     <div class="form-group">
                         <label class="form-label">🏅 Qualifica <span class="required">*</span></label>
                         <select class="form-select" id="qualification">
-                            <option value="">Seleziona qualifica...</option>
+                            <option value="">Seleziona...</option>
                             <option value="Comandante Generale">Comandante Generale</option>
                             <option value="Vice Comandante Generale">Vice Comandante Generale</option>
                             <option value="Comandante">Comandante</option>
                             <option value="Vice Comandante">Vice Comandante</option>
-                            <option value="Sostituto Vice Comandante">Sostituto Vice Comandante</option>
-                            <option value="Capitano">Capitano</option>
-                            <option value="Vice Capitano">Vice Capitano</option>
-                            <option value="Caposquadra">Caposquadra</option>
-                            <option value="Vice Caposquadra">Vice Caposquadra</option>
-                            <option value="Coordinatore">Coordinatore</option>
-                            <option value="Vice Coordinatore">Vice Coordinatore</option>
-                            <option value="Tecnico Esperto">Tecnico Esperto</option>
-                            <option value="Tecnico Specializzato">Tecnico Specializzato</option>
-                            <option value="Tecnico">Tecnico</option>
-                            <option value="Operatore Qualificato">Operatore Qualificato</option>
-                            <option value="Operatore Scelto">Operatore Scelto</option>
                             <option value="Operatore">Operatore</option>
-                            <option value="Operatore in Prova">Operatore in Prova</option>
                         </select>
                     </div>
-
                     <div class="form-group">
-                        <label class="form-label">🏛️ Nome e Cognome <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="fullName" placeholder="Es: Mario Rossi">
+                        <label class="form-label">🏛️ Nome <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="fullName" placeholder="Mario Rossi">
                     </div>
-
                     <div class="form-group">
-                        <label class="form-label">💬 ID Discord <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="discordId" placeholder="Es: 123456789012345678">
+                        <label class="form-label">💬 Discord ID <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="discordId" placeholder="123456789">
                     </div>
-
                     <div class="form-group">
-                        <label class="form-label">📋 Ruolo Aggiuntivo</label>
-                        <select class="form-select" id="additionalRole">
-                            <option value="">Nessuno</option>
-                            <option value="Istruttore">Istruttore</option>
-                            <option value="Specialista IT">Specialista IT</option>
-                            <option value="Responsabile Flotta">Responsabile Flotta</option>
-                            <option value="Coordinatore Turni">Coordinatore Turni</option>
-                            <option value="Responsabile Formazione">Responsabile Formazione</option>
-                        </select>
+                        <label class="form-label">🎭 Nominativo</label>
+                        <input type="text" class="form-input" id="callSign" placeholder="Alpha-1">
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">🎭 Nominativo (Call Sign)</label>
-                        <input type="text" class="form-input" id="callSign" placeholder="Es: Alpha-1">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">📝 Note Aggiuntive</label>
-                    <textarea class="form-textarea" id="notes" placeholder="Note aggiuntive..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1758,7 +1775,7 @@
                     <i class="fas fa-times"></i> Annulla
                 </button>
                 <button class="btn btn-success" onclick="savePersonnel()">
-                    <i class="fas fa-save"></i> Salva Operatore
+                    <i class="fas fa-save"></i> Salva
                 </button>
             </div>
         </div>
@@ -1769,14 +1786,13 @@
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
-        // DATABASE UTENTI AUTORIZZATI
+        // DATABASE UTENTI
         let AUTHORIZED_USERS = {
             'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', fullName: 'Admin Sistema', isAdmin: true, canAddPersonnel: true },
-            '1387684968536477756': { rank: 'Membro Della Dirigenza', fullName: 'Tonino Frasca', isAdmin: false, canAddPersonnel: true },
-            '1249738701081153658': { rank: 'Membro Della Dirigenza', fullName: 'Gabriel Martinelli', isAdmin: false, canAddPersonnel: true }
+            '1387684968536477756': { rank: 'Dirigenza', fullName: 'Tonino Frasca', isAdmin: false, canAddPersonnel: true },
+            '1249738701081153658': { rank: 'Dirigenza', fullName: 'Gabriel Martinelli', isAdmin: false, canAddPersonnel: true }
         };
 
-        // NOMI DIRIGENZA PER ISTANZE
         const LEADERSHIP_NAMES = ['Tonino Frasca', 'Gabriel Martinelli', 'Matteo Rossi', 'Simone Sottaceto', 'Diego Bianchi', 'Franco Costa', 'Simone Brighella'];
 
         // Database
@@ -1789,21 +1805,59 @@
         let currentUser = null;
         let canAddPersonnel = false;
         let isLeadership = false;
+        let isOnDuty = false;
 
         // SISTEMA NOTIFICHE
         let notifications = [
-            { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Nuovo operatore aggiunto al sistema', time: '2 minuti fa', unread: true },
-            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Aggiornamento sistema disponibile v2.1.0', time: '1 ora fa', unread: true },
-            { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza: ricordati di compilare il report', time: '3 ore fa', unread: true },
-            { id: 4, type: 'info', icon: 'fa-calendar', text: 'Riunione operativa programmata per domani', time: '5 ore fa', unread: false },
-            { id: 5, type: 'success', icon: 'fa-medal', text: 'Complimenti! Hai ricevuto un riconoscimento', time: '1 giorno fa', unread: false }
+            { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Sistema operativo', time: '2 min fa', unread: true },
+            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Aggiornamento v2.1.0', time: '1 ora fa', unread: true },
+            { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza', time: '3 ore fa', unread: false }
         ];
+
+        // STATUS INDICATOR
+        function updateServiceStatus() {
+            const indicator = document.getElementById('statusIndicator');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            if (isOnDuty) {
+                dot.className = 'status-dot online';
+                text.className = 'status-text online';
+                text.textContent = 'In Servizio';
+            } else {
+                dot.className = 'status-dot offline';
+                text.className = 'status-text offline';
+                text.textContent = 'Fuori Servizio';
+            }
+            
+            indicator.style.display = 'flex';
+        }
+
+        function checkIfOnDuty() {
+            // Controlla se c'è un turno attivo oggi
+            const today = new Date().toISOString().split('T')[0];
+            const todayShifts = shiftsDatabase.filter(s => s.date === today && s.operator === (currentUser?.fullName || currentUser?.username));
+            
+            if (todayShifts.length > 0) {
+                const lastShift = todayShifts[todayShifts.length - 1];
+                // Se il turno non ha ora fine o l'ora fine è nel futuro, è in servizio
+                if (!lastShift.endTime) {
+                    isOnDuty = true;
+                } else {
+                    const now = new Date();
+                    const endTime = new Date(`${lastShift.date}T${lastShift.endTime}`);
+                    isOnDuty = now < endTime;
+                }
+            } else {
+                isOnDuty = false;
+            }
+            
+            updateServiceStatus();
+        }
 
         function loadNotifications() {
             const saved = localStorage.getItem('uopi_notifications');
-            if (saved) {
-                notifications = JSON.parse(saved);
-            }
+            if (saved) notifications = JSON.parse(saved);
             updateNotificationBadge();
             renderNotifications();
         }
@@ -1826,12 +1880,7 @@
             if (!container) return;
 
             if (notifications.length === 0) {
-                container.innerHTML = `
-                    <div class="no-notifications">
-                        <i class="fas fa-bell-slash"></i>
-                        <p>Nessuna notifica</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="no-notifications"><i class="fas fa-bell-slash"></i><p>Nessuna notifica</p></div>';
                 return;
             }
 
@@ -1850,10 +1899,7 @@
         }
 
         function toggleNotifications() {
-            const panel = document.getElementById('notificationsPanel');
-            if (panel) {
-                panel.classList.toggle('show');
-            }
+            document.getElementById('notificationsPanel')?.classList.toggle('show');
         }
 
         function markAsRead(id) {
@@ -1874,7 +1920,6 @@
             renderNotifications();
         }
 
-        // Chiudi notifiche quando clicchi fuori
         document.addEventListener('click', (e) => {
             const panel = document.getElementById('notificationsPanel');
             const notifBtn = document.querySelector('.notifications');
@@ -1883,7 +1928,7 @@
             }
         });
 
-        // Carica dati salvati
+        // Carica dati
         function loadData() {
             try {
                 const saved = localStorage.getItem('uopi_personnel');
@@ -1909,11 +1954,10 @@
                 
                 console.log('✅ Dati caricati');
             } catch (e) {
-                console.error('Errore caricamento:', e);
+                console.error('Errore:', e);
             }
         }
 
-        // Salva dati
         function saveData() {
             try {
                 localStorage.setItem('uopi_personnel', JSON.stringify(personnelDatabase));
@@ -1923,44 +1967,33 @@
                 localStorage.setItem('uopi_patrols', JSON.stringify(patrolsDatabase));
                 localStorage.setItem('uopi_deactivations', JSON.stringify(deactivationsDatabase));
                 localStorage.setItem('uopi_requests', JSON.stringify(requestsDatabase));
-                console.log('💾 Dati salvati');
             } catch (e) {
                 console.error('Errore salvataggio:', e);
             }
         }
 
-        // Aggiorna statistiche
         function updateStats() {
             document.getElementById('totalPersonnel').textContent = personnelDatabase.length;
             document.getElementById('activePersonnel').textContent = Math.floor(personnelDatabase.length * 0.3);
         }
 
-        // Renderizza tabella personale
         function renderTable() {
             const container = document.getElementById('personnelTableContainer');
             
             if (personnelDatabase.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><h3>Nessun operatore</h3><p>Il database è vuoto.</p></div>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><h3>Nessun operatore</h3></div>';
                 return;
             }
 
-            let html = '<table><thead><tr><th>🏅 Qualifica</th><th>🏛️ Nome</th><th>💬 Discord</th><th>📋 Ruolo</th><th>🎭 Nominativo</th><th>⚡ Azioni</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>🏅 Qualifica</th><th>🏛️ Nome</th><th>💬 Discord</th><th>🎭 Nominativo</th><th>⚡ Azioni</th></tr></thead><tbody>';
             
             personnelDatabase.forEach((p, i) => {
-                const colorClass = p.qualification.includes('Comandante') ? 'status-offline' : (p.qualification.includes('Tecnico') ? 'status-online' : 'status-busy');
+                const colorClass = p.qualification.includes('Comandante') ? 'status-offline' : 'status-busy';
                 html += `<tr>
                     <td><span class="status-badge ${colorClass}">${p.qualification}</span></td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:0.8rem;">
-                            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;">
-                                ${p.fullName.split(' ').map(n => n[0]).join('').slice(0,2)}
-                            </div>
-                            ${p.fullName}
-                        </div>
-                    </td>
+                    <td>${p.fullName}</td>
                     <td><code style="background:var(--surface);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.8rem;">${p.discordId}</code></td>
-                    <td>${p.additionalRole || '<span style="color:var(--text-muted);">-</span>'}</td>
-                    <td>${p.callSign || '<span style="color:var(--text-muted);">-</span>'}</td>
+                    <td>${p.callSign || '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" onclick="viewPerson(${i})"><i class="fas fa-eye"></i></button>
                         ${canAddPersonnel ? `<button class="btn btn-sm btn-danger" onclick="deletePerson(${i})"><i class="fas fa-trash"></i></button>` : ''}
@@ -1972,18 +2005,17 @@
             container.innerHTML = html;
         }
 
-        // Renderizza turni
         function renderShiftsTable() {
             const container = document.getElementById('shiftsTableContainer');
             
             if (shiftsDatabase.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno registrato</h3></div>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno</h3></div>';
                 return;
             }
 
             let html = '<table><thead><tr><th>👮 Operatore</th><th>📅 Data</th><th>🕐 Inizio</th><th>🕐 Fine</th><th>📝 Note</th></tr></thead><tbody>';
             
-            shiftsDatabase.forEach((s) => {
+            shiftsDatabase.slice(-10).reverse().forEach((s) => {
                 html += `<tr>
                     <td>${s.operator}</td>
                     <td>${new Date(s.date).toLocaleDateString('it-IT')}</td>
@@ -1997,7 +2029,6 @@
             container.innerHTML = html;
         }
 
-        // Renderizza richieste pending (solo dirigenza)
         function renderPendingRequests() {
             if (!isLeadership) return;
             
@@ -2009,7 +2040,7 @@
             const pending = requestsDatabase.filter(r => r.status === 'pending');
             
             if (pending.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>Nessuna istanza in attesa</h3></div>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>Nessuna istanza</h3></div>';
                 return;
             }
             
@@ -2017,15 +2048,15 @@
             
             let html = '<table><thead><tr><th>🎯 Tipo</th><th>👤 Gestore</th><th>👤 Richiedente</th><th>📅 Data</th><th>⚡ Azioni</th></tr></thead><tbody>';
             
-            pending.forEach((r, i) => {
+            pending.forEach((r) => {
                 html += `<tr>
                     <td>${r.robberyType}</td>
                     <td>${r.manager}</td>
                     <td>${r.requestedBy}</td>
                     <td>${new Date(r.requestDate).toLocaleDateString('it-IT')}</td>
                     <td>
-                        <button class="btn btn-sm btn-success" onclick="approveRequest(${r.id})"><i class="fas fa-check"></i> Approva</button>
-                        <button class="btn btn-sm btn-danger" onclick="rejectRequest(${r.id})"><i class="fas fa-times"></i> Rifiuta</button>
+                        <button class="btn btn-sm btn-success" onclick="approveRequest(${r.id})"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="rejectRequest(${r.id})"><i class="fas fa-times"></i></button>
                     </td>
                 </tr>`;
             });
@@ -2034,118 +2065,68 @@
             container.innerHTML = html;
         }
 
-        // Approva richiesta
         function approveRequest(id) {
             const request = requestsDatabase.find(r => r.id === id);
             if (request) {
                 request.status = 'approved';
                 request.approvedBy = currentUser?.fullName || currentUser?.username;
-                request.approvedDate = new Date().toISOString();
                 saveData();
                 renderPendingRequests();
-                showSuccessMsg('Istanza approvata con successo!');
-                
-                // Notifica richiedente
-                notifications.unshift({
-                    id: Date.now(),
-                    type: 'success',
-                    icon: 'fa-check-circle',
-                    text: `La tua istanza per ${request.robberyType} è stata approvata!`,
-                    time: 'Adesso',
-                    unread: true
-                });
-                saveNotifications();
-                updateNotificationBadge();
+                showSuccessMsg('Istanza approvata!');
             }
         }
 
-        // Rifiuta richiesta
         function rejectRequest(id) {
-            if (!confirm('Sei sicuro di voler rifiutare questa istanza?')) return;
+            if (!confirm('Rifiutare questa istanza?')) return;
             
             const request = requestsDatabase.find(r => r.id === id);
             if (request) {
                 request.status = 'rejected';
-                request.rejectedBy = currentUser?.fullName || currentUser?.username;
-                request.rejectedDate = new Date().toISOString();
                 saveData();
                 renderPendingRequests();
                 showSuccessMsg('Istanza rifiutata');
             }
         }
 
-        // Mostra pagina
         function showPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
             event.target.closest('.nav-item').classList.add('active');
             
-            // Carica dati specifici pagina
-            if (page === 'shifts') {
+            if (page === 'operations') {
                 renderShiftsTable();
+                if (isLeadership) renderPendingRequests();
+                
                 // Pre-compila operatore
                 const operatorField = document.getElementById('shiftOperator');
                 if (operatorField && currentUser) {
                     operatorField.value = currentUser.fullName || currentUser.username;
                 }
-                // Pre-compila data odierna
-                const dateField = document.getElementById('shiftDate');
-                if (dateField) {
-                    dateField.value = new Date().toISOString().split('T')[0];
-                }
-            }
-            
-            if (page === 'activation' && isLeadership) {
-                renderPendingRequests();
             }
         }
 
-        // Visualizza operatore
         function viewPerson(index) {
             const p = personnelDatabase[index];
-            alert(`📋 DETTAGLI OPERATORE\n\n🏅 Qualifica: ${p.qualification}\n🏛️ Nome: ${p.fullName}\n💬 Discord: ${p.discordId}\n📋 Ruolo: ${p.additionalRole || 'Nessuno'}\n🎭 Nominativo: ${p.callSign || 'Non assegnato'}\n📝 Note: ${p.notes || 'Nessuna'}\n\n➕ Aggiunto da: ${p.addedBy}\n📅 Data: ${new Date(p.addedDate).toLocaleDateString('it-IT')}`);
+            alert(`📋 ${p.fullName}\n🏅 ${p.qualification}\n💬 ${p.discordId}\n🎭 ${p.callSign || 'N/A'}`);
         }
 
-        // Modal
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('show');
         }
 
         function closeModalFn(modalId) {
             document.getElementById(modalId).classList.remove('show');
-            // Reset form se è personnel modal
-            if (modalId === 'addPersonnelModal') {
-                document.getElementById('qualification').value = '';
-                document.getElementById('fullName').value = '';
-                document.getElementById('discordId').value = '';
-                document.getElementById('additionalRole').value = '';
-                document.getElementById('callSign').value = '';
-                document.getElementById('notes').value = '';
-            }
         }
 
-        // Salva operatore
         function savePersonnel() {
             const qualification = document.getElementById('qualification').value;
             const fullName = document.getElementById('fullName').value;
             const discordId = document.getElementById('discordId').value;
-            const additionalRole = document.getElementById('additionalRole').value;
             const callSign = document.getElementById('callSign').value;
-            const notes = document.getElementById('notes').value;
 
             if (!qualification || !fullName || !discordId) {
-                alert('❌ Compila tutti i campi obbligatori!');
-                return;
-            }
-
-            if (!/^\d{17,19}$/.test(discordId)) {
-                alert('❌ Discord ID deve essere 17-19 cifre!');
-                return;
-            }
-
-            if (personnelDatabase.some(p => p.discordId === discordId)) {
-                alert('❌ Discord ID già presente!');
+                alert('❌ Compila i campi obbligatori!');
                 return;
             }
 
@@ -2153,9 +2134,7 @@
                 qualification,
                 fullName,
                 discordId,
-                additionalRole,
                 callSign,
-                notes,
                 id: Date.now(),
                 addedBy: currentUser?.username || 'Sistema',
                 addedDate: new Date().toISOString()
@@ -2163,8 +2142,7 @@
 
             personnelDatabase.push(newPerson);
             
-            // Aggiungi agli autorizzati
-            const isAdmin = ['Comandante Generale', 'Vice Comandante Generale', 'Comandante', 'Vice Comandante', 'Sostituto Vice Comandante'].includes(qualification);
+            const isAdmin = qualification.includes('Comandante');
             AUTHORIZED_USERS[discordId] = {
                 rank: qualification,
                 fullName: fullName,
@@ -2176,27 +2154,11 @@
             renderTable();
             updateStats();
             closeModalFn('addPersonnelModal');
-            
-            // Aggiungi notifica
-            notifications.unshift({
-                id: Date.now(),
-                type: 'success',
-                icon: 'fa-user-plus',
-                text: `Nuovo operatore aggiunto: ${fullName}`,
-                time: 'Adesso',
-                unread: true
-            });
-            saveNotifications();
-            updateNotificationBadge();
-            renderNotifications();
-            
-            showSuccessMsg(`✅ Operatore ${fullName} aggiunto con successo!`);
-            console.log('✅ Operatore aggiunto:', newPerson);
+            showSuccessMsg(`✅ ${fullName} aggiunto!`);
         }
 
-        // Elimina operatore
         function deletePerson(index) {
-            if (!confirm('Sei sicuro di voler eliminare questo operatore?')) return;
+            if (!confirm('Eliminare questo operatore?')) return;
             
             const person = personnelDatabase[index];
             delete AUTHORIZED_USERS[person.discordId];
@@ -2205,11 +2167,9 @@
             saveData();
             renderTable();
             updateStats();
-            
-            showSuccessMsg(`🗑️ Operatore ${person.fullName} eliminato`);
+            showSuccessMsg(`🗑️ ${person.fullName} eliminato`);
         }
 
-        // Show success message
         function showSuccessMsg(msg) {
             const msgEl = document.getElementById('successMessage');
             const textEl = document.getElementById('successText');
@@ -2221,9 +2181,8 @@
         }
 
         // FORM HANDLERS
-
-        // Shift Form
         document.addEventListener('DOMContentLoaded', () => {
+            // Shift Form
             const shiftForm = document.getElementById('shiftForm');
             if (shiftForm) {
                 shiftForm.addEventListener('submit', (e) => {
@@ -2234,7 +2193,7 @@
                         operator: document.getElementById('shiftOperator').value,
                         startTime: document.getElementById('shiftStartTime').value,
                         endTime: document.getElementById('shiftEndTime').value,
-                        date: document.getElementById('shiftDate').value,
+                        date: new Date().toISOString().split('T')[0],
                         notes: document.getElementById('shiftNotes').value,
                         createdAt: new Date().toISOString()
                     };
@@ -2243,12 +2202,12 @@
                     saveData();
                     renderShiftsTable();
                     shiftForm.reset();
-                    
-                    // Re-imposta valori
                     document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
-                    document.getElementById('shiftDate').value = new Date().toISOString().split('T')[0];
                     
-                    showSuccessMsg('✅ Turno registrato con successo!');
+                    // Aggiorna status
+                    checkIfOnDuty();
+                    
+                    showSuccessMsg('✅ Turno iniziato!');
                 });
             }
 
@@ -2264,15 +2223,13 @@
                         coordinator: document.getElementById('activationCoordinator').value,
                         negotiator: document.getElementById('activationNegotiator').value,
                         intervention: document.getElementById('activationIntervention').value,
-                        operators: document.getElementById('activationOperators').value,
-                        createdAt: new Date().toISOString(),
-                        createdBy: currentUser?.fullName || currentUser?.username
+                        createdAt: new Date().toISOString()
                     };
                     
                     activationsDatabase.push(newActivation);
                     saveData();
                     activationForm.reset();
-                    showSuccessMsg('✅ Reparto attivato con successo!');
+                    showSuccessMsg('✅ Reparto attivato!');
                 });
             }
 
@@ -2285,17 +2242,15 @@
                     const newPatrol = {
                         id: Date.now(),
                         manager: document.getElementById('patrolManager').value,
-                        intervention: document.getElementById('patrolIntervention').value,
                         vehicle: document.getElementById('patrolVehicle').value,
                         operators: document.getElementById('patrolOperators').value,
-                        createdAt: new Date().toISOString(),
-                        createdBy: currentUser?.fullName || currentUser?.username
+                        createdAt: new Date().toISOString()
                     };
                     
                     patrolsDatabase.push(newPatrol);
                     saveData();
                     patrolForm.reset();
-                    showSuccessMsg('✅ Pattuglia avviata con successo!');
+                    showSuccessMsg('✅ Pattuglia avviata!');
                 });
             }
 
@@ -2309,14 +2264,13 @@
                         id: Date.now(),
                         operators: document.getElementById('deactivationOperators').value,
                         time: document.getElementById('deactivationTime').value,
-                        createdAt: new Date().toISOString(),
-                        createdBy: currentUser?.fullName || currentUser?.username
+                        createdAt: new Date().toISOString()
                     };
                     
                     deactivationsDatabase.push(newDeactivation);
                     saveData();
                     deactivationForm.reset();
-                    showSuccessMsg('✅ Reparto disattivato con successo!');
+                    showSuccessMsg('✅ Reparto disattivato!');
                 });
             }
 
@@ -2330,7 +2284,6 @@
                         id: Date.now(),
                         robberyType: document.getElementById('requestRobberyType').value,
                         manager: document.getElementById('requestManager').value,
-                        notes: document.getElementById('requestNotes').value,
                         status: 'pending',
                         requestedBy: currentUser?.fullName || currentUser?.username,
                         requestDate: new Date().toISOString()
@@ -2339,20 +2292,7 @@
                     requestsDatabase.push(newRequest);
                     saveData();
                     requestForm.reset();
-                    
-                    // Notifica dirigenza
-                    notifications.unshift({
-                        id: Date.now(),
-                        type: 'warning',
-                        icon: 'fa-file-alt',
-                        text: `Nuova istanza da ${newRequest.requestedBy} per ${newRequest.robberyType}`,
-                        time: 'Adesso',
-                        unread: true
-                    });
-                    saveNotifications();
-                    updateNotificationBadge();
-                    
-                    showSuccessMsg('✅ Istanza inviata alla dirigenza!');
+                    showSuccessMsg('✅ Istanza inviata!');
                 });
             }
         });
@@ -2407,9 +2347,9 @@
                 renderTable();
                 updateStats();
                 loadNotifications();
+                checkIfOnDuty();
                 initCharts();
                 document.getElementById('loadingOverlay').classList.remove('show');
-                console.log('✅ Login completato');
                 
             } catch (error) {
                 document.getElementById('errorText').textContent = error.message;
@@ -2420,15 +2360,12 @@
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Vuoi uscire dalla dashboard?')) {
-                location.reload();
-            }
+            if (confirm('Uscire?')) location.reload();
         });
 
         // Init Charts
         function initCharts() {
             try {
-                // Activity Chart
                 const activityCtx = document.getElementById('activityChart');
                 if (activityCtx && !activityCtx.chart) {
                     activityCtx.chart = new Chart(activityCtx, {
@@ -2456,7 +2393,6 @@
                     });
                 }
 
-                // Personnel Chart
                 const personnelCtx = document.getElementById('personnelChart');
                 if (personnelCtx && !personnelCtx.chart) {
                     const total = personnelDatabase.length;
@@ -2500,7 +2436,7 @@
             }
         });
 
-        console.log('🚁 U.O.P.I. Dashboard v6.0 - SISTEMA COMPLETO');
+        console.log('🚁 U.O.P.I. Dashboard v7.0 - CENTRO OPERATIVO UNICO + STATUS INDICATOR');
     </script>
 </body>
 </html>
