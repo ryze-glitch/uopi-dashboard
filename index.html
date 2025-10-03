@@ -682,6 +682,178 @@
             font-size: 1.1rem;
         }
 
+        /* ACTIVE SHIFTS SECTION - BIG AND VISIBLE */
+        .active-shifts-banner {
+            background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+            animation: pulse-banner 3s infinite;
+        }
+
+        @keyframes pulse-banner {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+            }
+            50% {
+                box-shadow: 0 15px 50px rgba(16, 185, 129, 0.5);
+            }
+        }
+
+        .active-shifts-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .active-shifts-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .active-shifts-title {
+            flex: 1;
+        }
+
+        .active-shifts-title h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .active-shifts-title p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .active-shifts-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .active-shifts-count-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .active-shifts-count-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .active-shifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .active-shift-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .active-shift-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .active-shift-operator {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .active-shift-time {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .no-active-shifts {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .no-active-shifts i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* NEW SHIFT FORM */
+        .new-shift-section {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
         /* VEHICLES GRID */
         .vehicles-grid {
             display: grid;
@@ -1108,6 +1280,7 @@
         /* RESPONSIVE */
         @media (max-width: 1200px) {
             .vehicles-grid { grid-template-columns: 1fr; }
+            .active-shifts-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
         }
 
         @media (max-width: 1024px) {
@@ -1122,6 +1295,7 @@
             .notifications-panel { width: calc(100vw - 2rem); right: 1rem; }
             .search-box { margin-left: 0; width: 100%; }
             .search-input { width: 100%; }
+            .active-shifts-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1376,14 +1550,88 @@
                     </div>
                 </div>
 
-                <!-- Operations Page -->
+                <!-- Operations Page (NUOVA VERSIONE) -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
-                        <p class="page-subtitle">Gestione completa turni e operazioni</p>
+                        <p class="page-subtitle">Gestione turni e operazioni in tempo reale</p>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Operazioni - In Sviluppo</h3>
+
+                    <!-- ACTIVE SHIFTS BANNER -->
+                    <div class="active-shifts-banner">
+                        <div class="active-shifts-header">
+                            <div class="active-shifts-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="active-shifts-title">
+                                <h2>Operatori in Servizio</h2>
+                                <p>Turni attivi in questo momento</p>
+                            </div>
+                            <div class="active-shifts-count">
+                                <div class="active-shifts-count-number" id="activeShiftsCount">0</div>
+                                <div class="active-shifts-count-label">Attivi</div>
+                            </div>
+                        </div>
+                        <div class="active-shifts-grid" id="activeShiftsGrid">
+                            <div class="no-active-shifts">
+                                <i class="fas fa-user-clock"></i>
+                                <div>Nessun operatore in servizio al momento</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NEW SHIFT FORM -->
+                    <div class="new-shift-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div class="section-title">Inizia Nuovo Turno</div>
+                                <div class="section-subtitle">Registra l'inizio del tuo servizio</div>
+                            </div>
+                        </div>
+                        <form id="shiftForm" class="form-compact">
+                            <div class="form-group">
+                                <label class="form-label">👮 Operatore</label>
+                                <input type="text" class="form-input" id="shiftOperator" readonly>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Inizio <span class="required">*</span></label>
+                                    <input type="time" class="form-input" id="shiftStartTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Fine</label>
+                                    <input type="time" class="form-input" id="shiftEndTime">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📝 Note Attività</label>
+                                <textarea class="form-textarea" id="shiftNotes" placeholder="Descrivi le attività svolte..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-play"></i> Inizia Turno
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SHIFT HISTORY -->
+                    <div class="data-table">
+                        <div class="table-header">
+                            <h3 class="table-title">📅 Storico Turni</h3>
+                            <div class="table-actions">
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-download"></i> Esporta
+                                </button>
+                            </div>
+                        </div>
+                        <div id="shiftsTableContainer">
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>Nessun turno registrato</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1391,11 +1639,10 @@
                 <div id="page-vehicles" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Mezzi Utilizzabili</h1>
-                        <p class="page-subtitle">Flotta veicoli operativi disponibili per il reparto</p>
+                        <p class="page-subtitle">Flotta veicoli operativi disponibili</p>
                     </div>
 
                     <div class="vehicles-grid">
-                        <!-- Jeep Cherokee -->
                         <div class="vehicle-card">
                             <div class="vehicle-image">
                                 <img src="https://i.imgur.com/wS4uBgY.png" alt="Jeep Cherokee">
@@ -1416,7 +1663,6 @@
                             </div>
                         </div>
 
-                        <!-- Alfa Romeo Giulietta -->
                         <div class="vehicle-card">
                             <div class="vehicle-image">
                                 <img src="https://i.imgur.com/qUr7Wwr.png" alt="Alfa Romeo Giulietta">
@@ -1541,17 +1787,18 @@
             { title: 'Mezzi', subtitle: 'Flotta veicoli', page: 'vehicles', icon: '🚓' },
             { title: 'Divise', subtitle: 'Catalogo divise', page: 'uniforms', icon: '🎽' },
             { title: 'Promozioni', subtitle: 'Gestione promozioni', page: 'promotions', icon: '⏫' },
-            { title: 'Richiami', subtitle: 'Provvedimenti disciplinari', page: 'warnings', icon: '⛔' },
-            { title: 'Codice Attivazione', subtitle: 'Attiva funzionalità', page: 'activation-code', icon: '🪄' },
-            { title: 'Status Sistema', subtitle: 'Monitoraggio sistema', page: 'system-status', icon: '🔄' }
+            { title: 'Richiami', subtitle: 'Provvedimenti', page: 'warnings', icon: '⛔' },
+            { title: 'Codice', subtitle: 'Attivazione', page: 'activation-code', icon: '🪄' },
+            { title: 'Status', subtitle: 'Sistema', page: 'system-status', icon: '🔄' }
         ];
 
         let personnelDatabase = [];
+        let shiftsDatabase = [];
         let currentUser = null;
         let canAddPersonnel = false;
         let notifications = [
             { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Sistema operativo', time: '2 min fa', unread: true },
-            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi mezzi disponibili', time: '1 ora fa', unread: true },
+            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi turni disponibili', time: '1 ora fa', unread: true },
             { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza', time: '3 ore fa', unread: false }
         ];
 
@@ -1572,7 +1819,6 @@
                 item.subtitle.toLowerCase().includes(query)
             );
 
-            // Cerca anche nel personale
             const personnelResults = personnelDatabase.filter(p => 
                 p.fullName.toLowerCase().includes(query) ||
                 p.qualification.toLowerCase().includes(query)
@@ -1587,13 +1833,13 @@
             const allResults = [...results, ...personnelResults];
 
             if (allResults.length === 0) {
-                searchResults.innerHTML = '<div class="no-results">Nessun risultato trovato</div>';
+                searchResults.innerHTML = '<div class="no-results">Nessun risultato</div>';
                 searchResults.classList.add('show');
                 return;
             }
 
             searchResults.innerHTML = allResults.map(item => `
-                <div class="search-result-item" onclick="navigateToResult('${item.page}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                <div class="search-result-item" onclick="navigateToResult('${item.page}')">
                     <div class="search-result-title">${item.icon} ${item.title}</div>
                     <div class="search-result-subtitle">${item.subtitle}</div>
                 </div>
@@ -1601,18 +1847,83 @@
             searchResults.classList.add('show');
         });
 
-        function navigateToResult(page, item) {
+        function navigateToResult(page) {
             showPage(page);
             searchInput.value = '';
             searchResults.classList.remove('show');
         }
 
-        // Chiudi ricerca quando clicchi fuori
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.classList.remove('show');
             }
         });
+
+        // ACTIVE SHIFTS RENDERING
+        function renderActiveShifts() {
+            const container = document.getElementById('activeShiftsGrid');
+            const countEl = document.getElementById('activeShiftsCount');
+            
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().substr(0, 5);
+            
+            const activeShifts = shiftsDatabase.filter(s => {
+                if (s.date !== today) return false;
+                if (!s.startTime) return false;
+                if (s.endTime && s.endTime < currentTime) return false;
+                return true;
+            });
+            
+            countEl.textContent = activeShifts.length;
+            
+            if (activeShifts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-active-shifts">
+                        <i class="fas fa-user-clock"></i>
+                        <div>Nessun operatore in servizio</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = activeShifts.map(s => `
+                <div class="active-shift-card">
+                    <div class="active-shift-operator">
+                        <i class="fas fa-user-check"></i>
+                        ${s.operator}
+                    </div>
+                    <div class="active-shift-time">
+                        <i class="fas fa-clock"></i>
+                        Dalle ${s.startTime}${s.endTime ? ' alle ' + s.endTime : ' (in corso)'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderShiftsTable() {
+            const container = document.getElementById('shiftsTableContainer');
+            
+            if (shiftsDatabase.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno</h3></div>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>👮 Operatore</th><th>📅 Data</th><th>🕐 Inizio</th><th>🕐 Fine</th><th>📝 Note</th></tr></thead><tbody>';
+            
+            shiftsDatabase.slice(-20).reverse().forEach((s) => {
+                html += `<tr>
+                    <td><strong>${s.operator}</strong></td>
+                    <td>${new Date(s.date).toLocaleDateString('it-IT')}</td>
+                    <td>${s.startTime}</td>
+                    <td>${s.endTime || '<span style="color:var(--accent)">In corso</span>'}</td>
+                    <td>${s.notes || '-'}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
 
         function loadNotifications() {
             const saved = localStorage.getItem('uopi_notifications');
@@ -1694,6 +2005,9 @@
                 
                 const savedUsers = localStorage.getItem('uopi_users');
                 if (savedUsers) AUTHORIZED_USERS = {...AUTHORIZED_USERS, ...JSON.parse(savedUsers)};
+                
+                const savedShifts = localStorage.getItem('uopi_shifts');
+                if (savedShifts) shiftsDatabase = JSON.parse(savedShifts);
             } catch (e) {
                 console.error('Errore:', e);
             }
@@ -1703,6 +2017,7 @@
             try {
                 localStorage.setItem('uopi_personnel', JSON.stringify(personnelDatabase));
                 localStorage.setItem('uopi_users', JSON.stringify(AUTHORIZED_USERS));
+                localStorage.setItem('uopi_shifts', JSON.stringify(shiftsDatabase));
             } catch (e) {
                 console.error('Errore salvataggio:', e);
             }
@@ -1710,7 +2025,10 @@
 
         function updateStats() {
             document.getElementById('totalPersonnel').textContent = personnelDatabase.length;
-            document.getElementById('activePersonnel').textContent = Math.floor(personnelDatabase.length * 0.3);
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const activeCount = shiftsDatabase.filter(s => s.date === today && !s.endTime).length;
+            document.getElementById('activePersonnel').textContent = activeCount;
         }
 
         function renderTable() {
@@ -1746,12 +2064,20 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
             
-            // Trova e attiva il nav item corrispondente
             document.querySelectorAll('.nav-item').forEach(item => {
                 if (item.onclick && item.onclick.toString().includes(`'${page}'`)) {
                     item.classList.add('active');
                 }
             });
+            
+            if (page === 'operations') {
+                renderActiveShifts();
+                renderShiftsTable();
+                const operatorField = document.getElementById('shiftOperator');
+                if (operatorField && currentUser) {
+                    operatorField.value = currentUser.fullName || currentUser.username;
+                }
+            }
         }
 
         function viewPerson(index) {
@@ -1799,6 +2125,35 @@
             updateStats();
         }
 
+        // SHIFT FORM
+        document.addEventListener('DOMContentLoaded', () => {
+            const shiftForm = document.getElementById('shiftForm');
+            if (shiftForm) {
+                shiftForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const newShift = {
+                        id: Date.now(),
+                        operator: document.getElementById('shiftOperator').value,
+                        startTime: document.getElementById('shiftStartTime').value,
+                        endTime: document.getElementById('shiftEndTime').value,
+                        date: new Date().toISOString().split('T')[0],
+                        notes: document.getElementById('shiftNotes').value,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    shiftsDatabase.push(newShift);
+                    saveData();
+                    renderActiveShifts();
+                    renderShiftsTable();
+                    updateStats();
+                    shiftForm.reset();
+                    document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
+                    alert('✅ Turno registrato!');
+                });
+            }
+        });
+
         document.getElementById('discordBtn').addEventListener('click', () => {
             const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
             window.location.href = url;
@@ -1844,6 +2199,7 @@
                 renderTable();
                 updateStats();
                 loadNotifications();
+                renderActiveShifts();
                 initCharts();
                 document.getElementById('loadingOverlay').classList.remove('show');
                 
@@ -1929,7 +2285,14 @@
             }
         });
 
-        console.log('🚁 U.O.P.I. Dashboard v10.0 - CLEAN UI + RICERCA FUNZIONANTE');
+        // Auto refresh active shifts ogni 30 secondi
+        setInterval(() => {
+            if (document.getElementById('page-operations').classList.contains('active')) {
+                renderActiveShifts();
+            }
+        }, 30000);
+
+        console.log('🚁 U.O.P.I. Dashboard v11.0 - TURNI VISIBILI E BELLISSIMI!');
     </script>
 </body>
 </html>
