@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>U.O.P.I. - Dashboard Operativo</title>
     
-    <!-- Favicon UOPI -->
     <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
     <link rel="shortcut icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
     <link rel="apple-touch-icon" href="https://i.imgur.com/B6E4u1X.png">
@@ -41,7 +40,6 @@
             line-height: 1.6;
         }
 
-        /* SCROLLBAR CUSTOM */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -58,66 +56,6 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--border);
-        }
-
-        /* STATUS INDICATOR */
-        .status-indicator {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: var(--card);
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .status-dot.online {
-            background: var(--accent);
-            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            animation: pulse-green 2s infinite;
-        }
-
-        .status-dot.offline {
-            background: var(--danger);
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .status-text {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-text.online {
-            color: var(--accent);
-        }
-
-        .status-text.offline {
-            color: var(--danger);
         }
 
         /* LOGIN STYLES */
@@ -353,7 +291,7 @@
             font-weight: 700;
         }
 
-        .admin-badge, .leadership-badge {
+        .admin-badge {
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -361,15 +299,7 @@
             margin-left: 1rem;
             display: none;
             white-space: nowrap;
-        }
-
-        .admin-badge {
             background: linear-gradient(135deg, var(--danger), #dc2626);
-            color: white;
-        }
-
-        .leadership-badge {
-            background: linear-gradient(135deg, var(--warning), #fb923c);
             color: white;
         }
 
@@ -393,6 +323,57 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-result-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .no-results {
+            padding: 2rem;
+            text-align: center;
             color: var(--text-muted);
         }
 
@@ -928,120 +909,6 @@
             border-radius: 8px;
         }
 
-        /* OPERATIONS SECTION STYLES (dal codice precedente) */
-        .operations-section {
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .section-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .shift-section {
-            background: var(--card);
-            border: 2px solid var(--accent);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .shift-section .section-icon {
-            background: var(--accent);
-        }
-
-        .activations-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .activation-card {
-            background: var(--card);
-            border: 2px solid var(--primary);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
-        .activation-card .section-icon {
-            background: var(--primary);
-        }
-
-        .deactivation-section {
-            background: var(--card);
-            border: 2px solid var(--danger);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .deactivation-section .section-icon {
-            background: var(--danger);
-        }
-
-        .request-section {
-            background: var(--card);
-            border: 2px solid var(--warning);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .request-section .section-icon {
-            background: var(--warning);
-        }
-
-        .leadership-info {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid var(--warning);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.9rem;
-            color: var(--warning);
-        }
-
-        .form-compact {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
         /* TABLES */
         .data-table {
             background: var(--card);
@@ -1082,45 +949,16 @@
             transition: all 0.2s;
         }
 
-        .btn-success {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 0.4rem 0.7rem;
-            font-size: 0.8rem;
-        }
+        .btn-success { background: var(--accent); color: white; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--surface); color: var(--text); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-sm { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
 
         .btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
 
         table {
@@ -1152,25 +990,9 @@
             font-weight: 600;
         }
 
-        .status-offline {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .status-busy {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .status-online {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
-        }
-
-        .status-pending {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-light);
-        }
+        .status-offline { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .status-busy { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .status-online { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
 
         .empty-state {
             text-align: center;
@@ -1200,9 +1022,7 @@
             padding: 2rem;
         }
 
-        .modal-overlay.show {
-            display: flex;
-        }
+        .modal-overlay.show { display: flex; }
 
         .modal {
             background: var(--card);
@@ -1235,9 +1055,7 @@
             padding: 0.5rem;
         }
 
-        .modal-body {
-            padding: 2rem;
-        }
+        .modal-body { padding: 2rem; }
 
         .form-grid {
             display: grid;
@@ -1258,9 +1076,7 @@
             font-size: 0.9rem;
         }
 
-        .required {
-            color: var(--danger);
-        }
+        .required { color: var(--danger); }
 
         .form-input, .form-select, .form-textarea {
             background: var(--surface);
@@ -1291,55 +1107,25 @@
 
         /* RESPONSIVE */
         @media (max-width: 1200px) {
-            .activations-grid {
-                grid-template-columns: 1fr;
-            }
-            .vehicles-grid {
-                grid-template-columns: 1fr;
-            }
+            .vehicles-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 1024px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                width: 260px;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
+            .charts-grid { grid-template-columns: 1fr; }
+            .sidebar { width: 260px; }
         }
 
         @media (max-width: 768px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .notifications-panel {
-                width: calc(100vw - 2rem);
-                right: 1rem;
-            }
-            .status-indicator {
-                top: auto;
-                bottom: 1rem;
-                right: 1rem;
-            }
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .notifications-panel { width: calc(100vw - 2rem); right: 1rem; }
+            .search-box { margin-left: 0; width: 100%; }
+            .search-input { width: 100%; }
         }
     </style>
 </head>
 <body>
-    <!-- Status Indicator -->
-    <div id="statusIndicator" class="status-indicator" style="display: none;">
-        <div class="status-dot offline" id="statusDot"></div>
-        <div class="status-text offline" id="statusText">Fuori Servizio</div>
-    </div>
-
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
@@ -1382,13 +1168,11 @@
                     <div id="adminBadge" class="admin-badge">
                         <i class="fas fa-crown"></i> Amministratore
                     </div>
-                    <div id="leadershipBadge" class="leadership-badge">
-                        <i class="fas fa-star"></i> Dirigenza
-                    </div>
                 </div>
                 <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Cerca nel sistema...">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Cerca nel sistema...">
                     <i class="fas fa-search search-icon"></i>
+                    <div class="search-results" id="searchResults"></div>
                 </div>
             </div>
             <div class="topbar-right">
@@ -1592,13 +1376,15 @@
                     </div>
                 </div>
 
-                <!-- Operations Page (da completare come prima) -->
+                <!-- Operations Page -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
                         <p class="page-subtitle">Gestione completa turni e operazioni</p>
                     </div>
-                    <!-- Inserisci qui il contenuto della pagina operazioni dal codice precedente -->
+                    <div class="chart-card">
+                        <h3>Sistema Operazioni - In Sviluppo</h3>
+                    </div>
                 </div>
 
                 <!-- Vehicles Page -->
@@ -1608,13 +1394,11 @@
                         <p class="page-subtitle">Flotta veicoli operativi disponibili per il reparto</p>
                     </div>
 
-                    <!-- Vehicles Grid -->
                     <div class="vehicles-grid">
                         <!-- Jeep Cherokee -->
                         <div class="vehicle-card">
                             <div class="vehicle-image">
-                                <!-- CARICA QUI LA TUA FOTO JEEP SU IMGUR E SOSTITUISCI L'URL -->
-                                <img src="https://i.imgur.com/wS4uBgY.png" alt="Jeep Cherokee" onerror="this.parentElement.innerHTML='<i class=\'fas fa-car\' style=\'font-size:4rem;color:var(--text-muted);\'></i>'">
+                                <img src="https://i.imgur.com/wS4uBgY.png" alt="Jeep Cherokee">
                                 <div class="vehicle-badge">
                                     <i class="fas fa-shield-alt"></i> UOPI
                                 </div>
@@ -1635,8 +1419,7 @@
                         <!-- Alfa Romeo Giulietta -->
                         <div class="vehicle-card">
                             <div class="vehicle-image">
-                                <!-- CARICA QUI LA TUA FOTO ALFA ROMEO SU IMGUR E SOSTITUISCI L'URL -->
-                                <img src="https://i.imgur.com/qUr7Wwr.png" alt="Alfa Romeo Giulietta" onerror="this.parentElement.innerHTML='<i class=\'fas fa-car\' style=\'font-size:4rem;color:var(--text-muted);\'></i>'">
+                                <img src="https://i.imgur.com/qUr7Wwr.png" alt="Alfa Romeo Giulietta">
                                 <div class="vehicle-badge">
                                     <i class="fas fa-star"></i> UOPI
                                 </div>
@@ -1660,47 +1443,36 @@
                 <div id="page-uniforms" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Divise Reparto</h1>
-                        <p class="page-subtitle">Catalogo divise operative</p>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Divise - In Sviluppo</h3>
-                    </div>
+                    <div class="chart-card"><h3>Sistema Divise - In Sviluppo</h3></div>
                 </div>
 
                 <div id="page-promotions" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Promozioni Operatori</h1>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Promozioni - In Sviluppo</h3>
-                    </div>
+                    <div class="chart-card"><h3>Sistema Promozioni - In Sviluppo</h3></div>
                 </div>
 
                 <div id="page-warnings" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Richiami Operatori</h1>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Richiami - In Sviluppo</h3>
-                    </div>
+                    <div class="chart-card"><h3>Sistema Richiami - In Sviluppo</h3></div>
                 </div>
 
                 <div id="page-activation-code" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Codice D'Attivazione</h1>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Codici - In Sviluppo</h3>
-                    </div>
+                    <div class="chart-card"><h3>Sistema Codici - In Sviluppo</h3></div>
                 </div>
 
                 <div id="page-system-status" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Status Sistema</h1>
                     </div>
-                    <div class="chart-card">
-                        <h3>Sistema Aggiornamenti - In Sviluppo</h3>
-                    </div>
+                    <div class="chart-card"><h3>Sistema Aggiornamenti - In Sviluppo</h3></div>
                 </div>
             </div>
         </div>
@@ -1762,38 +1534,85 @@
             'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', fullName: 'Admin Sistema', isAdmin: true, canAddPersonnel: true }
         };
 
-        const LEADERSHIP_NAMES = ['Tonino Frasca', 'Gabriel Martinelli', 'Matteo Rossi'];
+        const SEARCH_INDEX = [
+            { title: 'Dashboard', subtitle: 'Panoramica generale', page: 'dashboard', icon: '📈' },
+            { title: 'Personale', subtitle: 'Gestione operatori', page: 'personnel', icon: '👮' },
+            { title: 'Centro Operativo', subtitle: 'Turni e attivazioni', page: 'operations', icon: '🚨' },
+            { title: 'Mezzi', subtitle: 'Flotta veicoli', page: 'vehicles', icon: '🚓' },
+            { title: 'Divise', subtitle: 'Catalogo divise', page: 'uniforms', icon: '🎽' },
+            { title: 'Promozioni', subtitle: 'Gestione promozioni', page: 'promotions', icon: '⏫' },
+            { title: 'Richiami', subtitle: 'Provvedimenti disciplinari', page: 'warnings', icon: '⛔' },
+            { title: 'Codice Attivazione', subtitle: 'Attiva funzionalità', page: 'activation-code', icon: '🪄' },
+            { title: 'Status Sistema', subtitle: 'Monitoraggio sistema', page: 'system-status', icon: '🔄' }
+        ];
 
         let personnelDatabase = [];
-        let shiftsDatabase = [];
         let currentUser = null;
         let canAddPersonnel = false;
-        let isLeadership = false;
-        let isOnDuty = false;
-
         let notifications = [
             { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Sistema operativo', time: '2 min fa', unread: true },
             { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi mezzi disponibili', time: '1 ora fa', unread: true },
             { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza', time: '3 ore fa', unread: false }
         ];
 
-        function updateServiceStatus() {
-            const indicator = document.getElementById('statusIndicator');
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
+        // SEARCH SYSTEM
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
             
-            if (isOnDuty) {
-                dot.className = 'status-dot online';
-                text.className = 'status-text online';
-                text.textContent = 'In Servizio';
-            } else {
-                dot.className = 'status-dot offline';
-                text.className = 'status-text offline';
-                text.textContent = 'Fuori Servizio';
+            if (query.length === 0) {
+                searchResults.classList.remove('show');
+                return;
             }
-            
-            indicator.style.display = 'flex';
+
+            const results = SEARCH_INDEX.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.subtitle.toLowerCase().includes(query)
+            );
+
+            // Cerca anche nel personale
+            const personnelResults = personnelDatabase.filter(p => 
+                p.fullName.toLowerCase().includes(query) ||
+                p.qualification.toLowerCase().includes(query)
+            ).map(p => ({
+                title: p.fullName,
+                subtitle: p.qualification,
+                page: 'personnel',
+                icon: '👤',
+                data: p
+            }));
+
+            const allResults = [...results, ...personnelResults];
+
+            if (allResults.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">Nessun risultato trovato</div>';
+                searchResults.classList.add('show');
+                return;
+            }
+
+            searchResults.innerHTML = allResults.map(item => `
+                <div class="search-result-item" onclick="navigateToResult('${item.page}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                    <div class="search-result-title">${item.icon} ${item.title}</div>
+                    <div class="search-result-subtitle">${item.subtitle}</div>
+                </div>
+            `).join('');
+            searchResults.classList.add('show');
+        });
+
+        function navigateToResult(page, item) {
+            showPage(page);
+            searchInput.value = '';
+            searchResults.classList.remove('show');
         }
+
+        // Chiudi ricerca quando clicchi fuori
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.remove('show');
+            }
+        });
 
         function loadNotifications() {
             const saved = localStorage.getItem('uopi_notifications');
@@ -1875,8 +1694,6 @@
                 
                 const savedUsers = localStorage.getItem('uopi_users');
                 if (savedUsers) AUTHORIZED_USERS = {...AUTHORIZED_USERS, ...JSON.parse(savedUsers)};
-                
-                console.log('✅ Dati caricati');
             } catch (e) {
                 console.error('Errore:', e);
             }
@@ -1928,7 +1745,13 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
-            event.target.closest('.nav-item').classList.add('active');
+            
+            // Trova e attiva il nav item corrispondente
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.onclick && item.onclick.toString().includes(`'${page}'`)) {
+                    item.classList.add('active');
+                }
+            });
         }
 
         function viewPerson(index) {
@@ -1955,14 +1778,7 @@
                 return;
             }
 
-            const newPerson = {
-                qualification,
-                fullName,
-                discordId,
-                callSign,
-                id: Date.now()
-            };
-
+            const newPerson = { qualification, fullName, discordId, callSign, id: Date.now() };
             personnelDatabase.push(newPerson);
             AUTHORIZED_USERS[discordId] = { rank: qualification, fullName, isAdmin: false, canAddPersonnel: false };
 
@@ -2006,7 +1822,6 @@
                 const perms = AUTHORIZED_USERS[user.id];
                 currentUser.fullName = perms.fullName;
                 canAddPersonnel = perms.canAddPersonnel || false;
-                isLeadership = LEADERSHIP_NAMES.includes(perms.fullName);
 
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('dashboard').classList.add('active');
@@ -2020,8 +1835,6 @@
 
                 if (perms.isAdmin) {
                     document.getElementById('adminBadge').style.display = 'flex';
-                } else if (canAddPersonnel) {
-                    document.getElementById('leadershipBadge').style.display = 'flex';
                 }
 
                 if (canAddPersonnel) {
@@ -2031,7 +1844,6 @@
                 renderTable();
                 updateStats();
                 loadNotifications();
-                updateServiceStatus();
                 initCharts();
                 document.getElementById('loadingOverlay').classList.remove('show');
                 
@@ -2117,9 +1929,7 @@
             }
         });
 
-        console.log('🚁 U.O.P.I. Dashboard v9.0 - SEZIONE MEZZI COMPLETA');
+        console.log('🚁 U.O.P.I. Dashboard v10.0 - CLEAN UI + RICERCA FUNZIONANTE');
     </script>
 </body>
 </html>
-
-
