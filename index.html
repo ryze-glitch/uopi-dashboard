@@ -232,6 +232,16 @@
             display: block;
         }
 
+        .alert-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
         /* DASHBOARD STYLES */
         .dashboard {
             display: none;
@@ -682,23 +692,13 @@
             font-size: 1.1rem;
         }
 
-        /* ACTIVE SHIFTS SECTION - BIG AND VISIBLE */
+        /* ACTIVE SHIFTS SECTION */
         .active-shifts-banner {
             background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
-            animation: pulse-banner 3s infinite;
-        }
-
-        @keyframes pulse-banner {
-            0%, 100% {
-                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
-            }
-            50% {
-                box-shadow: 0 15px 50px rgba(16, 185, 129, 0.5);
-            }
         }
 
         .active-shifts-header {
@@ -802,14 +802,26 @@
             opacity: 0.5;
         }
 
-        /* NEW SHIFT FORM */
-        .new-shift-section {
-            background: var(--card);
-            border: 2px solid var(--accent);
-            border-radius: 16px;
-            padding: 2rem;
+        /* OPERATIONS SECTIONS */
+        .operations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
+
+        .operation-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid;
+        }
+
+        .operation-card.shift { border-color: var(--accent); }
+        .operation-card.activation { border-color: var(--primary); }
+        .operation-card.patrol { border-color: var(--secondary); }
+        .operation-card.deactivation { border-color: var(--danger); }
+        .operation-card.request { border-color: var(--warning); }
 
         .section-header {
             display: flex;
@@ -823,7 +835,6 @@
         .section-icon {
             width: 50px;
             height: 50px;
-            background: var(--accent);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -832,14 +843,20 @@
             color: white;
         }
 
+        .section-icon.accent { background: var(--accent); }
+        .section-icon.primary { background: var(--primary); }
+        .section-icon.secondary { background: var(--secondary); }
+        .section-icon.danger { background: var(--danger); }
+        .section-icon.warning { background: var(--warning); }
+
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
         }
 
         .section-subtitle {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .form-compact {
@@ -852,6 +869,95 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+        }
+
+        /* MULTI SELECT */
+        .multi-select-container {
+            position: relative;
+        }
+
+        .multi-select-display {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem;
+            min-height: 45px;
+            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .multi-select-display.open {
+            border-color: var(--primary);
+        }
+
+        .multi-select-placeholder {
+            color: var(--text-muted);
+        }
+
+        .selected-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .selected-tag .remove {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .selected-tag .remove:hover {
+            opacity: 1;
+        }
+
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .multi-select-dropdown.show {
+            display: block;
+        }
+
+        .multi-select-option {
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .multi-select-option:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .multi-select-option.selected {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         /* VEHICLES GRID */
@@ -1278,9 +1384,14 @@
         }
 
         /* RESPONSIVE */
+        @media (max-width: 1400px) {
+            .operations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 1200px) {
             .vehicles-grid { grid-template-columns: 1fr; }
-            .active-shifts-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
         }
 
         @media (max-width: 1024px) {
@@ -1295,7 +1406,6 @@
             .notifications-panel { width: calc(100vw - 2rem); right: 1rem; }
             .search-box { margin-left: 0; width: 100%; }
             .search-input { width: 100%; }
-            .active-shifts-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1550,11 +1660,11 @@
                     </div>
                 </div>
 
-                <!-- Operations Page (NUOVA VERSIONE) -->
+                <!-- Operations Page (COMPLETA CON TUTTI I MODULI) -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
-                        <p class="page-subtitle">Gestione turni e operazioni in tempo reale</p>
+                        <p class="page-subtitle">Gestione completa turni, attivazioni e operazioni</p>
                     </div>
 
                     <!-- ACTIVE SHIFTS BANNER -->
@@ -1575,43 +1685,208 @@
                         <div class="active-shifts-grid" id="activeShiftsGrid">
                             <div class="no-active-shifts">
                                 <i class="fas fa-user-clock"></i>
-                                <div>Nessun operatore in servizio al momento</div>
+                                <div>Nessun operatore in servizio</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- NEW SHIFT FORM -->
-                    <div class="new-shift-section">
+                    <!-- OPERATIONS GRID -->
+                    <div class="operations-grid">
+                        <!-- 1. TURNO SERVIZIO -->
+                        <div class="operation-card shift">
+                            <div class="section-header">
+                                <div class="section-icon accent">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <div class="section-title">Turno Servizio</div>
+                                    <div class="section-subtitle">Registra inizio/fine turno</div>
+                                </div>
+                            </div>
+                            <form id="shiftForm" class="form-compact">
+                                <div class="form-group">
+                                    <label class="form-label">👮 Operatore</label>
+                                    <input type="text" class="form-input" id="shiftOperator" readonly>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">🕐 Ora Inizio <span class="required">*</span></label>
+                                        <input type="time" class="form-input" id="shiftStartTime" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">🕐 Ora Fine</label>
+                                        <input type="time" class="form-input" id="shiftEndTime">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">📝 Note</label>
+                                    <textarea class="form-textarea" id="shiftNotes" placeholder="Attività svolte..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success" style="width: 100%;">
+                                    <i class="fas fa-play"></i> Inizia Turno
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- 2. ATTIVAZIONE REPARTO -->
+                        <div class="operation-card activation">
+                            <div class="section-header">
+                                <div class="section-icon primary">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <div class="section-title">Attivazione Reparto</div>
+                                    <div class="section-subtitle">Minimo 2 operatori</div>
+                                </div>
+                            </div>
+                            <form id="activationForm" class="form-compact">
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori <span class="required">*</span></label>
+                                    <div class="multi-select-container">
+                                        <div class="multi-select-display" id="activationOperatorsDisplay" onclick="toggleMultiSelect('activationOperators')">
+                                            <span class="multi-select-placeholder">Seleziona almeno 2 operatori...</span>
+                                        </div>
+                                        <div class="multi-select-dropdown" id="activationOperatorsDropdown"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">👤 Coordinatore <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="activationCoordinator" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
+                                    <select class="form-select" id="activationIntervention" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Rapina Banca">Rapina Banca</option>
+                                        <option value="Rapina Gioielleria">Rapina Gioielleria</option>
+                                        <option value="Emergenza">Emergenza</option>
+                                        <option value="Operazione Speciale">Operazione Speciale</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-check"></i> Attiva Reparto
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- 3. ATTIVAZIONE PATTUGLIA -->
+                        <div class="operation-card patrol">
+                            <div class="section-header">
+                                <div class="section-icon secondary">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div>
+                                    <div class="section-title">Attivazione Pattuglia</div>
+                                    <div class="section-subtitle">Minimo 2 operatori</div>
+                                </div>
+                            </div>
+                            <form id="patrolForm" class="form-compact">
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori <span class="required">*</span></label>
+                                    <div class="multi-select-container">
+                                        <div class="multi-select-display" id="patrolOperatorsDisplay" onclick="toggleMultiSelect('patrolOperators')">
+                                            <span class="multi-select-placeholder">Seleziona almeno 2 operatori...</span>
+                                        </div>
+                                        <div class="multi-select-dropdown" id="patrolOperatorsDropdown"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🚓 Veicolo <span class="required">*</span></label>
+                                    <select class="form-select" id="patrolVehicle" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Jeep Cherokee">Jeep Cherokee</option>
+                                        <option value="Alfa Romeo Giulietta">Alfa Romeo Giulietta</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🚨 Tipo <span class="required">*</span></label>
+                                    <select class="form-select" id="patrolType" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Pattugliamento">Pattugliamento</option>
+                                        <option value="Inseguimento">Inseguimento</option>
+                                        <option value="Controllo Territorio">Controllo Territorio</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-play"></i> Avvia Pattuglia
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- 4. DISATTIVAZIONE -->
+                        <div class="operation-card deactivation">
+                            <div class="section-header">
+                                <div class="section-icon danger">
+                                    <i class="fas fa-power-off"></i>
+                                </div>
+                                <div>
+                                    <div class="section-title">Disattivazione</div>
+                                    <div class="section-subtitle">Fine operazione</div>
+                                </div>
+                            </div>
+                            <form id="deactivationForm" class="form-compact">
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori in Rientro <span class="required">*</span></label>
+                                    <div class="multi-select-container">
+                                        <div class="multi-select-display" id="deactivationOperatorsDisplay" onclick="toggleMultiSelect('deactivationOperators')">
+                                            <span class="multi-select-placeholder">Seleziona operatori...</span>
+                                        </div>
+                                        <div class="multi-select-dropdown" id="deactivationOperatorsDropdown"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Disattivazione <span class="required">*</span></label>
+                                    <input type="time" class="form-input" id="deactivationTime" required>
+                                </div>
+                                <button type="submit" class="btn btn-danger" style="width: 100%;">
+                                    <i class="fas fa-stop"></i> Disattiva
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 5. ISTANZA ATTIVAZIONE (Full Width) -->
+                    <div class="operation-card request" style="grid-column: 1 / -1;">
                         <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-clock"></i>
+                            <div class="section-icon warning">
+                                <i class="fas fa-file-alt"></i>
                             </div>
                             <div>
-                                <div class="section-title">Inizia Nuovo Turno</div>
-                                <div class="section-subtitle">Registra l'inizio del tuo servizio</div>
+                                <div class="section-title">Istanza Attivazione Reparto</div>
+                                <div class="section-subtitle">Richiede approvazione dirigenza - Minimo 2 operatori</div>
                             </div>
                         </div>
-                        <form id="shiftForm" class="form-compact">
-                            <div class="form-group">
-                                <label class="form-label">👮 Operatore</label>
-                                <input type="text" class="form-input" id="shiftOperator" readonly>
-                            </div>
+                        <div class="alert-box">
+                            <i class="fas fa-info-circle"></i> <strong>Approvazione Richiesta:</strong> Questa istanza sarà inviata alla dirigenza per approvazione
+                        </div>
+                        <form id="requestForm" class="form-compact">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">🕐 Ora Inizio <span class="required">*</span></label>
-                                    <input type="time" class="form-input" id="shiftStartTime" required>
+                                    <label class="form-label">👥 Operatori <span class="required">*</span></label>
+                                    <div class="multi-select-container">
+                                        <div class="multi-select-display" id="requestOperatorsDisplay" onclick="toggleMultiSelect('requestOperators')">
+                                            <span class="multi-select-placeholder">Seleziona almeno 2 operatori...</span>
+                                        </div>
+                                        <div class="multi-select-dropdown" id="requestOperatorsDropdown"></div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">🕐 Ora Fine</label>
-                                    <input type="time" class="form-input" id="shiftEndTime">
+                                    <label class="form-label">🎯 Tipo Rapina <span class="required">*</span></label>
+                                    <select class="form-select" id="requestRobberyType" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Banca Centrale">Banca Centrale</option>
+                                        <option value="Banca Periferica">Banca Periferica</option>
+                                        <option value="Gioielleria">Gioielleria</option>
+                                        <option value="Negozio 24/7">Negozio 24/7</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">📝 Note Attività</label>
-                                <textarea class="form-textarea" id="shiftNotes" placeholder="Descrivi le attività svolte..."></textarea>
+                                <label class="form-label">📝 Note</label>
+                                <textarea class="form-textarea" id="requestNotes" placeholder="Dettagli per la dirigenza..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success" style="width: 100%;">
-                                <i class="fas fa-play"></i> Inizia Turno
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i> Invia Istanza
                             </button>
                         </form>
                     </div>
@@ -1620,11 +1895,6 @@
                     <div class="data-table">
                         <div class="table-header">
                             <h3 class="table-title">📅 Storico Turni</h3>
-                            <div class="table-actions">
-                                <button class="btn btn-secondary">
-                                    <i class="fas fa-download"></i> Esporta
-                                </button>
-                            </div>
                         </div>
                         <div id="shiftsTableContainer">
                             <div class="empty-state">
@@ -1639,7 +1909,7 @@
                 <div id="page-vehicles" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Mezzi Utilizzabili</h1>
-                        <p class="page-subtitle">Flotta veicoli operativi disponibili</p>
+                        <p class="page-subtitle">Flotta veicoli operativi</p>
                     </div>
 
                     <div class="vehicles-grid">
@@ -1781,26 +2051,114 @@
         };
 
         const SEARCH_INDEX = [
-            { title: 'Dashboard', subtitle: 'Panoramica generale', page: 'dashboard', icon: '📈' },
-            { title: 'Personale', subtitle: 'Gestione operatori', page: 'personnel', icon: '👮' },
-            { title: 'Centro Operativo', subtitle: 'Turni e attivazioni', page: 'operations', icon: '🚨' },
-            { title: 'Mezzi', subtitle: 'Flotta veicoli', page: 'vehicles', icon: '🚓' },
-            { title: 'Divise', subtitle: 'Catalogo divise', page: 'uniforms', icon: '🎽' },
-            { title: 'Promozioni', subtitle: 'Gestione promozioni', page: 'promotions', icon: '⏫' },
-            { title: 'Richiami', subtitle: 'Provvedimenti', page: 'warnings', icon: '⛔' },
-            { title: 'Codice', subtitle: 'Attivazione', page: 'activation-code', icon: '🪄' },
-            { title: 'Status', subtitle: 'Sistema', page: 'system-status', icon: '🔄' }
+            { title: 'Dashboard', subtitle: 'Panoramica', page: 'dashboard', icon: '📈' },
+            { title: 'Personale', subtitle: 'Gestione', page: 'personnel', icon: '👮' },
+            { title: 'Centro Operativo', subtitle: 'Turni', page: 'operations', icon: '🚨' },
+            { title: 'Mezzi', subtitle: 'Flotta', page: 'vehicles', icon: '🚓' },
+            { title: 'Divise', subtitle: 'Catalogo', page: 'uniforms', icon: '🎽' },
+            { title: 'Promozioni', subtitle: 'Gestione', page: 'promotions', icon: '⏫' },
+            { title: 'Richiami', subtitle: 'Provvedimenti', page: 'warnings', icon: '⛔' }
         ];
 
         let personnelDatabase = [];
         let shiftsDatabase = [];
+        let activationsDatabase = [];
+        let patrolsDatabase = [];
+        let deactivationsDatabase = [];
+        let requestsDatabase = [];
         let currentUser = null;
         let canAddPersonnel = false;
+        
         let notifications = [
             { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Sistema operativo', time: '2 min fa', unread: true },
-            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi turni disponibili', time: '1 ora fa', unread: true },
-            { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza', time: '3 ore fa', unread: false }
+            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi turni', time: '1 ora fa', unread: true },
+            { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno scadenza', time: '3 ore fa', unread: false }
         ];
+
+        // MULTI SELECT SYSTEM
+        const multiSelectStates = {
+            activationOperators: [],
+            patrolOperators: [],
+            deactivationOperators: [],
+            requestOperators: []
+        };
+
+        function initMultiSelects() {
+            const selects = ['activationOperators', 'patrolOperators', 'deactivationOperators', 'requestOperators'];
+            selects.forEach(id => {
+                const dropdown = document.getElementById(id + 'Dropdown');
+                if (dropdown) {
+                    dropdown.innerHTML = personnelDatabase.map(p => `
+                        <div class="multi-select-option" onclick="toggleOption('${id}', '${p.fullName}', event)">
+                            <input type="checkbox" id="${id}_${p.fullName}">
+                            <label>${p.fullName} - ${p.qualification}</label>
+                        </div>
+                    `).join('');
+                }
+            });
+        }
+
+        function toggleMultiSelect(id) {
+            const dropdown = document.getElementById(id + 'Dropdown');
+            const display = document.getElementById(id + 'Display');
+            
+            // Chiudi altri dropdown
+            document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+                if (d.id !== id + 'Dropdown') d.classList.remove('show');
+            });
+            
+            dropdown.classList.toggle('show');
+            display.classList.toggle('open');
+        }
+
+        function toggleOption(selectId, value, event) {
+            event.stopPropagation();
+            
+            const checkbox = document.getElementById(`${selectId}_${value}`);
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                if (!multiSelectStates[selectId].includes(value)) {
+                    multiSelectStates[selectId].push(value);
+                }
+            } else {
+                multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== value);
+            }
+            
+            updateMultiSelectDisplay(selectId);
+        }
+
+        function updateMultiSelectDisplay(id) {
+            const display = document.getElementById(id + 'Display');
+            const selected = multiSelectStates[id];
+            
+            if (selected.length === 0) {
+                display.innerHTML = '<span class="multi-select-placeholder">Seleziona almeno 2 operatori...</span>';
+            } else {
+                display.innerHTML = selected.map(name => `
+                    <span class="selected-tag">
+                        ${name}
+                        <span class="remove" onclick="removeOption('${id}', '${name}', event)">×</span>
+                    </span>
+                `).join('');
+            }
+        }
+
+        function removeOption(selectId, value, event) {
+            event.stopPropagation();
+            multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== value);
+            const checkbox = document.getElementById(`${selectId}_${value}`);
+            if (checkbox) checkbox.checked = false;
+            updateMultiSelectDisplay(selectId);
+        }
+
+        // Chiudi dropdown quando clicchi fuori
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.multi-select-display').forEach(d => d.classList.remove('open'));
+            }
+        });
 
         // SEARCH SYSTEM
         const searchInput = document.getElementById('searchInput');
@@ -1826,8 +2184,7 @@
                 title: p.fullName,
                 subtitle: p.qualification,
                 page: 'personnel',
-                icon: '👤',
-                data: p
+                icon: '👤'
             }));
 
             const allResults = [...results, ...personnelResults];
@@ -1859,7 +2216,7 @@
             }
         });
 
-        // ACTIVE SHIFTS RENDERING
+        // ACTIVE SHIFTS
         function renderActiveShifts() {
             const container = document.getElementById('activeShiftsGrid');
             const countEl = document.getElementById('activeShiftsCount');
@@ -2008,6 +2365,18 @@
                 
                 const savedShifts = localStorage.getItem('uopi_shifts');
                 if (savedShifts) shiftsDatabase = JSON.parse(savedShifts);
+                
+                const savedActivations = localStorage.getItem('uopi_activations');
+                if (savedActivations) activationsDatabase = JSON.parse(savedActivations);
+                
+                const savedPatrols = localStorage.getItem('uopi_patrols');
+                if (savedPatrols) patrolsDatabase = JSON.parse(savedPatrols);
+                
+                const savedDeactivations = localStorage.getItem('uopi_deactivations');
+                if (savedDeactivations) deactivationsDatabase = JSON.parse(savedDeactivations);
+                
+                const savedRequests = localStorage.getItem('uopi_requests');
+                if (savedRequests) requestsDatabase = JSON.parse(savedRequests);
             } catch (e) {
                 console.error('Errore:', e);
             }
@@ -2018,6 +2387,10 @@
                 localStorage.setItem('uopi_personnel', JSON.stringify(personnelDatabase));
                 localStorage.setItem('uopi_users', JSON.stringify(AUTHORIZED_USERS));
                 localStorage.setItem('uopi_shifts', JSON.stringify(shiftsDatabase));
+                localStorage.setItem('uopi_activations', JSON.stringify(activationsDatabase));
+                localStorage.setItem('uopi_patrols', JSON.stringify(patrolsDatabase));
+                localStorage.setItem('uopi_deactivations', JSON.stringify(deactivationsDatabase));
+                localStorage.setItem('uopi_requests', JSON.stringify(requestsDatabase));
             } catch (e) {
                 console.error('Errore salvataggio:', e);
             }
@@ -2073,6 +2446,7 @@
             if (page === 'operations') {
                 renderActiveShifts();
                 renderShiftsTable();
+                initMultiSelects();
                 const operatorField = document.getElementById('shiftOperator');
                 if (operatorField && currentUser) {
                     operatorField.value = currentUser.fullName || currentUser.username;
@@ -2111,6 +2485,7 @@
             saveData();
             renderTable();
             updateStats();
+            initMultiSelects();
             closeModalFn('addPersonnelModal');
             alert(`✅ ${fullName} aggiunto!`);
         }
@@ -2123,10 +2498,12 @@
             saveData();
             renderTable();
             updateStats();
+            initMultiSelects();
         }
 
-        // SHIFT FORM
+        // FORM HANDLERS
         document.addEventListener('DOMContentLoaded', () => {
+            // SHIFT FORM
             const shiftForm = document.getElementById('shiftForm');
             if (shiftForm) {
                 shiftForm.addEventListener('submit', (e) => {
@@ -2138,8 +2515,7 @@
                         startTime: document.getElementById('shiftStartTime').value,
                         endTime: document.getElementById('shiftEndTime').value,
                         date: new Date().toISOString().split('T')[0],
-                        notes: document.getElementById('shiftNotes').value,
-                        createdAt: new Date().toISOString()
+                        notes: document.getElementById('shiftNotes').value
                     };
                     
                     shiftsDatabase.push(newShift);
@@ -2150,6 +2526,123 @@
                     shiftForm.reset();
                     document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
                     alert('✅ Turno registrato!');
+                });
+            }
+
+            // ACTIVATION FORM
+            const activationForm = document.getElementById('activationForm');
+            if (activationForm) {
+                activationForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.activationOperators;
+                    if (operators.length < 2) {
+                        alert('❌ Seleziona almeno 2 operatori!');
+                        return;
+                    }
+                    
+                    const newActivation = {
+                        id: Date.now(),
+                        operators: operators,
+                        coordinator: document.getElementById('activationCoordinator').value,
+                        intervention: document.getElementById('activationIntervention').value,
+                        date: new Date().toISOString()
+                    };
+                    
+                    activationsDatabase.push(newActivation);
+                    saveData();
+                    activationForm.reset();
+                    multiSelectStates.activationOperators = [];
+                    updateMultiSelectDisplay('activationOperators');
+                    alert('✅ Reparto attivato!');
+                });
+            }
+
+            // PATROL FORM
+            const patrolForm = document.getElementById('patrolForm');
+            if (patrolForm) {
+                patrolForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.patrolOperators;
+                    if (operators.length < 2) {
+                        alert('❌ Seleziona almeno 2 operatori!');
+                        return;
+                    }
+                    
+                    const newPatrol = {
+                        id: Date.now(),
+                        operators: operators,
+                        vehicle: document.getElementById('patrolVehicle').value,
+                        type: document.getElementById('patrolType').value,
+                        date: new Date().toISOString()
+                    };
+                    
+                    patrolsDatabase.push(newPatrol);
+                    saveData();
+                    patrolForm.reset();
+                    multiSelectStates.patrolOperators = [];
+                    updateMultiSelectDisplay('patrolOperators');
+                    alert('✅ Pattuglia avviata!');
+                });
+            }
+
+            // DEACTIVATION FORM
+            const deactivationForm = document.getElementById('deactivationForm');
+            if (deactivationForm) {
+                deactivationForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.deactivationOperators;
+                    if (operators.length === 0) {
+                        alert('❌ Seleziona almeno 1 operatore!');
+                        return;
+                    }
+                    
+                    const newDeactivation = {
+                        id: Date.now(),
+                        operators: operators,
+                        time: document.getElementById('deactivationTime').value,
+                        date: new Date().toISOString()
+                    };
+                    
+                    deactivationsDatabase.push(newDeactivation);
+                    saveData();
+                    deactivationForm.reset();
+                    multiSelectStates.deactivationOperators = [];
+                    updateMultiSelectDisplay('deactivationOperators');
+                    alert('✅ Disattivazione registrata!');
+                });
+            }
+
+            // REQUEST FORM
+            const requestForm = document.getElementById('requestForm');
+            if (requestForm) {
+                requestForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.requestOperators;
+                    if (operators.length < 2) {
+                        alert('❌ Seleziona almeno 2 operatori!');
+                        return;
+                    }
+                    
+                    const newRequest = {
+                        id: Date.now(),
+                        operators: operators,
+                        robberyType: document.getElementById('requestRobberyType').value,
+                        notes: document.getElementById('requestNotes').value,
+                        status: 'pending',
+                        requestedBy: currentUser?.fullName || currentUser?.username,
+                        date: new Date().toISOString()
+                    };
+                    
+                    requestsDatabase.push(newRequest);
+                    saveData();
+                    requestForm.reset();
+                    multiSelectStates.requestOperators = [];
+                    updateMultiSelectDisplay('requestOperators');
+                    alert('✅ Istanza inviata alla dirigenza!');
                 });
             }
         });
@@ -2200,6 +2693,7 @@
                 updateStats();
                 loadNotifications();
                 renderActiveShifts();
+                initMultiSelects();
                 initCharts();
                 document.getElementById('loadingOverlay').classList.remove('show');
                 
@@ -2285,14 +2779,13 @@
             }
         });
 
-        // Auto refresh active shifts ogni 30 secondi
         setInterval(() => {
             if (document.getElementById('page-operations').classList.contains('active')) {
                 renderActiveShifts();
             }
         }, 30000);
 
-        console.log('🚁 U.O.P.I. Dashboard v11.0 - TURNI VISIBILI E BELLISSIMI!');
+        console.log('🚁 U.O.P.I. Dashboard v12.0 - TUTTI I MODULI COMPLETI CON MULTI-SELECT');
     </script>
 </body>
 </html>
