@@ -871,7 +871,7 @@
             gap: 1rem;
         }
 
-        /* MULTI SELECT MIGLIORATO */
+        /* MULTI SELECT */
         .multi-select-container {
             position: relative;
         }
@@ -979,7 +979,7 @@
             flex: 1;
         }
 
-        /* SHIFT CARDS - LAYOUT BELLISSIMO */
+        /* SHIFT CARDS */
         .shifts-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -1130,7 +1130,7 @@
             color: var(--primary-light);
         }
 
-        /* VEHICLES GRID */
+        /* VEHICLES */
         .vehicles-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -1229,7 +1229,7 @@
             font-size: 1.05rem;
         }
 
-        /* STATISTICS */
+        /* STATS */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -2265,7 +2265,7 @@
             { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno scadenza', time: '3 ore fa', unread: false }
         ];
 
-        // MULTI SELECT SYSTEM - CORRETTO
+        // MULTI SELECT
         const multiSelectStates = {
             activationOperators: [],
             patrolOperators: [],
@@ -2285,7 +2285,6 @@
                         </div>
                     `).join('');
 
-                    // Aggiungi event listeners ai checkbox
                     dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                         checkbox.addEventListener('change', function(e) {
                             e.stopPropagation();
@@ -2311,7 +2310,6 @@
             const dropdown = document.getElementById(id + 'Dropdown');
             const display = document.getElementById(id + 'Display');
             
-            // Chiudi altri dropdown
             document.querySelectorAll('.multi-select-dropdown').forEach(d => {
                 if (d.id !== id + 'Dropdown') d.classList.remove('show');
             });
@@ -2343,7 +2341,6 @@
             event.stopPropagation();
             multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== value);
             
-            // Deseleziona il checkbox
             const dropdown = document.getElementById(selectId + 'Dropdown');
             const checkbox = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'))
                 .find(cb => cb.getAttribute('data-name') === value);
@@ -2352,7 +2349,6 @@
             updateMultiSelectDisplay(selectId);
         }
 
-        // Chiudi dropdown quando clicchi fuori
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.multi-select-container')) {
                 document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.remove('show'));
@@ -2360,7 +2356,7 @@
             }
         });
 
-        // SEARCH SYSTEM
+        // SEARCH
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
@@ -2416,7 +2412,6 @@
             }
         });
 
-        // ACTIVE SHIFTS
         function renderActiveShifts() {
             const container = document.getElementById('activeShiftsGrid');
             const countEl = document.getElementById('activeShiftsCount');
@@ -2458,7 +2453,6 @@
             `).join('');
         }
 
-        // SHIFT CARDS - NUOVO RENDERING
         function renderShiftsCards() {
             const container = document.getElementById('shiftsCardsContainer');
             
@@ -2469,7 +2463,7 @@
 
             const recentShifts = shiftsDatabase.slice(-12).reverse();
             
-            container.innerHTML = recentShifts.map((s, index) => {
+            container.innerHTML = recentShifts.map((s) => {
                 const date = new Date(s.date);
                 const initial = s.operator.charAt(0).toUpperCase();
                 const isActive = !s.endTime;
@@ -2725,7 +2719,6 @@
             initMultiSelects();
             closeModalFn('addPersonnelModal');
             
-            // Resetta il form
             document.getElementById('qualification').value = '';
             document.getElementById('fullName').value = '';
             document.getElementById('discordId').value = '';
@@ -2745,9 +2738,8 @@
             initMultiSelects();
         }
 
-        // FORM HANDLERS
+        // FORMS
         document.addEventListener('DOMContentLoaded', () => {
-            // SHIFT FORM
             const shiftForm = document.getElementById('shiftForm');
             if (shiftForm) {
                 shiftForm.addEventListener('submit', (e) => {
@@ -2768,7 +2760,6 @@
                     renderShiftsCards();
                     updateStats();
                     
-                    // Reset form
                     document.getElementById('shiftStartTime').value = '';
                     document.getElementById('shiftEndTime').value = '';
                     document.getElementById('shiftNotes').value = '';
@@ -2777,7 +2768,6 @@
                 });
             }
 
-            // ACTIVATION FORM
             const activationForm = document.getElementById('activationForm');
             if (activationForm) {
                 activationForm.addEventListener('submit', (e) => {
@@ -2800,7 +2790,78 @@
                     activationsDatabase.push(newActivation);
                     saveData();
                     
-                    // Reset form
                     activationForm.reset();
                     multiSelectStates.activationOperators = [];
                     updateMultiSelectDisplay('activationOperators');
+                    
+                    alert('✅ Reparto attivato!');
+                });
+            }
+
+            const patrolForm = document.getElementById('patrolForm');
+            if (patrolForm) {
+                patrolForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.patrolOperators;
+                    if (operators.length < 2) {
+                        alert('❌ Seleziona almeno 2 operatori!');
+                        return;
+                    }
+                    
+                    const newPatrol = {
+                        id: Date.now(),
+                        operators: operators,
+                        vehicle: document.getElementById('patrolVehicle').value,
+                        type: document.getElementById('patrolType').value,
+                        date: new Date().toISOString()
+                    };
+                    
+                    patrolsDatabase.push(newPatrol);
+                    saveData();
+                    
+                    patrolForm.reset();
+                    multiSelectStates.patrolOperators = [];
+                    updateMultiSelectDisplay('patrolOperators');
+                    
+                    alert('✅ Pattuglia avviata!');
+                });
+            }
+
+            const deactivationForm = document.getElementById('deactivationForm');
+            if (deactivationForm) {
+                deactivationForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.deactivationOperators;
+                    if (operators.length === 0) {
+                        alert('❌ Seleziona almeno 1 operatore!');
+                        return;
+                    }
+                    
+                    const newDeactivation = {
+                        id: Date.now(),
+                        operators: operators,
+                        time: document.getElementById('deactivationTime').value,
+                        date: new Date().toISOString()
+                    };
+                    
+                    deactivationsDatabase.push(newDeactivation);
+                    saveData();
+                    
+                    deactivationForm.reset();
+                    multiSelectStates.deactivationOperators = [];
+                    updateMultiSelectDisplay('deactivationOperators');
+                    
+                    alert('✅ Disattivazione registrata!');
+                });
+            }
+
+            const requestForm = document.getElementById('requestForm');
+            if (requestForm) {
+                requestForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const operators = multiSelectStates.requestOperators;
+                    if (operators.length < 2) {
+                        alert
