@@ -842,66 +842,97 @@
             border-radius: 8px;
         }
 
-        /* COMPACT FORMS GRID */
-        .compact-forms-grid {
+        /* NUOVO LAYOUT MODULI - PIÙ ORGANIZZATO */
+        .operations-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* TURNO - FULL WIDTH */
+        .shift-section {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .shift-section .section-icon {
+            background: var(--accent);
+        }
+
+        /* ATTIVAZIONI - 2 COLONNE */
+        .activations-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .compact-form-card {
+        .activation-card {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 2px solid var(--primary);
             border-radius: 16px;
-            padding: 1.5rem;
-            transition: transform 0.2s;
+            padding: 2rem;
         }
 
-        .compact-form-card:hover {
-            transform: translateY(-2px);
+        .activation-card .section-icon {
+            background: var(--primary);
         }
 
-        .compact-form-header {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+        /* DISATTIVAZIONE - SINGLE */
+        .deactivation-section {
+            background: var(--card);
+            border: 2px solid var(--danger);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .compact-form-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: white;
+        .deactivation-section .section-icon {
+            background: var(--danger);
         }
 
-        .compact-form-icon.success { background: var(--accent); }
-        .compact-form-icon.primary { background: var(--primary); }
-        .compact-form-icon.danger { background: var(--danger); }
-        .compact-form-icon.warning { background: var(--warning); }
-
-        .compact-form-title {
-            font-size: 1.1rem;
-            font-weight: 600;
+        /* ISTANZA - FULL WIDTH CON WARNING */
+        .request-section {
+            background: var(--card);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .compact-form-body {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .request-section .section-icon {
+            background: var(--warning);
         }
 
         .leadership-info {
@@ -917,12 +948,26 @@
             color: var(--warning);
         }
 
+        /* FORM COMPATTI */
+        .form-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
         /* TABLES */
         .data-table {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
+            margin-top: 2rem;
         }
 
         .table-header {
@@ -1165,7 +1210,7 @@
 
         /* RESPONSIVE */
         @media (max-width: 1200px) {
-            .compact-forms-grid {
+            .activations-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -1308,7 +1353,7 @@
                     </button>
                 </div>
                 
-                <!-- ATTIVAZIONI REPARTO -->
+                <!-- OPERAZIONI -->
                 <div class="nav-section">
                     <div class="nav-title">📋 OPERAZIONI</div>
                     <button class="nav-item" onclick="showPage('operations')">
@@ -1325,7 +1370,7 @@
                     </button>
                 </div>
                 
-                <!-- RICHIAMI E PROMOZIONI -->
+                <!-- GESTIONE -->
                 <div class="nav-section">
                     <div class="nav-title">🔰 GESTIONE</div>
                     <button class="nav-item" onclick="showPage('promotions')">
@@ -1473,177 +1518,218 @@
                     </div>
                 </div>
 
-                <!-- Operations Page (CENTRO OPERATIVO UNICO) -->
+                <!-- Operations Page (NUOVO LAYOUT ORGANIZZATO) -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
                         <p class="page-subtitle">Gestione completa turni, attivazioni e operazioni</p>
                     </div>
 
-                    <!-- COMPACT FORMS GRID -->
-                    <div class="compact-forms-grid">
-                        <!-- TURNO SERVIZIO -->
-                        <div class="compact-form-card">
-                            <div class="compact-form-header">
-                                <div class="compact-form-icon success">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="compact-form-title">Turno Servizio</div>
+                    <!-- SEZIONE TURNO (Full Width Verde) -->
+                    <div class="operations-section shift-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-clock"></i>
                             </div>
-                            <form id="shiftForm" class="compact-form-body">
-                                <div class="form-group">
-                                    <label class="form-label">👮 Operatore</label>
-                                    <input type="text" class="form-input" id="shiftOperator" readonly>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">🕐 Ora Inizio</label>
-                                        <input type="time" class="form-input" id="shiftStartTime" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">🕐 Ora Fine</label>
-                                        <input type="time" class="form-input" id="shiftEndTime">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">📝 Note</label>
-                                    <textarea class="form-textarea" id="shiftNotes" placeholder="Attività svolte..."></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-success" style="width: 100%;">
-                                    <i class="fas fa-play"></i> Inizia Turno
-                                </button>
-                            </form>
+                            <div>
+                                <div class="section-title">Turno di Servizio</div>
+                                <div class="section-subtitle">Registra inizio e fine del tuo turno operativo</div>
+                            </div>
                         </div>
-
-                        <!-- ATTIVAZIONE REPARTO -->
-                        <div class="compact-form-card">
-                            <div class="compact-form-header">
-                                <div class="compact-form-icon primary">
-                                    <i class="fas fa-plus-circle"></i>
-                                </div>
-                                <div class="compact-form-title">Attivazione Reparto</div>
+                        <form id="shiftForm" class="form-compact">
+                            <div class="form-group">
+                                <label class="form-label">👮 Operatore</label>
+                                <input type="text" class="form-input" id="shiftOperator" readonly>
                             </div>
-                            <form id="activationForm" class="compact-form-body">
-                                <div class="form-row">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Inizio <span class="required">*</span></label>
+                                    <input type="time" class="form-input" id="shiftStartTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Fine</label>
+                                    <input type="time" class="form-input" id="shiftEndTime">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📝 Note Attività</label>
+                                <textarea class="form-textarea" id="shiftNotes" placeholder="Descrivi le attività svolte durante il turno..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success" style="width: 100%;">
+                                <i class="fas fa-play"></i> Inizia Turno
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SEZIONE ATTIVAZIONI (2 Colonne Blu) -->
+                    <div class="operations-section">
+                        <div class="activations-grid">
+                            <!-- Attivazione Reparto -->
+                            <div class="activation-card">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </div>
+                                    <div>
+                                        <div class="section-title">Attivazione Reparto</div>
+                                        <div class="section-subtitle">Attiva il reparto per operazione</div>
+                                    </div>
+                                </div>
+                                <form id="activationForm" class="form-compact">
                                     <div class="form-group">
-                                        <label class="form-label">👤 Autorizzato Da</label>
+                                        <label class="form-label">👤 Autorizzato Da <span class="required">*</span></label>
                                         <input type="text" class="form-input" id="activationAuthorized" required>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">📋 Coordinatore</label>
+                                        <label class="form-label">📋 Coordinatore <span class="required">*</span></label>
                                         <input type="text" class="form-input" id="activationCoordinator" required>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">💼 Op. Contrattazione</label>
-                                    <input type="text" class="form-input" id="activationNegotiator" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">🚨 Tipo Intervento</label>
-                                    <select class="form-select" id="activationIntervention" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="Rapina Banca">Rapina Banca</option>
-                                        <option value="Rapina Gioielleria">Rapina Gioielleria</option>
-                                        <option value="Emergenza">Emergenza</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    <i class="fas fa-check"></i> Attiva
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- ATTIVAZIONE PATTUGLIA -->
-                        <div class="compact-form-card">
-                            <div class="compact-form-header">
-                                <div class="compact-form-icon primary">
-                                    <i class="fas fa-car"></i>
-                                </div>
-                                <div class="compact-form-title">Attivazione Pattuglia</div>
-                            </div>
-                            <form id="patrolForm" class="compact-form-body">
-                                <div class="form-row">
                                     <div class="form-group">
-                                        <label class="form-label">👤 Gestito Da</label>
+                                        <label class="form-label">💼 Op. Contrattazione <span class="required">*</span></label>
+                                        <input type="text" class="form-input" id="activationNegotiator" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
+                                        <select class="form-select" id="activationIntervention" required>
+                                            <option value="">Seleziona...</option>
+                                            <option value="Rapina Banca">Rapina Banca</option>
+                                            <option value="Rapina Gioielleria">Rapina Gioielleria</option>
+                                            <option value="Emergenza">Emergenza</option>
+                                            <option value="Operazione Speciale">Operazione Speciale</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                        <i class="fas fa-check"></i> Attiva Reparto
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Attivazione Pattuglia -->
+                            <div class="activation-card">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-car"></i>
+                                    </div>
+                                    <div>
+                                        <div class="section-title">Attivazione Pattuglia</div>
+                                        <div class="section-subtitle">Avvia pattuglia operativa</div>
+                                    </div>
+                                </div>
+                                <form id="patrolForm" class="form-compact">
+                                    <div class="form-group">
+                                        <label class="form-label">👤 Gestito Da <span class="required">*</span></label>
                                         <input type="text" class="form-input" id="patrolManager" required>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">🚓 Veicolo</label>
-                                        <input type="text" class="form-input" id="patrolVehicle" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">👥 Operatori</label>
-                                    <input type="text" class="form-input" id="patrolOperators" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    <i class="fas fa-play"></i> Avvia
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- DISATTIVAZIONE REPARTO -->
-                        <div class="compact-form-card">
-                            <div class="compact-form-header">
-                                <div class="compact-form-icon danger">
-                                    <i class="fas fa-stop-circle"></i>
-                                </div>
-                                <div class="compact-form-title">Disattivazione</div>
-                            </div>
-                            <form id="deactivationForm" class="compact-form-body">
-                                <div class="form-group">
-                                    <label class="form-label">👥 Operatori Rientro</label>
-                                    <textarea class="form-textarea" id="deactivationOperators" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora</label>
-                                    <input type="time" class="form-input" id="deactivationTime" required>
-                                </div>
-                                <button type="submit" class="btn btn-danger" style="width: 100%;">
-                                    <i class="fas fa-power-off"></i> Disattiva
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- ISTANZA ATTIVAZIONE -->
-                        <div class="compact-form-card" style="grid-column: span 2;">
-                            <div class="compact-form-header">
-                                <div class="compact-form-icon warning">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div class="compact-form-title">Istanza per Attivazione (Richiede Approvazione)</div>
-                            </div>
-                            <form id="requestForm" class="compact-form-body">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">🎯 Tipo Rapina</label>
-                                        <select class="form-select" id="requestRobberyType" required>
+                                        <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
+                                        <select class="form-select" id="patrolIntervention" required>
                                             <option value="">Seleziona...</option>
-                                            <option value="Banca Centrale">Banca Centrale</option>
-                                            <option value="Gioielleria">Gioielleria</option>
-                                            <option value="Negozio 24/7">Negozio 24/7</option>
+                                            <option value="Pattugliamento">Pattugliamento</option>
+                                            <option value="Inseguimento">Inseguimento</option>
+                                            <option value="Controllo Territorio">Controllo Territorio</option>
+                                            <option value="Emergenza">Emergenza</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">👤 Gestore</label>
-                                        <input type="text" class="form-input" id="requestManager" required>
+                                        <label class="form-label">🚓 Veicolo <span class="required">*</span></label>
+                                        <input type="text" class="form-input" id="patrolVehicle" required placeholder="Codice mezzo">
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">👔 Dirigenza (non modificabile)</label>
-                                    <input type="text" class="form-input" value="Tonino Frasca, Gabriel Martinelli, Matteo Rossi, Simone Sottaceto, Diego Bianchi, Franco Costa, Simone Brighella" readonly style="background: var(--dark); cursor: not-allowed; font-size: 0.8rem;">
-                                </div>
-                                <button type="submit" class="btn btn-warning" style="width: 100%;">
-                                    <i class="fas fa-paper-plane"></i> Invia Istanza
-                                </button>
-                            </form>
+                                    <div class="form-group">
+                                        <label class="form-label">👥 Operatori <span class="required">*</span></label>
+                                        <input type="text" class="form-input" id="patrolOperators" required placeholder="Nomi operatori">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                        <i class="fas fa-play"></i> Avvia Pattuglia
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- SEZIONE DISATTIVAZIONE (Full Width Rosso) -->
+                    <div class="operations-section deactivation-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-stop-circle"></i>
+                            </div>
+                            <div>
+                                <div class="section-title">Disattivazione Reparto</div>
+                                <div class="section-subtitle">Registra fine operazione e rientro personale</div>
+                            </div>
+                        </div>
+                        <form id="deactivationForm" class="form-compact">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">👥 Operatori in Rientro <span class="required">*</span></label>
+                                    <textarea class="form-textarea" id="deactivationOperators" required placeholder="Elenco operatori (separati da virgola)"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">🕐 Ora Disattivazione <span class="required">*</span></label>
+                                    <input type="time" class="form-input" id="deactivationTime" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-danger" style="width: 100%;">
+                                <i class="fas fa-power-off"></i> Disattiva Reparto
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SEZIONE ISTANZA (Full Width Arancione) -->
+                    <div class="operations-section request-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div>
+                                <div class="section-title">Istanza per Attivazione Reparto</div>
+                                <div class="section-subtitle">Richiesta che necessita approvazione della dirigenza</div>
+                            </div>
+                        </div>
+                        
+                        <div class="leadership-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>⚠️ Approvazione Richiesta</strong><br>
+                                Questa istanza verrà inviata alla dirigenza e richiede approvazione prima di procedere.
+                            </div>
+                        </div>
+
+                        <form id="requestForm" class="form-compact">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">🎯 Tipo di Rapina <span class="required">*</span></label>
+                                    <select class="form-select" id="requestRobberyType" required>
+                                        <option value="">Seleziona...</option>
+                                        <option value="Banca Centrale">Banca Centrale</option>
+                                        <option value="Banca Periferica">Banca Periferica</option>
+                                        <option value="Gioielleria">Gioielleria</option>
+                                        <option value="Negozio 24/7">Negozio 24/7</option>
+                                        <option value="Altro">Altro</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">👤 Operatore che Gestirà <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="requestManager" required placeholder="Nome operatore">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">👔 Tag Dirigenza (non modificabile)</label>
+                                <input type="text" class="form-input" value="Tonino Frasca, Gabriel Martinelli, Matteo Rossi, Simone Sottaceto, Diego Bianchi, Franco Costa, Simone Brighella" readonly style="background: var(--dark); cursor: not-allowed; font-size: 0.85rem;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📝 Note Aggiuntive</label>
+                                <textarea class="form-textarea" id="requestNotes" placeholder="Eventuali dettagli aggiuntivi per la dirigenza..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i> Invia Istanza alla Dirigenza
+                            </button>
+                        </form>
+                    </div>
+
                     <!-- Storico Turni -->
-                    <div class="data-table" style="margin-top: 2rem;">
+                    <div class="data-table">
                         <div class="table-header">
-                            <h3 class="table-title">Storico Turni</h3>
+                            <h3 class="table-title">📅 Storico Turni</h3>
                         </div>
                         <div id="shiftsTableContainer">
                             <div class="empty-state">
@@ -1654,9 +1740,9 @@
                     </div>
 
                     <!-- Istanze Pending (Solo Dirigenza) -->
-                    <div class="data-table" id="pendingRequestsTable" style="display: none; margin-top: 2rem;">
+                    <div class="data-table" id="pendingRequestsTable" style="display: none;">
                         <div class="table-header">
-                            <h3 class="table-title">Istanze in Attesa</h3>
+                            <h3 class="table-title">⏳ Istanze in Attesa di Approvazione</h3>
                         </div>
                         <div id="pendingRequestsContainer">
                             <div class="empty-state">
@@ -1834,13 +1920,11 @@
         }
 
         function checkIfOnDuty() {
-            // Controlla se c'è un turno attivo oggi
             const today = new Date().toISOString().split('T')[0];
             const todayShifts = shiftsDatabase.filter(s => s.date === today && s.operator === (currentUser?.fullName || currentUser?.username));
             
             if (todayShifts.length > 0) {
                 const lastShift = todayShifts[todayShifts.length - 1];
-                // Se il turno non ha ora fine o l'ora fine è nel futuro, è in servizio
                 if (!lastShift.endTime) {
                     isOnDuty = true;
                 } else {
@@ -2098,7 +2182,6 @@
                 renderShiftsTable();
                 if (isLeadership) renderPendingRequests();
                 
-                // Pre-compila operatore
                 const operatorField = document.getElementById('shiftOperator');
                 if (operatorField && currentUser) {
                     operatorField.value = currentUser.fullName || currentUser.username;
@@ -2182,7 +2265,6 @@
 
         // FORM HANDLERS
         document.addEventListener('DOMContentLoaded', () => {
-            // Shift Form
             const shiftForm = document.getElementById('shiftForm');
             if (shiftForm) {
                 shiftForm.addEventListener('submit', (e) => {
@@ -2204,14 +2286,11 @@
                     shiftForm.reset();
                     document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
                     
-                    // Aggiorna status
                     checkIfOnDuty();
-                    
                     showSuccessMsg('✅ Turno iniziato!');
                 });
             }
 
-            // Activation Form
             const activationForm = document.getElementById('activationForm');
             if (activationForm) {
                 activationForm.addEventListener('submit', (e) => {
@@ -2233,7 +2312,6 @@
                 });
             }
 
-            // Patrol Form
             const patrolForm = document.getElementById('patrolForm');
             if (patrolForm) {
                 patrolForm.addEventListener('submit', (e) => {
@@ -2242,6 +2320,7 @@
                     const newPatrol = {
                         id: Date.now(),
                         manager: document.getElementById('patrolManager').value,
+                        intervention: document.getElementById('patrolIntervention').value,
                         vehicle: document.getElementById('patrolVehicle').value,
                         operators: document.getElementById('patrolOperators').value,
                         createdAt: new Date().toISOString()
@@ -2254,7 +2333,6 @@
                 });
             }
 
-            // Deactivation Form
             const deactivationForm = document.getElementById('deactivationForm');
             if (deactivationForm) {
                 deactivationForm.addEventListener('submit', (e) => {
@@ -2274,7 +2352,6 @@
                 });
             }
 
-            // Request Form
             const requestForm = document.getElementById('requestForm');
             if (requestForm) {
                 requestForm.addEventListener('submit', (e) => {
@@ -2284,6 +2361,7 @@
                         id: Date.now(),
                         robberyType: document.getElementById('requestRobberyType').value,
                         manager: document.getElementById('requestManager').value,
+                        notes: document.getElementById('requestNotes').value,
                         status: 'pending',
                         requestedBy: currentUser?.fullName || currentUser?.username,
                         requestDate: new Date().toISOString()
@@ -2436,7 +2514,7 @@
             }
         });
 
-        console.log('🚁 U.O.P.I. Dashboard v7.0 - CENTRO OPERATIVO UNICO + STATUS INDICATOR');
+        console.log('🚁 U.O.P.I. Dashboard v8.0 - LAYOUT ORGANIZZATO E PROFESSIONALE');
     </script>
 </body>
 </html>
