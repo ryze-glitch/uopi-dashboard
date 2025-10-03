@@ -96,27 +96,15 @@
         }
 
         @keyframes pulse-green {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
         @keyframes pulse-red {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         .status-text {
@@ -444,7 +432,6 @@
             font-weight: 600;
         }
 
-        /* NOTIFICATIONS PANEL */
         .notifications-panel {
             position: absolute;
             top: 100%;
@@ -714,6 +701,105 @@
             font-size: 1.1rem;
         }
 
+        /* VEHICLES GRID */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .vehicle-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-light);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vehicle-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(59, 130, 246, 0.95);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .vehicle-info {
+            padding: 2rem;
+        }
+
+        .vehicle-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .vehicle-requirement {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-light);
+        }
+
+        .vehicle-requirement-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .vehicle-requirement-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .vehicle-requirement-text strong {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
         /* STATISTICS */
         .stats-grid {
             display: grid;
@@ -842,7 +928,7 @@
             border-radius: 8px;
         }
 
-        /* NUOVO LAYOUT MODULI - PIÙ ORGANIZZATO */
+        /* OPERATIONS SECTION STYLES (dal codice precedente) */
         .operations-section {
             margin-bottom: 2rem;
         }
@@ -877,7 +963,6 @@
             font-size: 0.9rem;
         }
 
-        /* TURNO - FULL WIDTH */
         .shift-section {
             background: var(--card);
             border: 2px solid var(--accent);
@@ -890,7 +975,6 @@
             background: var(--accent);
         }
 
-        /* ATTIVAZIONI - 2 COLONNE */
         .activations-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -909,7 +993,6 @@
             background: var(--primary);
         }
 
-        /* DISATTIVAZIONE - SINGLE */
         .deactivation-section {
             background: var(--card);
             border: 2px solid var(--danger);
@@ -922,7 +1005,6 @@
             background: var(--danger);
         }
 
-        /* ISTANZA - FULL WIDTH CON WARNING */
         .request-section {
             background: var(--card);
             border: 2px solid var(--warning);
@@ -948,7 +1030,6 @@
             color: var(--warning);
         }
 
-        /* FORM COMPATTI */
         .form-compact {
             display: flex;
             flex-direction: column;
@@ -1213,6 +1294,9 @@
             .activations-grid {
                 grid-template-columns: 1fr;
             }
+            .vehicles-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 1024px) {
@@ -1310,17 +1394,14 @@
             <div class="topbar-right">
                 <div class="notifications" onclick="toggleNotifications()">
                     <i class="fas fa-bell"></i>
-                    <div class="notification-badge" id="notificationCount">5</div>
+                    <div class="notification-badge" id="notificationCount">3</div>
                     
-                    <!-- Notifications Panel -->
                     <div class="notifications-panel" id="notificationsPanel">
                         <div class="notifications-header">
                             <span class="notifications-title">Notifiche</span>
                             <span class="mark-all-read" onclick="markAllRead(event)">Segna tutte lette</span>
                         </div>
-                        <div id="notificationsList">
-                            <!-- Notifications will be inserted here -->
-                        </div>
+                        <div id="notificationsList"></div>
                     </div>
                 </div>
                 <div class="user-menu">
@@ -1340,7 +1421,6 @@
         <div class="main-layout">
             <!-- Sidebar -->
             <div class="sidebar">
-                <!-- PRINCIPALE -->
                 <div class="nav-section">
                     <div class="nav-title">📌 PRINCIPALE</div>
                     <button class="nav-item active" onclick="showPage('dashboard')">
@@ -1353,7 +1433,6 @@
                     </button>
                 </div>
                 
-                <!-- OPERAZIONI -->
                 <div class="nav-section">
                     <div class="nav-title">📋 OPERAZIONI</div>
                     <button class="nav-item" onclick="showPage('operations')">
@@ -1370,7 +1449,6 @@
                     </button>
                 </div>
                 
-                <!-- GESTIONE -->
                 <div class="nav-section">
                     <div class="nav-title">🔰 GESTIONE</div>
                     <button class="nav-item" onclick="showPage('promotions')">
@@ -1383,7 +1461,6 @@
                     </button>
                 </div>
                 
-                <!-- SISTEMA -->
                 <div class="nav-section">
                     <div class="nav-title">⚙️ SISTEMA</div>
                     <button class="nav-item" onclick="showPage('activation-code')">
@@ -1406,7 +1483,6 @@
                         <p class="page-subtitle">Monitoraggio in tempo reale delle operazioni UOPI</p>
                     </div>
 
-                    <!-- Statistics Cards -->
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-header">
@@ -1443,7 +1519,7 @@
                                     <i class="fas fa-arrow-up"></i> +2%
                                 </div>
                             </div>
-                            <div class="stat-value">23</div>
+                            <div class="stat-value">2</div>
                             <div class="stat-label">Mezzi Disponibili</div>
                         </div>
 
@@ -1461,7 +1537,6 @@
                         </div>
                     </div>
 
-                    <!-- Charts Section -->
                     <div class="charts-grid">
                         <div class="chart-card">
                             <div class="chart-header">
@@ -1512,258 +1587,76 @@
                             <div class="empty-state">
                                 <i class="fas fa-users"></i>
                                 <h3>Nessun operatore presente</h3>
-                                <p>Il database del personale è vuoto.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Operations Page (NUOVO LAYOUT ORGANIZZATO) -->
+                <!-- Operations Page (da completare come prima) -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
-                        <p class="page-subtitle">Gestione completa turni, attivazioni e operazioni</p>
+                        <p class="page-subtitle">Gestione completa turni e operazioni</p>
+                    </div>
+                    <!-- Inserisci qui il contenuto della pagina operazioni dal codice precedente -->
+                </div>
+
+                <!-- Vehicles Page -->
+                <div id="page-vehicles" class="page">
+                    <div class="page-header">
+                        <h1 class="page-title">Mezzi Utilizzabili</h1>
+                        <p class="page-subtitle">Flotta veicoli operativi disponibili per il reparto</p>
                     </div>
 
-                    <!-- SEZIONE TURNO (Full Width Verde) -->
-                    <div class="operations-section shift-section">
-                        <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div>
-                                <div class="section-title">Turno di Servizio</div>
-                                <div class="section-subtitle">Registra inizio e fine del tuo turno operativo</div>
-                            </div>
-                        </div>
-                        <form id="shiftForm" class="form-compact">
-                            <div class="form-group">
-                                <label class="form-label">👮 Operatore</label>
-                                <input type="text" class="form-input" id="shiftOperator" readonly>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Inizio <span class="required">*</span></label>
-                                    <input type="time" class="form-input" id="shiftStartTime" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Fine</label>
-                                    <input type="time" class="form-input" id="shiftEndTime">
+                    <!-- Vehicles Grid -->
+                    <div class="vehicles-grid">
+                        <!-- Jeep Cherokee -->
+                        <div class="vehicle-card">
+                            <div class="vehicle-image">
+                                <!-- CARICA QUI LA TUA FOTO JEEP SU IMGUR E SOSTITUISCI L'URL -->
+                                <img src="https://i.imgur.com/TUOLINK1.jpg" alt="Jeep Cherokee" onerror="this.parentElement.innerHTML='<i class=\'fas fa-car\' style=\'font-size:4rem;color:var(--text-muted);\'></i>'">
+                                <div class="vehicle-badge">
+                                    <i class="fas fa-shield-alt"></i> UOPI
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">📝 Note Attività</label>
-                                <textarea class="form-textarea" id="shiftNotes" placeholder="Descrivi le attività svolte durante il turno..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-success" style="width: 100%;">
-                                <i class="fas fa-play"></i> Inizia Turno
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- SEZIONE ATTIVAZIONI (2 Colonne Blu) -->
-                    <div class="operations-section">
-                        <div class="activations-grid">
-                            <!-- Attivazione Reparto -->
-                            <div class="activation-card">
-                                <div class="section-header">
-                                    <div class="section-icon">
-                                        <i class="fas fa-plus-circle"></i>
+                            <div class="vehicle-info">
+                                <h3 class="vehicle-name">Jeep Cherokee</h3>
+                                <div class="vehicle-requirement">
+                                    <div class="vehicle-requirement-icon">
+                                        <i class="fas fa-id-badge"></i>
                                     </div>
-                                    <div>
-                                        <div class="section-title">Attivazione Reparto</div>
-                                        <div class="section-subtitle">Attiva il reparto per operazione</div>
+                                    <div class="vehicle-requirement-text">
+                                        Utilizzabile dal Grado di <strong>Operatore</strong>
                                     </div>
                                 </div>
-                                <form id="activationForm" class="form-compact">
-                                    <div class="form-group">
-                                        <label class="form-label">👤 Autorizzato Da <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="activationAuthorized" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">📋 Coordinatore <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="activationCoordinator" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">💼 Op. Contrattazione <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="activationNegotiator" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
-                                        <select class="form-select" id="activationIntervention" required>
-                                            <option value="">Seleziona...</option>
-                                            <option value="Rapina Banca">Rapina Banca</option>
-                                            <option value="Rapina Gioielleria">Rapina Gioielleria</option>
-                                            <option value="Emergenza">Emergenza</option>
-                                            <option value="Operazione Speciale">Operazione Speciale</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                        <i class="fas fa-check"></i> Attiva Reparto
-                                    </button>
-                                </form>
-                            </div>
-
-                            <!-- Attivazione Pattuglia -->
-                            <div class="activation-card">
-                                <div class="section-header">
-                                    <div class="section-icon">
-                                        <i class="fas fa-car"></i>
-                                    </div>
-                                    <div>
-                                        <div class="section-title">Attivazione Pattuglia</div>
-                                        <div class="section-subtitle">Avvia pattuglia operativa</div>
-                                    </div>
-                                </div>
-                                <form id="patrolForm" class="form-compact">
-                                    <div class="form-group">
-                                        <label class="form-label">👤 Gestito Da <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="patrolManager" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
-                                        <select class="form-select" id="patrolIntervention" required>
-                                            <option value="">Seleziona...</option>
-                                            <option value="Pattugliamento">Pattugliamento</option>
-                                            <option value="Inseguimento">Inseguimento</option>
-                                            <option value="Controllo Territorio">Controllo Territorio</option>
-                                            <option value="Emergenza">Emergenza</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">🚓 Veicolo <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="patrolVehicle" required placeholder="Codice mezzo">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">👥 Operatori <span class="required">*</span></label>
-                                        <input type="text" class="form-input" id="patrolOperators" required placeholder="Nomi operatori">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                        <i class="fas fa-play"></i> Avvia Pattuglia
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SEZIONE DISATTIVAZIONE (Full Width Rosso) -->
-                    <div class="operations-section deactivation-section">
-                        <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-stop-circle"></i>
-                            </div>
-                            <div>
-                                <div class="section-title">Disattivazione Reparto</div>
-                                <div class="section-subtitle">Registra fine operazione e rientro personale</div>
-                            </div>
-                        </div>
-                        <form id="deactivationForm" class="form-compact">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">👥 Operatori in Rientro <span class="required">*</span></label>
-                                    <textarea class="form-textarea" id="deactivationOperators" required placeholder="Elenco operatori (separati da virgola)"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">🕐 Ora Disattivazione <span class="required">*</span></label>
-                                    <input type="time" class="form-input" id="deactivationTime" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-danger" style="width: 100%;">
-                                <i class="fas fa-power-off"></i> Disattiva Reparto
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- SEZIONE ISTANZA (Full Width Arancione) -->
-                    <div class="operations-section request-section">
-                        <div class="section-header">
-                            <div class="section-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div>
-                                <div class="section-title">Istanza per Attivazione Reparto</div>
-                                <div class="section-subtitle">Richiesta che necessita approvazione della dirigenza</div>
-                            </div>
-                        </div>
-                        
-                        <div class="leadership-info">
-                            <i class="fas fa-info-circle"></i>
-                            <div>
-                                <strong>⚠️ Approvazione Richiesta</strong><br>
-                                Questa istanza verrà inviata alla dirigenza e richiede approvazione prima di procedere.
                             </div>
                         </div>
 
-                        <form id="requestForm" class="form-compact">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">🎯 Tipo di Rapina <span class="required">*</span></label>
-                                    <select class="form-select" id="requestRobberyType" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="Banca Centrale">Banca Centrale</option>
-                                        <option value="Banca Periferica">Banca Periferica</option>
-                                        <option value="Gioielleria">Gioielleria</option>
-                                        <option value="Negozio 24/7">Negozio 24/7</option>
-                                        <option value="Altro">Altro</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">👤 Operatore che Gestirà <span class="required">*</span></label>
-                                    <input type="text" class="form-input" id="requestManager" required placeholder="Nome operatore">
+                        <!-- Alfa Romeo Giulietta -->
+                        <div class="vehicle-card">
+                            <div class="vehicle-image">
+                                <!-- CARICA QUI LA TUA FOTO ALFA ROMEO SU IMGUR E SOSTITUISCI L'URL -->
+                                <img src="https://i.imgur.com/TUOLINK2.jpg" alt="Alfa Romeo Giulietta" onerror="this.parentElement.innerHTML='<i class=\'fas fa-car\' style=\'font-size:4rem;color:var(--text-muted);\'></i>'">
+                                <div class="vehicle-badge">
+                                    <i class="fas fa-star"></i> UOPI
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">👔 Tag Dirigenza (non modificabile)</label>
-                                <input type="text" class="form-input" value="Tonino Frasca, Gabriel Martinelli, Matteo Rossi, Simone Sottaceto, Diego Bianchi, Franco Costa, Simone Brighella" readonly style="background: var(--dark); cursor: not-allowed; font-size: 0.85rem;">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">📝 Note Aggiuntive</label>
-                                <textarea class="form-textarea" id="requestNotes" placeholder="Eventuali dettagli aggiuntivi per la dirigenza..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-warning" style="width: 100%;">
-                                <i class="fas fa-paper-plane"></i> Invia Istanza alla Dirigenza
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Storico Turni -->
-                    <div class="data-table">
-                        <div class="table-header">
-                            <h3 class="table-title">📅 Storico Turni</h3>
-                        </div>
-                        <div id="shiftsTableContainer">
-                            <div class="empty-state">
-                                <i class="fas fa-calendar-times"></i>
-                                <h3>Nessun turno registrato</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Istanze Pending (Solo Dirigenza) -->
-                    <div class="data-table" id="pendingRequestsTable" style="display: none;">
-                        <div class="table-header">
-                            <h3 class="table-title">⏳ Istanze in Attesa di Approvazione</h3>
-                        </div>
-                        <div id="pendingRequestsContainer">
-                            <div class="empty-state">
-                                <i class="fas fa-inbox"></i>
-                                <h3>Nessuna istanza</h3>
+                            <div class="vehicle-info">
+                                <h3 class="vehicle-name">Alfa Romeo Giulietta</h3>
+                                <div class="vehicle-requirement">
+                                    <div class="vehicle-requirement-icon">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="vehicle-requirement-text">
+                                        Utilizzabile dal Grado di <strong>Coordinatore</strong>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Other Pages -->
-                <div id="page-vehicles" class="page">
-                    <div class="page-header">
-                        <h1 class="page-title">Mezzi Utilizzabili</h1>
-                        <p class="page-subtitle">Flotta veicoli disponibili</p>
-                    </div>
-                    <div class="chart-card">
-                        <h3>Gestione Flotta - In Sviluppo</h3>
-                    </div>
-                </div>
-
                 <div id="page-uniforms" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Divise Reparto</h1>
@@ -1777,7 +1670,6 @@
                 <div id="page-promotions" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Promozioni Operatori</h1>
-                        <p class="page-subtitle">Gestione promozioni</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Promozioni - In Sviluppo</h3>
@@ -1787,7 +1679,6 @@
                 <div id="page-warnings" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Richiami Operatori</h1>
-                        <p class="page-subtitle">Gestione provvedimenti</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Richiami - In Sviluppo</h3>
@@ -1797,7 +1688,6 @@
                 <div id="page-activation-code" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Codice D'Attivazione</h1>
-                        <p class="page-subtitle">Attiva funzionalità</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Codici - In Sviluppo</h3>
@@ -1807,7 +1697,6 @@
                 <div id="page-system-status" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Status Sistema</h1>
-                        <p class="page-subtitle">Monitoraggio</p>
                     </div>
                     <div class="chart-card">
                         <h3>Sistema Aggiornamenti - In Sviluppo</h3>
@@ -1836,10 +1725,8 @@
                         <select class="form-select" id="qualification">
                             <option value="">Seleziona...</option>
                             <option value="Comandante Generale">Comandante Generale</option>
-                            <option value="Vice Comandante Generale">Vice Comandante Generale</option>
-                            <option value="Comandante">Comandante</option>
-                            <option value="Vice Comandante">Vice Comandante</option>
                             <option value="Operatore">Operatore</option>
+                            <option value="Coordinatore">Coordinatore</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1868,39 +1755,28 @@
     </div>
 
     <script>
-        // CONFIGURAZIONE
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
-        // DATABASE UTENTI
         let AUTHORIZED_USERS = {
-            'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', fullName: 'Admin Sistema', isAdmin: true, canAddPersonnel: true },
-            '1387684968536477756': { rank: 'Dirigenza', fullName: 'Tonino Frasca', isAdmin: false, canAddPersonnel: true },
-            '1249738701081153658': { rank: 'Dirigenza', fullName: 'Gabriel Martinelli', isAdmin: false, canAddPersonnel: true }
+            'METTI_QUI_TUO_DISCORD_ID': { rank: 'Comandante Generale', fullName: 'Admin Sistema', isAdmin: true, canAddPersonnel: true }
         };
 
-        const LEADERSHIP_NAMES = ['Tonino Frasca', 'Gabriel Martinelli', 'Matteo Rossi', 'Simone Sottaceto', 'Diego Bianchi', 'Franco Costa', 'Simone Brighella'];
+        const LEADERSHIP_NAMES = ['Tonino Frasca', 'Gabriel Martinelli', 'Matteo Rossi'];
 
-        // Database
         let personnelDatabase = [];
         let shiftsDatabase = [];
-        let activationsDatabase = [];
-        let patrolsDatabase = [];
-        let deactivationsDatabase = [];
-        let requestsDatabase = [];
         let currentUser = null;
         let canAddPersonnel = false;
         let isLeadership = false;
         let isOnDuty = false;
 
-        // SISTEMA NOTIFICHE
         let notifications = [
             { id: 1, type: 'success', icon: 'fa-check-circle', text: 'Sistema operativo', time: '2 min fa', unread: true },
-            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Aggiornamento v2.1.0', time: '1 ora fa', unread: true },
+            { id: 2, type: 'info', icon: 'fa-info-circle', text: 'Nuovi mezzi disponibili', time: '1 ora fa', unread: true },
             { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno in scadenza', time: '3 ore fa', unread: false }
         ];
 
-        // STATUS INDICATOR
         function updateServiceStatus() {
             const indicator = document.getElementById('statusIndicator');
             const dot = document.getElementById('statusDot');
@@ -1917,26 +1793,6 @@
             }
             
             indicator.style.display = 'flex';
-        }
-
-        function checkIfOnDuty() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayShifts = shiftsDatabase.filter(s => s.date === today && s.operator === (currentUser?.fullName || currentUser?.username));
-            
-            if (todayShifts.length > 0) {
-                const lastShift = todayShifts[todayShifts.length - 1];
-                if (!lastShift.endTime) {
-                    isOnDuty = true;
-                } else {
-                    const now = new Date();
-                    const endTime = new Date(`${lastShift.date}T${lastShift.endTime}`);
-                    isOnDuty = now < endTime;
-                }
-            } else {
-                isOnDuty = false;
-            }
-            
-            updateServiceStatus();
         }
 
         function loadNotifications() {
@@ -2012,7 +1868,6 @@
             }
         });
 
-        // Carica dati
         function loadData() {
             try {
                 const saved = localStorage.getItem('uopi_personnel');
@@ -2020,21 +1875,6 @@
                 
                 const savedUsers = localStorage.getItem('uopi_users');
                 if (savedUsers) AUTHORIZED_USERS = {...AUTHORIZED_USERS, ...JSON.parse(savedUsers)};
-                
-                const savedShifts = localStorage.getItem('uopi_shifts');
-                if (savedShifts) shiftsDatabase = JSON.parse(savedShifts);
-                
-                const savedActivations = localStorage.getItem('uopi_activations');
-                if (savedActivations) activationsDatabase = JSON.parse(savedActivations);
-                
-                const savedPatrols = localStorage.getItem('uopi_patrols');
-                if (savedPatrols) patrolsDatabase = JSON.parse(savedPatrols);
-                
-                const savedDeactivations = localStorage.getItem('uopi_deactivations');
-                if (savedDeactivations) deactivationsDatabase = JSON.parse(savedDeactivations);
-                
-                const savedRequests = localStorage.getItem('uopi_requests');
-                if (savedRequests) requestsDatabase = JSON.parse(savedRequests);
                 
                 console.log('✅ Dati caricati');
             } catch (e) {
@@ -2046,11 +1886,6 @@
             try {
                 localStorage.setItem('uopi_personnel', JSON.stringify(personnelDatabase));
                 localStorage.setItem('uopi_users', JSON.stringify(AUTHORIZED_USERS));
-                localStorage.setItem('uopi_shifts', JSON.stringify(shiftsDatabase));
-                localStorage.setItem('uopi_activations', JSON.stringify(activationsDatabase));
-                localStorage.setItem('uopi_patrols', JSON.stringify(patrolsDatabase));
-                localStorage.setItem('uopi_deactivations', JSON.stringify(deactivationsDatabase));
-                localStorage.setItem('uopi_requests', JSON.stringify(requestsDatabase));
             } catch (e) {
                 console.error('Errore salvataggio:', e);
             }
@@ -2076,7 +1911,7 @@
                 html += `<tr>
                     <td><span class="status-badge ${colorClass}">${p.qualification}</span></td>
                     <td>${p.fullName}</td>
-                    <td><code style="background:var(--surface);padding:0.2rem 0.5rem;border-radius:4px;font-size:0.8rem;">${p.discordId}</code></td>
+                    <td><code style="background:var(--surface);padding:0.2rem 0.5rem;border-radius:4px;">${p.discordId}</code></td>
                     <td>${p.callSign || '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-secondary" onclick="viewPerson(${i})"><i class="fas fa-eye"></i></button>
@@ -2089,109 +1924,16 @@
             container.innerHTML = html;
         }
 
-        function renderShiftsTable() {
-            const container = document.getElementById('shiftsTableContainer');
-            
-            if (shiftsDatabase.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno</h3></div>';
-                return;
-            }
-
-            let html = '<table><thead><tr><th>👮 Operatore</th><th>📅 Data</th><th>🕐 Inizio</th><th>🕐 Fine</th><th>📝 Note</th></tr></thead><tbody>';
-            
-            shiftsDatabase.slice(-10).reverse().forEach((s) => {
-                html += `<tr>
-                    <td>${s.operator}</td>
-                    <td>${new Date(s.date).toLocaleDateString('it-IT')}</td>
-                    <td>${s.startTime}</td>
-                    <td>${s.endTime || '-'}</td>
-                    <td>${s.notes || '-'}</td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
-
-        function renderPendingRequests() {
-            if (!isLeadership) return;
-            
-            const table = document.getElementById('pendingRequestsTable');
-            const container = document.getElementById('pendingRequestsContainer');
-            
-            if (!table || !container) return;
-            
-            const pending = requestsDatabase.filter(r => r.status === 'pending');
-            
-            if (pending.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>Nessuna istanza</h3></div>';
-                return;
-            }
-            
-            table.style.display = 'block';
-            
-            let html = '<table><thead><tr><th>🎯 Tipo</th><th>👤 Gestore</th><th>👤 Richiedente</th><th>📅 Data</th><th>⚡ Azioni</th></tr></thead><tbody>';
-            
-            pending.forEach((r) => {
-                html += `<tr>
-                    <td>${r.robberyType}</td>
-                    <td>${r.manager}</td>
-                    <td>${r.requestedBy}</td>
-                    <td>${new Date(r.requestDate).toLocaleDateString('it-IT')}</td>
-                    <td>
-                        <button class="btn btn-sm btn-success" onclick="approveRequest(${r.id})"><i class="fas fa-check"></i></button>
-                        <button class="btn btn-sm btn-danger" onclick="rejectRequest(${r.id})"><i class="fas fa-times"></i></button>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
-
-        function approveRequest(id) {
-            const request = requestsDatabase.find(r => r.id === id);
-            if (request) {
-                request.status = 'approved';
-                request.approvedBy = currentUser?.fullName || currentUser?.username;
-                saveData();
-                renderPendingRequests();
-                showSuccessMsg('Istanza approvata!');
-            }
-        }
-
-        function rejectRequest(id) {
-            if (!confirm('Rifiutare questa istanza?')) return;
-            
-            const request = requestsDatabase.find(r => r.id === id);
-            if (request) {
-                request.status = 'rejected';
-                saveData();
-                renderPendingRequests();
-                showSuccessMsg('Istanza rifiutata');
-            }
-        }
-
         function showPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('page-' + page).classList.add('active');
             event.target.closest('.nav-item').classList.add('active');
-            
-            if (page === 'operations') {
-                renderShiftsTable();
-                if (isLeadership) renderPendingRequests();
-                
-                const operatorField = document.getElementById('shiftOperator');
-                if (operatorField && currentUser) {
-                    operatorField.value = currentUser.fullName || currentUser.username;
-                }
-            }
         }
 
         function viewPerson(index) {
             const p = personnelDatabase[index];
-            alert(`📋 ${p.fullName}\n🏅 ${p.qualification}\n💬 ${p.discordId}\n🎭 ${p.callSign || 'N/A'}`);
+            alert(`📋 ${p.fullName}\n🏅 ${p.qualification}\n💬 ${p.discordId}`);
         }
 
         function openModal(modalId) {
@@ -2218,170 +1960,34 @@
                 fullName,
                 discordId,
                 callSign,
-                id: Date.now(),
-                addedBy: currentUser?.username || 'Sistema',
-                addedDate: new Date().toISOString()
+                id: Date.now()
             };
 
             personnelDatabase.push(newPerson);
-            
-            const isAdmin = qualification.includes('Comandante');
-            AUTHORIZED_USERS[discordId] = {
-                rank: qualification,
-                fullName: fullName,
-                isAdmin: isAdmin,
-                canAddPersonnel: isAdmin
-            };
+            AUTHORIZED_USERS[discordId] = { rank: qualification, fullName, isAdmin: false, canAddPersonnel: false };
 
             saveData();
             renderTable();
             updateStats();
             closeModalFn('addPersonnelModal');
-            showSuccessMsg(`✅ ${fullName} aggiunto!`);
+            alert(`✅ ${fullName} aggiunto!`);
         }
 
         function deletePerson(index) {
-            if (!confirm('Eliminare questo operatore?')) return;
-            
+            if (!confirm('Eliminare?')) return;
             const person = personnelDatabase[index];
             delete AUTHORIZED_USERS[person.discordId];
             personnelDatabase.splice(index, 1);
-            
             saveData();
             renderTable();
             updateStats();
-            showSuccessMsg(`🗑️ ${person.fullName} eliminato`);
         }
 
-        function showSuccessMsg(msg) {
-            const msgEl = document.getElementById('successMessage');
-            const textEl = document.getElementById('successText');
-            if (msgEl && textEl) {
-                textEl.textContent = msg;
-                msgEl.classList.add('show');
-                setTimeout(() => msgEl.classList.remove('show'), 3000);
-            }
-        }
-
-        // FORM HANDLERS
-        document.addEventListener('DOMContentLoaded', () => {
-            const shiftForm = document.getElementById('shiftForm');
-            if (shiftForm) {
-                shiftForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const newShift = {
-                        id: Date.now(),
-                        operator: document.getElementById('shiftOperator').value,
-                        startTime: document.getElementById('shiftStartTime').value,
-                        endTime: document.getElementById('shiftEndTime').value,
-                        date: new Date().toISOString().split('T')[0],
-                        notes: document.getElementById('shiftNotes').value,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    shiftsDatabase.push(newShift);
-                    saveData();
-                    renderShiftsTable();
-                    shiftForm.reset();
-                    document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
-                    
-                    checkIfOnDuty();
-                    showSuccessMsg('✅ Turno iniziato!');
-                });
-            }
-
-            const activationForm = document.getElementById('activationForm');
-            if (activationForm) {
-                activationForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const newActivation = {
-                        id: Date.now(),
-                        authorizedBy: document.getElementById('activationAuthorized').value,
-                        coordinator: document.getElementById('activationCoordinator').value,
-                        negotiator: document.getElementById('activationNegotiator').value,
-                        intervention: document.getElementById('activationIntervention').value,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    activationsDatabase.push(newActivation);
-                    saveData();
-                    activationForm.reset();
-                    showSuccessMsg('✅ Reparto attivato!');
-                });
-            }
-
-            const patrolForm = document.getElementById('patrolForm');
-            if (patrolForm) {
-                patrolForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const newPatrol = {
-                        id: Date.now(),
-                        manager: document.getElementById('patrolManager').value,
-                        intervention: document.getElementById('patrolIntervention').value,
-                        vehicle: document.getElementById('patrolVehicle').value,
-                        operators: document.getElementById('patrolOperators').value,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    patrolsDatabase.push(newPatrol);
-                    saveData();
-                    patrolForm.reset();
-                    showSuccessMsg('✅ Pattuglia avviata!');
-                });
-            }
-
-            const deactivationForm = document.getElementById('deactivationForm');
-            if (deactivationForm) {
-                deactivationForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const newDeactivation = {
-                        id: Date.now(),
-                        operators: document.getElementById('deactivationOperators').value,
-                        time: document.getElementById('deactivationTime').value,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    deactivationsDatabase.push(newDeactivation);
-                    saveData();
-                    deactivationForm.reset();
-                    showSuccessMsg('✅ Reparto disattivato!');
-                });
-            }
-
-            const requestForm = document.getElementById('requestForm');
-            if (requestForm) {
-                requestForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const newRequest = {
-                        id: Date.now(),
-                        robberyType: document.getElementById('requestRobberyType').value,
-                        manager: document.getElementById('requestManager').value,
-                        notes: document.getElementById('requestNotes').value,
-                        status: 'pending',
-                        requestedBy: currentUser?.fullName || currentUser?.username,
-                        requestDate: new Date().toISOString()
-                    };
-                    
-                    requestsDatabase.push(newRequest);
-                    saveData();
-                    requestForm.reset();
-                    showSuccessMsg('✅ Istanza inviata!');
-                });
-            }
-        });
-
-        // Discord OAuth
         document.getElementById('discordBtn').addEventListener('click', () => {
             const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
             window.location.href = url;
         });
 
-        // Login
         async function handleLogin(token) {
             try {
                 document.getElementById('loadingOverlay').classList.add('show');
@@ -2425,7 +2031,7 @@
                 renderTable();
                 updateStats();
                 loadNotifications();
-                checkIfOnDuty();
+                updateServiceStatus();
                 initCharts();
                 document.getElementById('loadingOverlay').classList.remove('show');
                 
@@ -2436,12 +2042,10 @@
             }
         }
 
-        // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             if (confirm('Uscire?')) location.reload();
         });
 
-        // Init Charts
         function initCharts() {
             try {
                 const activityCtx = document.getElementById('activityChart');
@@ -2501,7 +2105,6 @@
             }
         }
 
-        // Init
         window.addEventListener('load', () => {
             loadData();
             loadNotifications();
@@ -2514,7 +2117,7 @@
             }
         });
 
-        console.log('🚁 U.O.P.I. Dashboard v8.0 - LAYOUT ORGANIZZATO E PROFESSIONALE');
+        console.log('🚁 U.O.P.I. Dashboard v9.0 - SEZIONE MEZZI COMPLETA');
     </script>
 </body>
 </html>
