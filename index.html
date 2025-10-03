@@ -871,7 +871,7 @@
             gap: 1rem;
         }
 
-        /* MULTI SELECT */
+        /* MULTI SELECT MIGLIORATO */
         .multi-select-container {
             position: relative;
         }
@@ -887,6 +887,11 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .multi-select-display:hover {
+            border-color: var(--primary-light);
         }
 
         .multi-select-display.open {
@@ -903,14 +908,16 @@
             padding: 0.3rem 0.6rem;
             border-radius: 6px;
             font-size: 0.85rem;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
         }
 
         .selected-tag .remove {
             cursor: pointer;
             opacity: 0.7;
+            font-weight: bold;
+            transition: opacity 0.2s;
         }
 
         .selected-tag .remove:hover {
@@ -935,6 +942,7 @@
 
         .multi-select-dropdown.show {
             display: block;
+            animation: slideDown 0.2s ease-out;
         }
 
         .multi-select-option {
@@ -943,7 +951,12 @@
             transition: background 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .multi-select-option:last-child {
+            border-bottom: none;
         }
 
         .multi-select-option:hover {
@@ -958,6 +971,163 @@
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .multi-select-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* SHIFT CARDS - LAYOUT BELLISSIMO */
+        .shifts-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .shift-history-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shift-history-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent), var(--primary));
+        }
+
+        .shift-history-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-light);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .shift-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .shift-card-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .shift-card-operator {
+            flex: 1;
+        }
+
+        .shift-card-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .shift-card-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .shift-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .shift-card-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+        }
+
+        .shift-card-info-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .shift-card-info-content {
+            flex: 1;
+        }
+
+        .shift-card-info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .shift-card-info-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .shift-card-notes {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin-top: 0.5rem;
+        }
+
+        .shift-card-notes-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .shift-card-notes-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .shift-status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .shift-status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .shift-status-completed {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-light);
         }
 
         /* VEHICLES GRID */
@@ -1388,6 +1558,9 @@
             .operations-grid {
                 grid-template-columns: 1fr;
             }
+            .shifts-cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
         }
 
         @media (max-width: 1200px) {
@@ -1406,6 +1579,7 @@
             .notifications-panel { width: calc(100vw - 2rem); right: 1rem; }
             .search-box { margin-left: 0; width: 100%; }
             .search-input { width: 100%; }
+            .shifts-cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1660,7 +1834,7 @@
                     </div>
                 </div>
 
-                <!-- Operations Page (COMPLETA CON TUTTI I MODULI) -->
+                <!-- Operations Page -->
                 <div id="page-operations" class="page">
                     <div class="page-header">
                         <h1 class="page-title">Centro Operativo</h1>
@@ -1757,10 +1931,9 @@
                                     <label class="form-label">🚨 Tipo Intervento <span class="required">*</span></label>
                                     <select class="form-select" id="activationIntervention" required>
                                         <option value="">Seleziona...</option>
-                                        <option value="Rapina Banca">Rapina Banca</option>
-                                        <option value="Rapina Gioielleria">Rapina Gioielleria</option>
-                                        <option value="Emergenza">Emergenza</option>
-                                        <option value="Operazione Speciale">Operazione Speciale</option>
+                                        <option value="Banca D'Italia">Banca D'Italia</option>
+                                        <option value="Banca di Credito Capitolina">Banca di Credito Capitolina</option>
+                                        <option value="Gioielleria">Gioielleria</option>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -1874,8 +2047,8 @@
                                     <label class="form-label">🎯 Tipo Rapina <span class="required">*</span></label>
                                     <select class="form-select" id="requestRobberyType" required>
                                         <option value="">Seleziona...</option>
-                                        <option value="Banca Centrale">Banca Centrale</option>
-                                        <option value="Banca Periferica">Banca Periferica</option>
+                                        <option value="Banca D'Italia">Banca D'Italia</option>
+                                        <option value="Banca di Credito Capitolina">Banca di Credito Capitolina</option>
                                         <option value="Gioielleria">Gioielleria</option>
                                         <option value="Negozio 24/7">Negozio 24/7</option>
                                     </select>
@@ -1891,12 +2064,13 @@
                         </form>
                     </div>
 
-                    <!-- SHIFT HISTORY -->
-                    <div class="data-table">
-                        <div class="table-header">
-                            <h3 class="table-title">📅 Storico Turni</h3>
+                    <!-- SHIFT HISTORY - NUOVO LAYOUT CON CARD -->
+                    <div style="margin-top: 3rem;">
+                        <div class="page-header" style="margin-bottom: 2rem;">
+                            <h2 class="page-title" style="font-size: 2rem;">📅 Storico Turni</h2>
+                            <p class="page-subtitle">Ultimi turni registrati nel sistema</p>
                         </div>
-                        <div id="shiftsTableContainer">
+                        <div class="shifts-cards-grid" id="shiftsCardsContainer">
                             <div class="empty-state">
                                 <i class="fas fa-calendar-times"></i>
                                 <h3>Nessun turno registrato</h3>
@@ -2013,8 +2187,24 @@
                         <select class="form-select" id="qualification">
                             <option value="">Seleziona...</option>
                             <option value="Comandante Generale">Comandante Generale</option>
-                            <option value="Operatore">Operatore</option>
-                            <option value="Coordinatore">Coordinatore</option>
+                            <option value="Vice Comandante">Vice Comandante</option>
+                            <option value="Dirigente Superiore">Dirigente Superiore</option>
+                            <option value="Dirigente">Dirigente</option>
+                            <option value="Vice Dirigente">Vice Dirigente</option>
+                            <option value="Sostituto Commissario">Sostituto Commissario</option>
+                            <option value="Commissario Capo">Commissario Capo</option>
+                            <option value="Commissario">Commissario</option>
+                            <option value="Vice Commissario">Vice Commissario</option>
+                            <option value="Ispettore Superiore">Ispettore Superiore</option>
+                            <option value="Ispettore Capo">Ispettore Capo</option>
+                            <option value="Ispettore">Ispettore</option>
+                            <option value="Sovrintendente Capo">Sovrintendente Capo</option>
+                            <option value="Sovrintendente">Sovrintendente</option>
+                            <option value="Assistente Capo">Assistente Capo</option>
+                            <option value="Assistente">Assistente</option>
+                            <option value="Agente Scelto">Agente Scelto</option>
+                            <option value="Agente">Agente</option>
+                            <option value="Allievo Agente">Allievo Agente</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -2075,7 +2265,7 @@
             { id: 3, type: 'warning', icon: 'fa-exclamation-triangle', text: 'Turno scadenza', time: '3 ore fa', unread: false }
         ];
 
-        // MULTI SELECT SYSTEM
+        // MULTI SELECT SYSTEM - CORRETTO
         const multiSelectStates = {
             activationOperators: [],
             patrolOperators: [],
@@ -2087,13 +2277,32 @@
             const selects = ['activationOperators', 'patrolOperators', 'deactivationOperators', 'requestOperators'];
             selects.forEach(id => {
                 const dropdown = document.getElementById(id + 'Dropdown');
-                if (dropdown) {
+                if (dropdown && personnelDatabase.length > 0) {
                     dropdown.innerHTML = personnelDatabase.map(p => `
-                        <div class="multi-select-option" onclick="toggleOption('${id}', '${p.fullName}', event)">
-                            <input type="checkbox" id="${id}_${p.fullName}">
-                            <label>${p.fullName} - ${p.qualification}</label>
+                        <div class="multi-select-option" data-value="${p.fullName}">
+                            <input type="checkbox" id="${id}_${p.id}" data-select="${id}" data-name="${p.fullName}">
+                            <label for="${id}_${p.id}">${p.fullName} - ${p.qualification}</label>
                         </div>
                     `).join('');
+
+                    // Aggiungi event listeners ai checkbox
+                    dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.addEventListener('change', function(e) {
+                            e.stopPropagation();
+                            const selectId = this.getAttribute('data-select');
+                            const name = this.getAttribute('data-name');
+                            
+                            if (this.checked) {
+                                if (!multiSelectStates[selectId].includes(name)) {
+                                    multiSelectStates[selectId].push(name);
+                                }
+                            } else {
+                                multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== name);
+                            }
+                            
+                            updateMultiSelectDisplay(selectId);
+                        });
+                    });
                 }
             });
         }
@@ -2106,26 +2315,12 @@
             document.querySelectorAll('.multi-select-dropdown').forEach(d => {
                 if (d.id !== id + 'Dropdown') d.classList.remove('show');
             });
+            document.querySelectorAll('.multi-select-display').forEach(d => {
+                if (d.id !== id + 'Display') d.classList.remove('open');
+            });
             
             dropdown.classList.toggle('show');
             display.classList.toggle('open');
-        }
-
-        function toggleOption(selectId, value, event) {
-            event.stopPropagation();
-            
-            const checkbox = document.getElementById(`${selectId}_${value}`);
-            checkbox.checked = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                if (!multiSelectStates[selectId].includes(value)) {
-                    multiSelectStates[selectId].push(value);
-                }
-            } else {
-                multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== value);
-            }
-            
-            updateMultiSelectDisplay(selectId);
         }
 
         function updateMultiSelectDisplay(id) {
@@ -2147,8 +2342,13 @@
         function removeOption(selectId, value, event) {
             event.stopPropagation();
             multiSelectStates[selectId] = multiSelectStates[selectId].filter(v => v !== value);
-            const checkbox = document.getElementById(`${selectId}_${value}`);
+            
+            // Deseleziona il checkbox
+            const dropdown = document.getElementById(selectId + 'Dropdown');
+            const checkbox = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'))
+                .find(cb => cb.getAttribute('data-name') === value);
             if (checkbox) checkbox.checked = false;
+            
             updateMultiSelectDisplay(selectId);
         }
 
@@ -2258,28 +2458,65 @@
             `).join('');
         }
 
-        function renderShiftsTable() {
-            const container = document.getElementById('shiftsTableContainer');
+        // SHIFT CARDS - NUOVO RENDERING
+        function renderShiftsCards() {
+            const container = document.getElementById('shiftsCardsContainer');
             
             if (shiftsDatabase.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno</h3></div>';
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Nessun turno registrato</h3></div>';
                 return;
             }
 
-            let html = '<table><thead><tr><th>👮 Operatore</th><th>📅 Data</th><th>🕐 Inizio</th><th>🕐 Fine</th><th>📝 Note</th></tr></thead><tbody>';
+            const recentShifts = shiftsDatabase.slice(-12).reverse();
             
-            shiftsDatabase.slice(-20).reverse().forEach((s) => {
-                html += `<tr>
-                    <td><strong>${s.operator}</strong></td>
-                    <td>${new Date(s.date).toLocaleDateString('it-IT')}</td>
-                    <td>${s.startTime}</td>
-                    <td>${s.endTime || '<span style="color:var(--accent)">In corso</span>'}</td>
-                    <td>${s.notes || '-'}</td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
+            container.innerHTML = recentShifts.map((s, index) => {
+                const date = new Date(s.date);
+                const initial = s.operator.charAt(0).toUpperCase();
+                const isActive = !s.endTime;
+                
+                return `
+                    <div class="shift-history-card">
+                        <div class="shift-card-header">
+                            <div class="shift-card-avatar">${initial}</div>
+                            <div class="shift-card-operator">
+                                <div class="shift-card-name">${s.operator}</div>
+                                <div class="shift-card-date">
+                                    <i class="fas fa-calendar"></i> ${date.toLocaleDateString('it-IT')}
+                                </div>
+                            </div>
+                            <div class="shift-status-badge ${isActive ? 'shift-status-active' : 'shift-status-completed'}">
+                                ${isActive ? 'In Corso' : 'Completato'}
+                            </div>
+                        </div>
+                        <div class="shift-card-body">
+                            <div class="shift-card-info">
+                                <div class="shift-card-info-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="shift-card-info-content">
+                                    <div class="shift-card-info-label">Inizio</div>
+                                    <div class="shift-card-info-value">${s.startTime}</div>
+                                </div>
+                            </div>
+                            <div class="shift-card-info">
+                                <div class="shift-card-info-icon">
+                                    <i class="fas fa-stop"></i>
+                                </div>
+                                <div class="shift-card-info-content">
+                                    <div class="shift-card-info-label">Fine</div>
+                                    <div class="shift-card-info-value">${s.endTime || 'In corso'}</div>
+                                </div>
+                            </div>
+                            ${s.notes ? `
+                                <div class="shift-card-notes">
+                                    <div class="shift-card-notes-label">📝 Note</div>
+                                    <div class="shift-card-notes-text">${s.notes}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadNotifications() {
@@ -2415,7 +2652,7 @@
             let html = '<table><thead><tr><th>🏅 Qualifica</th><th>🏛️ Nome</th><th>💬 Discord</th><th>🎭 Nominativo</th><th>⚡ Azioni</th></tr></thead><tbody>';
             
             personnelDatabase.forEach((p, i) => {
-                const colorClass = p.qualification.includes('Comandante') ? 'status-offline' : 'status-busy';
+                const colorClass = p.qualification.includes('Comandante') || p.qualification.includes('Dirigente') ? 'status-offline' : 'status-busy';
                 html += `<tr>
                     <td><span class="status-badge ${colorClass}">${p.qualification}</span></td>
                     <td>${p.fullName}</td>
@@ -2445,7 +2682,7 @@
             
             if (page === 'operations') {
                 renderActiveShifts();
-                renderShiftsTable();
+                renderShiftsCards();
                 initMultiSelects();
                 const operatorField = document.getElementById('shiftOperator');
                 if (operatorField && currentUser) {
@@ -2487,6 +2724,13 @@
             updateStats();
             initMultiSelects();
             closeModalFn('addPersonnelModal');
+            
+            // Resetta il form
+            document.getElementById('qualification').value = '';
+            document.getElementById('fullName').value = '';
+            document.getElementById('discordId').value = '';
+            document.getElementById('callSign').value = '';
+            
             alert(`✅ ${fullName} aggiunto!`);
         }
 
@@ -2521,10 +2765,14 @@
                     shiftsDatabase.push(newShift);
                     saveData();
                     renderActiveShifts();
-                    renderShiftsTable();
+                    renderShiftsCards();
                     updateStats();
-                    shiftForm.reset();
-                    document.getElementById('shiftOperator').value = currentUser.fullName || currentUser.username;
+                    
+                    // Reset form
+                    document.getElementById('shiftStartTime').value = '';
+                    document.getElementById('shiftEndTime').value = '';
+                    document.getElementById('shiftNotes').value = '';
+                    
                     alert('✅ Turno registrato!');
                 });
             }
@@ -2551,241 +2799,8 @@
                     
                     activationsDatabase.push(newActivation);
                     saveData();
+                    
+                    // Reset form
                     activationForm.reset();
                     multiSelectStates.activationOperators = [];
                     updateMultiSelectDisplay('activationOperators');
-                    alert('✅ Reparto attivato!');
-                });
-            }
-
-            // PATROL FORM
-            const patrolForm = document.getElementById('patrolForm');
-            if (patrolForm) {
-                patrolForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const operators = multiSelectStates.patrolOperators;
-                    if (operators.length < 2) {
-                        alert('❌ Seleziona almeno 2 operatori!');
-                        return;
-                    }
-                    
-                    const newPatrol = {
-                        id: Date.now(),
-                        operators: operators,
-                        vehicle: document.getElementById('patrolVehicle').value,
-                        type: document.getElementById('patrolType').value,
-                        date: new Date().toISOString()
-                    };
-                    
-                    patrolsDatabase.push(newPatrol);
-                    saveData();
-                    patrolForm.reset();
-                    multiSelectStates.patrolOperators = [];
-                    updateMultiSelectDisplay('patrolOperators');
-                    alert('✅ Pattuglia avviata!');
-                });
-            }
-
-            // DEACTIVATION FORM
-            const deactivationForm = document.getElementById('deactivationForm');
-            if (deactivationForm) {
-                deactivationForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const operators = multiSelectStates.deactivationOperators;
-                    if (operators.length === 0) {
-                        alert('❌ Seleziona almeno 1 operatore!');
-                        return;
-                    }
-                    
-                    const newDeactivation = {
-                        id: Date.now(),
-                        operators: operators,
-                        time: document.getElementById('deactivationTime').value,
-                        date: new Date().toISOString()
-                    };
-                    
-                    deactivationsDatabase.push(newDeactivation);
-                    saveData();
-                    deactivationForm.reset();
-                    multiSelectStates.deactivationOperators = [];
-                    updateMultiSelectDisplay('deactivationOperators');
-                    alert('✅ Disattivazione registrata!');
-                });
-            }
-
-            // REQUEST FORM
-            const requestForm = document.getElementById('requestForm');
-            if (requestForm) {
-                requestForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    
-                    const operators = multiSelectStates.requestOperators;
-                    if (operators.length < 2) {
-                        alert('❌ Seleziona almeno 2 operatori!');
-                        return;
-                    }
-                    
-                    const newRequest = {
-                        id: Date.now(),
-                        operators: operators,
-                        robberyType: document.getElementById('requestRobberyType').value,
-                        notes: document.getElementById('requestNotes').value,
-                        status: 'pending',
-                        requestedBy: currentUser?.fullName || currentUser?.username,
-                        date: new Date().toISOString()
-                    };
-                    
-                    requestsDatabase.push(newRequest);
-                    saveData();
-                    requestForm.reset();
-                    multiSelectStates.requestOperators = [];
-                    updateMultiSelectDisplay('requestOperators');
-                    alert('✅ Istanza inviata alla dirigenza!');
-                });
-            }
-        });
-
-        document.getElementById('discordBtn').addEventListener('click', () => {
-            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
-            window.location.href = url;
-        });
-
-        async function handleLogin(token) {
-            try {
-                document.getElementById('loadingOverlay').classList.add('show');
-                
-                const response = await fetch('https://discord.com/api/users/@me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                
-                const user = await response.json();
-                
-                if (!AUTHORIZED_USERS[user.id]) {
-                    throw new Error('Accesso negato');
-                }
-
-                currentUser = user;
-                const perms = AUTHORIZED_USERS[user.id];
-                currentUser.fullName = perms.fullName;
-                canAddPersonnel = perms.canAddPersonnel || false;
-
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('dashboard').classList.add('active');
-                document.getElementById('userName').textContent = user.username;
-                document.getElementById('userRank').textContent = perms.rank;
-                
-                if (user.avatar) {
-                    document.getElementById('userAvatar').style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png)`;
-                    document.getElementById('userAvatar').textContent = '';
-                }
-
-                if (perms.isAdmin) {
-                    document.getElementById('adminBadge').style.display = 'flex';
-                }
-
-                if (canAddPersonnel) {
-                    document.getElementById('addPersonnelBtn').style.display = 'inline-flex';
-                }
-
-                renderTable();
-                updateStats();
-                loadNotifications();
-                renderActiveShifts();
-                initMultiSelects();
-                initCharts();
-                document.getElementById('loadingOverlay').classList.remove('show');
-                
-            } catch (error) {
-                document.getElementById('errorText').textContent = error.message;
-                document.getElementById('errorMessage').classList.add('show');
-                document.getElementById('loadingOverlay').classList.remove('show');
-            }
-        }
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Uscire?')) location.reload();
-        });
-
-        function initCharts() {
-            try {
-                const activityCtx = document.getElementById('activityChart');
-                if (activityCtx && !activityCtx.chart) {
-                    activityCtx.chart = new Chart(activityCtx, {
-                        type: 'line',
-                        data: {
-                            labels: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
-                            datasets: [{
-                                label: 'Interventi',
-                                data: [12, 19, 8, 15, 7, 9, 18],
-                                borderColor: '#3b82f6',
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                tension: 0.4,
-                                fill: true,
-                                borderWidth: 3
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: { beginAtZero: true, grid: { color: '#475569' }, ticks: { color: '#94a3b8' } },
-                                x: { grid: { color: '#475569' }, ticks: { color: '#94a3b8' } }
-                            }
-                        }
-                    });
-                }
-
-                const personnelCtx = document.getElementById('personnelChart');
-                if (personnelCtx && !personnelCtx.chart) {
-                    const total = personnelDatabase.length;
-                    personnelCtx.chart = new Chart(personnelCtx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['In Servizio', 'Riposo', 'Ferie', 'Formazione'],
-                            datasets: [{
-                                data: [Math.floor(total * 0.3), Math.floor(total * 0.5), Math.floor(total * 0.15), Math.floor(total * 0.05)],
-                                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
-                                borderWidth: 0,
-                                cutout: '60%'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { color: '#94a3b8', padding: 20, usePointStyle: true }
-                                }
-                            }
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error('Errore grafici:', e);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            loadData();
-            loadNotifications();
-            
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token=')) {
-                const token = new URLSearchParams(hash.substr(1)).get('access_token');
-                window.history.replaceState({}, '', window.location.pathname);
-                handleLogin(token);
-            }
-        });
-
-        setInterval(() => {
-            if (document.getElementById('page-operations').classList.contains('active')) {
-                renderActiveShifts();
-            }
-        }, 30000);
-
-        console.log('🚁 U.O.P.I. Dashboard v12.0 - TUTTI I MODULI COMPLETI CON MULTI-SELECT');
-    </script>
-</body>
-</html>
