@@ -267,14 +267,8 @@
             box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
             animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .alert-box i {
-            font-size: 1.8rem;
-            color: var(--warning);
-            flex-shrink: 0;
-        }
-        .alert-box strong {
-            color: var(--warning);
-        }
+        .alert-box i { font-size: 1.8rem; color: var(--warning); flex-shrink: 0; }
+        .alert-box strong { color: var(--warning); }
 
         /* DASHBOARD STYLES */
         .dashboard {
@@ -700,10 +694,11 @@
 
         .content-area {
             flex: 1;
-            padding: 2rem;
+            padding: 2rem 3rem;
             background: rgba(15, 23, 42, 0.5);
             min-height: calc(100vh - 80px);
             overflow-y: auto;
+            max-width: 100%;
         }
 
         .page {
@@ -859,10 +854,12 @@
         .operation-card:nth-child(2) { animation-delay: 0.2s; }
         .operation-card:nth-child(3) { animation-delay: 0.3s; }
         .operation-card:nth-child(4) { animation-delay: 0.4s; }
+
         .operation-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
+
         .operation-card.shift { border-color: var(--accent); }
         .operation-card.activation { border-color: var(--primary); }
         .operation-card.patrol { border-color: var(--secondary); }
@@ -1038,9 +1035,9 @@
         }
 
         .vehicle-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
             border-color: var(--primary-light);
-            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
         }
 
         .vehicle-image {
@@ -1112,21 +1109,36 @@
         /* STATISTICS */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
             margin-bottom: 3rem;
         }
 
+        @media (max-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         .stat-card {
-            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 2rem;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
         }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
 
         .stat-card::before {
             content: '';
@@ -1138,10 +1150,6 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .stat-card:nth-child(4) { animation-delay: 0.4s; }
         .stat-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);
@@ -1157,15 +1165,16 @@
         }
 
         .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.6rem;
             color: white;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .stat-icon.primary { background: var(--primary); }
@@ -1187,9 +1196,9 @@
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
             line-height: 1;
         }
 
@@ -1202,7 +1211,7 @@
         .charts-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
+            gap: 2rem;
             margin-bottom: 3rem;
         }
 
