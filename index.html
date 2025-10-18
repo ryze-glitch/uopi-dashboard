@@ -4879,7 +4879,12 @@
         // Inizializza i grafici Chart.js
         function initializeCharts() {
             // Grafico operazioni
-            const operationsCtx = document.getElementById('operationsChart').getContext('2d');
+            const operationsChart = document.getElementById('operationsChart');
+            if (!operationsChart) {
+                console.warn('⚠️ Elemento operationsChart non trovato, grafici saltati');
+                return;
+            }
+            const operationsCtx = operationsChart.getContext('2d');
             new Chart(operationsCtx, {
                 type: 'line',
                 data: {
@@ -7593,9 +7598,17 @@
         function forceInitializeNavigation() {
             console.log('🔥 FORZA INIZIALIZZAZIONE NAVIGAZIONE');
             
-            // Gestisci NAVBAR DELL'HEADER (in alto)
-            const headerNavItems = document.querySelectorAll('.main-nav .nav-item');
-            console.log('🎯 Navbar header trovata:', headerNavItems.length, 'elementi');
+            // Aspetta che il DOM sia completamente caricato
+            setTimeout(() => {
+                // Gestisci NAVBAR DELL'HEADER (in alto)
+                const headerNavItems = document.querySelectorAll('.main-nav .nav-item');
+                console.log('🎯 Navbar header trovata:', headerNavItems.length, 'elementi');
+                
+                if (headerNavItems.length === 0) {
+                    console.warn('⚠️ Nessun elemento header trovato, riprovo tra 500ms...');
+                    setTimeout(() => forceInitializeNavigation(), 500);
+                    return;
+                }
             
             headerNavItems.forEach((item, index) => {
                 console.log(`🔗 Header Nav ${index + 1}:`, item.dataset.page);
@@ -7643,9 +7656,9 @@
                 });
             });
             
-            // Gestisci SIDEBAR NAV (laterale)
-            const sidebarNavItems = document.querySelectorAll('.sidebar-nav .nav-item');
-            console.log('🎯 Sidebar nav trovata:', sidebarNavItems.length, 'elementi');
+                // Gestisci SIDEBAR NAV (laterale)
+                const sidebarNavItems = document.querySelectorAll('.sidebar-nav .nav-item');
+                console.log('🎯 Sidebar nav trovata:', sidebarNavItems.length, 'elementi');
             
             sidebarNavItems.forEach((item, index) => {
                 console.log(`🔗 Sidebar Nav ${index + 1}:`, item.dataset.page);
@@ -7693,7 +7706,8 @@
                 });
             });
             
-            console.log('✅ NAVIGAZIONE FORZATA INIZIALIZZATA - Header:', headerNavItems.length, 'Sidebar:', sidebarNavItems.length);
+                console.log('✅ NAVIGAZIONE FORZATA INIZIALIZZATA - Header:', headerNavItems.length, 'Sidebar:', sidebarNavItems.length);
+            }, 100); // Chiusura del setTimeout
         }
 
         // Test specifico per la navbar dell'header
@@ -7754,7 +7768,7 @@
         // Inizializza le sezioni quando la dashboard viene caricata
         setTimeout(() => {
             forceInitializeNavigation();
-        }, 1000);
+        }, 2000);
 
         // Log di conferma - Sistema Ufficiale
         console.log('🚁 U.O.P.I. Dashboard - Sistema Ufficiale');
