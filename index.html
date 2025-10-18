@@ -581,6 +581,58 @@
             color: #ffffff;
         }
 
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            color: #374151;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .user-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-menu-item:hover {
+            background: #f9fafb;
+            color: var(--primary);
+        }
+
+        .user-menu-item i {
+            width: 16px;
+            text-align: center;
+        }
+
         .logout-btn {
             background: var(--danger);
             border: none;
@@ -2929,6 +2981,16 @@
         }
 
         function clearDiscordAuth() {
+            // Rimuovi solo la sessione attiva, mantieni l'autorizzazione permanente
+            localStorage.removeItem('discord_auth');
+            sessionStorage.removeItem('discord_session');
+            
+            // NON rimuovere i cookie - mantieni l'autorizzazione permanente
+            console.log('Sessione Discord chiusa, autorizzazione permanente mantenuta');
+        }
+
+        function clearAllDiscordAuth() {
+            // Funzione per rimuovere completamente l'autorizzazione (solo per admin)
             localStorage.removeItem('discord_auth');
             sessionStorage.removeItem('discord_session');
             
@@ -2976,16 +3038,92 @@
             return false;
         }
 
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Chiudi il menu utente quando si clicca fuori
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('userMenu');
+            const profile = document.querySelector('.user-profile');
+            
+            if (menu && profile && !profile.contains(event.target) && !menu.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function revokeAllAuth() {
+            if (confirm('Sei sicuro di voler rimuovere completamente l\'autorizzazione Discord? Dovrai riautorizzare l\'applicazione.')) {
+                clearAllDiscordAuth();
+                showSuccess('Autorizzazione Discord rimossa completamente');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            }
+        }
+
         function logoutDiscord() {
-            // Rimuovi l'autorizzazione salvata
+            // Rimuovi solo la sessione attiva, mantieni l'autorizzazione permanente
             clearDiscordAuth();
             
             // Mostra messaggio di logout
-            showSuccess('Logout completato');
+            showSuccess('Logout completato - autorizzazione mantenuta');
             
-            // Torna alla schermata di login dopo un breve delay
+            // Torna alla schermata di login senza ricaricare la pagina
             setTimeout(() => {
-                location.reload();
+                // Nascondi la dashboard e mostra la schermata di login
+                document.getElementById('app').innerHTML = `
+                    <div class="login-container">
+                        <div class="login-card">
+                            <div class="login-header">
+                                <img src="https://i.imgur.com/B6E4u1X.png" alt="UOPI Logo" class="login-logo">
+                                <div class="login-badge">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Sistema Sicuro</span>
+                                </div>
+                            </div>
+                            
+                            <h1 class="login-title">U.O.P.I.</h1>
+                            <p class="login-subtitle">Unità Operativa di Primo Intervento</p>
+                            <p class="login-description">Sistema di gestione operativa modernizzato con design professionale e funzionalità avanzate.</p>
+                            
+                            <div id="errorMessage" class="error-message">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span id="errorText">Errore durante l'autenticazione</span>
+                            </div>
+                            
+                            <div id="successMessage" class="success-message">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="successText">Autenticazione completata con successo!</span>
+                            </div>
+                            
+                            <button id="discordBtn" class="demo-btn">
+                                <div class="demo-icon">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <span>Accedi con Discord</span>
+                            </button>
+                            
+                            <div class="login-footer">
+                                <p>Sistema di gestione operativa U.O.P.I.</p>
+                                <p>Per supporto tecnico contatta l'amministratore</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Aggiorna il bottone Discord per mostrare l'accesso diretto disponibile
+                updateDiscordButton();
+                
+                // Mostra messaggio che l'accesso diretto è disponibile
+                setTimeout(() => {
+                    showSuccess('Accesso diretto disponibile - clicca il bottone per entrare');
+                }, 500);
+                
             }, 1500);
         }
 
@@ -3265,15 +3403,24 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="user-profile">
-                                    <div class="user-avatar">
+                                <div class="user-profile" style="position: relative;">
+                                    <div class="user-avatar" onclick="toggleUserMenu()">
                                         <i class="fas fa-user-shield"></i>
                                     </div>
                                     <span class="user-name">${user.username}</span>
+                                    
+                                    <!-- User Menu Dropdown -->
+                                    <div class="user-menu" id="userMenu" style="display: none;">
+                                        <div class="user-menu-item" onclick="logoutDiscord()">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>Logout</span>
+                                        </div>
+                                        <div class="user-menu-item" onclick="revokeAllAuth()">
+                                            <i class="fas fa-ban"></i>
+                                            <span>Rimuovi Autorizzazione</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="icon-btn logout" onclick="logoutDiscord()">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </button>
                             </div>
                         </div>
                     </header>
