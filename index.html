@@ -8588,11 +8588,11 @@
                         <p>Amministrazione completa degli operatori U.O.P.I.</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn-primary" onclick="showAddOperatorModal()" id="addOperatorBtn" style="display: none;">
+                        <button class="btn-primary" onclick="showAddOperatorModal()" id="addOperatorBtn">
                             <i class="fas fa-user-plus"></i>
                             Aggiungi Operatore
                         </button>
-                        <button class="btn-danger" onclick="removeFakeOperators()" id="removeFakeBtn" style="display: none;">
+                        <button class="btn-danger" onclick="removeFakeOperators()" id="removeFakeBtn">
                             <i class="fas fa-trash"></i>
                             Rimuovi Fake
                         </button>
@@ -8739,77 +8739,142 @@
             }
         }
 
-        // Mostra modal per aggiungere nuovo operatore
+        // Mostra modal per aggiungere nuovo operatore - VERSIONE MODERNA
         function showAddOperatorModal() {
             console.log('🏅 Apertura modal aggiungi operatore');
             
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
+            modal.style.opacity = '0';
             modal.innerHTML = `
-                <div class="modal-content">
+                <div class="modal-container">
                     <div class="modal-header">
-                        <h2>🏅 Aggiungi Nuovo Operatore</h2>
-                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                        <h3>🏅 Aggiungi Nuovo Operatore</h3>
+                        <button class="modal-close" onclick="closeOperatorModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="modal-body">
                         <form id="addOperatorForm">
-                            <div class="form-group">
-                                <label>Nome Completo</label>
-                                <input type="text" id="operatorName" placeholder="Es: Mario Rossi" required>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome Completo</label>
+                                    <input type="text" id="operatorName" placeholder="Es: Mario Rossi" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Matricola</label>
+                                    <input type="text" id="operatorMatricola" placeholder="Es: UOPI-001" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Matricola</label>
-                                <input type="text" id="operatorMatricola" placeholder="Es: UOPI-001" required>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Grado</label>
+                                    <select id="operatorRank" required>
+                                        <option value="">Seleziona Grado</option>
+                                        <option value="Generale">Generale</option>
+                                        <option value="Colonnello">Colonnello</option>
+                                        <option value="Maggiore">Maggiore</option>
+                                        <option value="Capitano">Capitano</option>
+                                        <option value="Tenente">Tenente</option>
+                                        <option value="Sottotenente">Sottotenente</option>
+                                        <option value="Maresciallo">Maresciallo</option>
+                                        <option value="Sergente">Sergente</option>
+                                        <option value="Caporale">Caporale</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Specializzazione</label>
+                                    <select id="operatorSpecialization" required>
+                                        <option value="">Seleziona Specializzazione</option>
+                                        <option value="Pilota">Pilota</option>
+                                        <option value="Medico">Medico</option>
+                                        <option value="Tecnico">Tecnico</option>
+                                        <option value="Operatore Radio">Operatore Radio</option>
+                                        <option value="Sicurezza">Sicurezza</option>
+                                        <option value="Logistica">Logistica</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Grado</label>
-                                <input type="text" id="operatorRank" placeholder="Es: Tenente, Capitano, Maggiore..." required>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Squadra</label>
+                                    <select id="operatorTeam" required>
+                                        <option value="">Seleziona Squadra</option>
+                                        <option value="Alpha">Squadra Alpha</option>
+                                        <option value="Beta">Squadra Beta</option>
+                                        <option value="Gamma">Squadra Gamma</option>
+                                        <option value="Delta">Squadra Delta</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Esperienza</label>
+                                    <input type="text" id="operatorExperience" placeholder="Es: 5 anni" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Specializzazione</label>
-                                <input type="text" id="operatorSpecialization" placeholder="Es: Pilota, Medico, Tecnico..." required>
-                            </div>
-                            <div class="form-group">
-                                <label>Squadra</label>
-                                <input type="text" id="operatorTeam" placeholder="Es: Squadra Alpha, Squadra Beta..." required>
-                            </div>
-                            <div class="form-group">
-                                <label>Esperienza (anni)</label>
-                                <input type="number" id="operatorExperience" min="0" max="30" placeholder="Es: 5" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Telefono</label>
-                                <input type="tel" id="operatorPhone" placeholder="Es: +39 123 456 7890">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="operatorEmail" placeholder="Es: mario.rossi@uopi.it">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Telefono</label>
+                                    <input type="tel" id="operatorPhone" placeholder="Es: +39 123 456 7890">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="operatorEmail" placeholder="Es: mario.rossi@uopi.it">
+                                </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn-secondary" onclick="closeModal()">Annulla</button>
-                        <button class="btn-primary" onclick="addNewOperator()">Aggiungi Operatore</button>
+                        <button class="btn-secondary" onclick="closeOperatorModal()">
+                            <i class="fas fa-times"></i>
+                            Annulla
+                        </button>
+                        <button class="btn-primary" onclick="addNewOperator()">
+                            <i class="fas fa-save"></i>
+                            Aggiungi Operatore
+                        </button>
                     </div>
                 </div>
             `;
             
             document.body.appendChild(modal);
+            
+            // Animazione di apertura
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // Chiudi cliccando fuori
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeOperatorModal();
+                }
+            });
         }
 
-        // Aggiunge nuovo operatore
+        // Chiudi modal operatore
+        function closeOperatorModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
+        // Aggiunge nuovo operatore - VERSIONE MODERNA
         function addNewOperator() {
-            const name = document.getElementById('operatorName').value;
-            const matricola = document.getElementById('operatorMatricola').value;
-            const rank = document.getElementById('operatorRank').value;
-            const specialization = document.getElementById('operatorSpecialization').value;
-            const team = document.getElementById('operatorTeam').value;
-            const experience = document.getElementById('operatorExperience').value;
-            const phone = document.getElementById('operatorPhone').value;
-            const email = document.getElementById('operatorEmail').value;
+            const name = document.getElementById('operatorName')?.value;
+            const matricola = document.getElementById('operatorMatricola')?.value;
+            const rank = document.getElementById('operatorRank')?.value;
+            const specialization = document.getElementById('operatorSpecialization')?.value;
+            const team = document.getElementById('operatorTeam')?.value;
+            const experience = document.getElementById('operatorExperience')?.value;
+            const phone = document.getElementById('operatorPhone')?.value || 'Non specificato';
+            const email = document.getElementById('operatorEmail')?.value || 'Non specificato';
             
             if (!name || !matricola || !rank || !specialization || !team || !experience) {
-                alert('Compila tutti i campi obbligatori!');
+                showError('⚠️ Compila tutti i campi obbligatori!');
                 return;
             }
             
@@ -8817,12 +8882,39 @@
                 name, matricola, rank, specialization, team, experience, phone, email 
             });
             
-            // Simula aggiunta operatore
-            alert(`Operatore ${name} (${matricola}) aggiunto con successo!\n\nDettagli:\n- Grado: ${rank}\n- Specializzazione: ${specialization}\n- Squadra: ${team}\n- Esperienza: ${experience} anni`);
-            closeModal();
+            // Mostra loading
+            showLoadingOverlay('Salvataggio operatore...');
             
-            // Ricarica i dati
-            loadPersonnelData();
+            setTimeout(() => {
+                hideLoadingOverlay();
+                
+                // Aggiungi il nuovo operatore ai dati
+                const newOperator = {
+                    id: personnelData.length + 1,
+                    name: name,
+                    rank: rank,
+                    specialization: specialization,
+                    status: "available",
+                    team: team,
+                    experience: experience,
+                    phone: phone,
+                    email: email,
+                    avatar: name.split(' ').map(n => n[0]).join('')
+                };
+                
+                personnelData.push(newOperator);
+                
+                // Mostra successo
+                showSuccess(`✅ Operatore ${name} aggiunto con successo!`);
+                
+                // Chiudi modal
+                closeOperatorModal();
+                
+                // Ricarica i dati se la tabella è visibile
+                if (document.getElementById('personnelTableBody')) {
+                    loadPersonnelData();
+                }
+            }, 1500);
         }
 
         // Rimuove operatori fake
