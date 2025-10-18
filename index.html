@@ -2851,6 +2851,66 @@
             return window.location.protocol === 'file:';
         }
 
+        // Sistema di memorizzazione autorizzazione Discord
+        function saveDiscordAuth(userData, token) {
+            const authData = {
+                user: userData,
+                token: token,
+                timestamp: Date.now(),
+                expires: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 giorni
+            };
+            localStorage.setItem('discord_auth', JSON.stringify(authData));
+            console.log('Autorizzazione Discord salvata nel localStorage');
+        }
+
+        function getDiscordAuth() {
+            try {
+                const authData = localStorage.getItem('discord_auth');
+                if (!authData) return null;
+                
+                const parsed = JSON.parse(authData);
+                
+                // Controlla se l'autorizzazione è scaduta
+                if (Date.now() > parsed.expires) {
+                    localStorage.removeItem('discord_auth');
+                    console.log('Autorizzazione Discord scaduta, rimossa');
+                    return null;
+                }
+                
+                return parsed;
+            } catch (error) {
+                console.error('Errore nel recupero autorizzazione:', error);
+                localStorage.removeItem('discord_auth');
+                return null;
+            }
+        }
+
+        function clearDiscordAuth() {
+            localStorage.removeItem('discord_auth');
+            console.log('Autorizzazione Discord rimossa');
+        }
+
+        function isDiscordAuthValid() {
+            const authData = getDiscordAuth();
+            if (!authData) return false;
+            
+            // Verifica che l'utente sia ancora autorizzato
+            return AUTHORIZED_USERS[authData.user.id] !== undefined;
+        }
+
+        function logoutDiscord() {
+            // Rimuovi l'autorizzazione salvata
+            clearDiscordAuth();
+            
+            // Mostra messaggio di logout
+            showSuccess('Logout completato');
+            
+            // Torna alla schermata di login dopo un breve delay
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        }
+
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
@@ -2897,9 +2957,52 @@
             window.location.href = url;
         });
 
+        // Aggiorna il bottone Discord se c'è già un'autorizzazione
+        function updateDiscordButton() {
+            const btn = document.getElementById('discordBtn');
+            if (!btn) return;
+            
+            if (isDiscordAuthValid()) {
+                const authData = getDiscordAuth();
+                btn.innerHTML = `
+                    <div class="demo-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <span>Accesso automatico disponibile</span>
+                `;
+                btn.style.opacity = '0.7';
+                btn.title = `Autorizzato come ${authData.user.username}`;
+            } else {
+                btn.innerHTML = `
+                    <div class="demo-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <span>Accedi con Discord</span>
+                `;
+                btn.style.opacity = '1';
+                btn.title = '';
+            }
+        }
+
         // Gestione callback OAuth2
         window.addEventListener('load', () => {
             showLocalDevelopmentWarning();
+            
+            // Aggiorna il bottone Discord
+            updateDiscordButton();
+            
+            // Verifica se c'è già un'autorizzazione valida salvata
+            if (isDiscordAuthValid()) {
+                const authData = getDiscordAuth();
+                console.log('Autorizzazione Discord trovata, accesso automatico...');
+                showSuccess('Accesso automatico in corso...');
+                
+                setTimeout(() => {
+                    const userInfo = AUTHORIZED_USERS[authData.user.id];
+                    showModernDashboard(authData.user, userInfo);
+                }, 1500);
+                return;
+            }
             
             const hash = window.location.hash;
             if (hash && hash.includes('access_token=')) {
@@ -2938,6 +3041,9 @@
 
                 const userInfo = AUTHORIZED_USERS[user.id];
                 showSuccess(`Benvenuto ${user.username}!`);
+                
+                // Salva l'autorizzazione per le prossime volte
+                saveDiscordAuth(user, token);
                 
                 // Mostra dashboard moderna
                 setTimeout(() => {
@@ -3060,7 +3166,7 @@
                                     </div>
                                     <span class="user-name">${user.username}</span>
                                 </div>
-                                <button class="icon-btn logout" onclick="location.reload()">
+                                <button class="icon-btn logout" onclick="logoutDiscord()">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </button>
                             </div>
@@ -5060,4 +5166,3 @@
     </script>
 </body>
 </html>
-
