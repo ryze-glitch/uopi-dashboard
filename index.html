@@ -7548,6 +7548,24 @@
             console.log('Funzionalità turni inizializzate');
         }
 
+        // Funzione per inizializzare le sezioni della dashboard
+        function initializeDashboardSections() {
+            console.log('Inizializzazione sezioni dashboard...');
+            
+            // Aggiungi event listeners ai link della navbar
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = item.getAttribute('data-page');
+                    console.log('Sezione cliccata:', section);
+                    loadDashboardSection(section);
+                });
+            });
+            
+            console.log('Sezioni dashboard inizializzate');
+        }
+
         // Inizializza le sezioni quando la dashboard viene caricata
         setTimeout(() => {
             initializeDashboardSections();
