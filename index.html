@@ -7722,46 +7722,47 @@
             initializeAnimations();
         }
 
-        // Gestione notifiche
+        // Gestione notifiche - VERSIONE ROBUSTA
         function initializeNotifications() {
+            console.log('🔔 Inizializzazione notifiche...');
+            
             const notificationBtn = document.getElementById('notificationBtn');
             const notificationsDropdown = document.getElementById('notificationsDropdown');
             const notificationBadge = document.getElementById('notificationBadge');
             const markAllReadBtn = document.getElementById('markAllRead');
 
-            // Toggle dropdown notifiche
-            notificationBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notificationsDropdown.classList.toggle('show');
-            });
-
-            // Chiudi dropdown quando si clicca fuori
-            document.addEventListener('click', () => {
-                notificationsDropdown.classList.remove('show');
-            });
-
-            // Segna tutto come letto
-            markAllReadBtn.addEventListener('click', () => {
-                const unreadItems = document.querySelectorAll('.notification-item.unread');
-                unreadItems.forEach(item => {
-                    item.classList.remove('unread');
+            // Toggle dropdown notifiche (se esiste)
+            if (notificationBtn && notificationsDropdown) {
+                notificationBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notificationsDropdown.classList.toggle('show');
                 });
-                notificationBadge.textContent = '0';
-                notificationBadge.style.display = 'none';
-            });
 
-            // Simula nuove notifiche ogni 30 secondi
-            setInterval(() => {
-                const currentCount = parseInt(notificationBadge.textContent);
-                if (currentCount < 5) {
-                    notificationBadge.textContent = currentCount + 1;
-                    notificationBadge.style.display = 'block';
-                }
-            }, 30000);
+                // Chiudi dropdown quando si clicca fuori
+                document.addEventListener('click', () => {
+                    notificationsDropdown.classList.remove('show');
+                });
+            }
+
+            // Segna tutto come letto (se esiste)
+            if (markAllReadBtn && notificationBadge) {
+                markAllReadBtn.addEventListener('click', () => {
+                    const unreadItems = document.querySelectorAll('.notification-item.unread');
+                    unreadItems.forEach(item => {
+                        item.classList.remove('unread');
+                    });
+                    notificationBadge.textContent = '0';
+                    notificationBadge.style.display = 'none';
+                });
+            }
+
+            console.log('✅ Notifiche inizializzate');
         }
 
-        // Gestione ricerca e filtri
+        // Gestione ricerca e filtri - VERSIONE ROBUSTA
         function initializeSearchAndFilters() {
+            console.log('🔍 Inizializzazione ricerca e filtri...');
+            
             const searchInput = document.getElementById('globalSearch');
             const searchClear = document.getElementById('searchClear');
             const filterBtn = document.getElementById('filterBtn');
@@ -7770,221 +7771,191 @@
             const clearFilters = document.getElementById('clearFilters');
             const applyFilters = document.getElementById('applyFilters');
 
-            // Gestione ricerca
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                if (query.length > 0) {
-                    searchClear.style.display = 'block';
-                    // Implementa logica di ricerca
-                    console.log('Ricerca:', query);
-                } else {
-                    searchClear.style.display = 'none';
-                }
-            });
-
-            // Pulisci ricerca
-            searchClear.addEventListener('click', () => {
-                searchInput.value = '';
-                searchClear.style.display = 'none';
-            });
-
-            // Toggle filtri
-            filterBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                filterPanel.classList.toggle('show');
-            });
-
-            // Chiudi filtri quando si clicca fuori
-            document.addEventListener('click', () => {
-                filterPanel.classList.remove('show');
-            });
-
-            // Conta filtri attivi
-            const filterCheckboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
-            filterCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const activeFilters = filterPanel.querySelectorAll('input[type="checkbox"]:checked').length;
-                    filterCount.textContent = activeFilters;
-                    filterCount.style.display = activeFilters > 0 ? 'block' : 'none';
-                });
-            });
-
-            // Cancella filtri
-            clearFilters.addEventListener('click', () => {
-                filterCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                filterCount.textContent = '0';
-                filterCount.style.display = 'none';
-            });
-
-            // Applica filtri
-            applyFilters.addEventListener('click', () => {
-                const activeFilters = Array.from(filterCheckboxes)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                console.log('Filtri applicati:', activeFilters);
-                filterPanel.classList.remove('show');
-            });
-        }
-
-        // Gestione modal
-        function initializeModals() {
-            // Modal Personale
-            const addPersonnelBtn = document.getElementById('addPersonnelBtn');
-            const personnelModal = document.getElementById('personnelModal');
-            const closePersonnelModal = document.getElementById('closePersonnelModal');
-            const cancelPersonnel = document.getElementById('cancelPersonnel');
-            const savePersonnel = document.getElementById('savePersonnel');
-
-            addPersonnelBtn.addEventListener('click', () => {
-                personnelModal.style.display = 'flex';
-            });
-
-            closePersonnelModal.addEventListener('click', () => {
-                personnelModal.style.display = 'none';
-            });
-
-            cancelPersonnel.addEventListener('click', () => {
-                personnelModal.style.display = 'none';
-            });
-
-            savePersonnel.addEventListener('click', (e) => {
-                e.preventDefault();
-                const form = document.getElementById('personnelForm');
-                const formData = new FormData(form);
-                
-                // Simula salvataggio
-                console.log('Personale salvato:', Object.fromEntries(formData));
-                showSuccess('Personale aggiunto con successo!');
-                personnelModal.style.display = 'none';
-                form.reset();
-            });
-
-            // Modal Operazione
-            const newOperationBtn = document.getElementById('newOperationBtn');
-            const operationModal = document.getElementById('operationModal');
-            const closeOperationModal = document.getElementById('closeOperationModal');
-            const cancelOperation = document.getElementById('cancelOperation');
-            const saveOperation = document.getElementById('saveOperation');
-
-            newOperationBtn.addEventListener('click', () => {
-                operationModal.style.display = 'flex';
-            });
-
-            closeOperationModal.addEventListener('click', () => {
-                operationModal.style.display = 'none';
-            });
-
-            cancelOperation.addEventListener('click', () => {
-                operationModal.style.display = 'none';
-            });
-
-            saveOperation.addEventListener('click', (e) => {
-                e.preventDefault();
-                const form = document.getElementById('operationForm');
-                const formData = new FormData(form);
-                
-                // Simula creazione operazione
-                console.log('Operazione creata:', Object.fromEntries(formData));
-                showSuccess('Operazione avviata con successo!');
-                operationModal.style.display = 'none';
-                form.reset();
-            });
-
-            // Chiudi modal cliccando fuori
-            [personnelModal, operationModal].forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
+            // Gestione ricerca (se esiste)
+            if (searchInput && searchClear) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    if (query.length > 0) {
+                        searchClear.style.display = 'block';
+                        console.log('Ricerca:', query);
+                    } else {
+                        searchClear.style.display = 'none';
                     }
                 });
-            });
+
+                searchClear.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchClear.style.display = 'none';
+                });
+            }
+
+            // Toggle filtri (se esiste)
+            if (filterBtn && filterPanel) {
+                filterBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    filterPanel.classList.toggle('show');
+                });
+
+                document.addEventListener('click', () => {
+                    filterPanel.classList.remove('show');
+                });
+
+                // Conta filtri attivi
+                const filterCheckboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
+                if (filterCheckboxes.length > 0 && filterCount) {
+                    filterCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', () => {
+                            const activeFilters = filterPanel.querySelectorAll('input[type="checkbox"]:checked').length;
+                            filterCount.textContent = activeFilters;
+                            filterCount.style.display = activeFilters > 0 ? 'block' : 'none';
+                        });
+                    });
+
+                    // Cancella filtri
+                    if (clearFilters) {
+                        clearFilters.addEventListener('click', () => {
+                            filterCheckboxes.forEach(checkbox => {
+                                checkbox.checked = false;
+                            });
+                            filterCount.textContent = '0';
+                            filterCount.style.display = 'none';
+                        });
+                    }
+
+                    // Applica filtri
+                    if (applyFilters) {
+                        applyFilters.addEventListener('click', () => {
+                            const activeFilters = Array.from(filterCheckboxes)
+                                .filter(cb => cb.checked)
+                                .map(cb => cb.value);
+                            console.log('Filtri applicati:', activeFilters);
+                            filterPanel.classList.remove('show');
+                        });
+                    }
+                }
+            }
+            
+            console.log('✅ Ricerca e filtri inizializzati');
         }
 
-        // Gestione operazioni avanzate
+        // Gestione modal - VERSIONE AGGIORNATA
+        function initializeModals() {
+            console.log('🎭 Inizializzazione modals...');
+            
+            // I pulsanti usano onclick direttamente, non serve aggiungere event listeners qui
+            // Le funzioni showAddOperatorModal(), showAddShiftModal(), etc. gestiscono tutto
+            
+            console.log('✅ Sistema modal pronto (gestito tramite onclick)');
+        }
+
+        // Gestione operazioni avanzate - VERSIONE ROBUSTA
         function initializeOperationsManagement() {
+            console.log('🚁 Inizializzazione gestione operazioni...');
+            
             const refreshBtn = document.getElementById('refreshBtn');
             const sortSelect = document.getElementById('sortOperations');
             const viewToggle = document.querySelectorAll('.toggle-btn');
 
-            // Aggiorna operazioni
-            refreshBtn.addEventListener('click', () => {
-                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aggiornamento...';
-                setTimeout(() => {
-                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Aggiorna';
-                    showSuccess('Operazioni aggiornate!');
-                }, 2000);
-            });
-
-            // Ordinamento operazioni
-            sortSelect.addEventListener('change', (e) => {
-                console.log('Ordinamento per:', e.target.value);
-                // Implementa logica di ordinamento
-            });
-
-            // Toggle vista griglia/lista
-            viewToggle.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    viewToggle.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    console.log('Vista cambiata:', btn.dataset.view);
+            // Aggiorna operazioni (se il pulsante esiste)
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aggiornamento...';
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Aggiorna';
+                        showSuccess('Operazioni aggiornate!');
+                    }, 2000);
                 });
-            });
+            }
+
+            // Ordinamento operazioni (se esiste)
+            if (sortSelect) {
+                sortSelect.addEventListener('change', (e) => {
+                    console.log('Ordinamento per:', e.target.value);
+                });
+            }
+
+            // Toggle vista griglia/lista (se esistono)
+            if (viewToggle.length > 0) {
+                viewToggle.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        viewToggle.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        console.log('Vista cambiata:', btn.dataset.view);
+                    });
+                });
+            }
+            
+            console.log('✅ Gestione operazioni inizializzata');
         }
 
-        // Gestione Turni
+        // Gestione Turni - VERSIONE ROBUSTA
         function initializeShiftsManagement() {
-            // Filtri turni
+            console.log('🕐 Inizializzazione gestione turni...');
+            
+            // Filtri turni (se esistono)
             const shiftFilters = document.querySelectorAll('.shift-filter');
-            shiftFilters.forEach(filter => {
-                filter.addEventListener('click', (e) => {
-                    shiftFilters.forEach(f => f.classList.remove('active'));
-                    e.target.classList.add('active');
-                    const filterType = e.target.textContent.toLowerCase();
-                    filterShifts(filterType);
+            if (shiftFilters.length > 0) {
+                shiftFilters.forEach(filter => {
+                    filter.addEventListener('click', (e) => {
+                        shiftFilters.forEach(f => f.classList.remove('active'));
+                        e.target.classList.add('active');
+                        const filterType = e.target.textContent.toLowerCase();
+                        filterShifts(filterType);
+                    });
                 });
-            });
+            }
 
-            // Modal turni
+            // Modal turni (se esiste)
             const shiftModal = document.getElementById('shiftModal');
             const closeShiftModal = document.getElementById('closeShiftModal');
             const cancelShift = document.getElementById('cancelShift');
             const saveShift = document.getElementById('saveShift');
 
-            closeShiftModal.addEventListener('click', () => {
-                shiftModal.style.display = 'none';
-            });
+            if (closeShiftModal) {
+                closeShiftModal.addEventListener('click', () => {
+                    if (shiftModal) shiftModal.style.display = 'none';
+                });
+            }
 
-            cancelShift.addEventListener('click', () => {
-                shiftModal.style.display = 'none';
-            });
+            if (cancelShift) {
+                cancelShift.addEventListener('click', () => {
+                    if (shiftModal) shiftModal.style.display = 'none';
+                });
+            }
 
-            saveShift.addEventListener('click', (e) => {
-                e.preventDefault();
-                const form = document.getElementById('shiftForm');
-                const formData = new FormData(form);
-                
-                showLoadingOverlay('Salvataggio turno...');
-                
-                setTimeout(() => {
-                    console.log('Turno salvato:', Object.fromEntries(formData));
-                    hideLoadingOverlay();
-                    showSuccess('Turno aggiunto con successo!');
-                    shiftModal.style.display = 'none';
-                    form.reset();
+            if (saveShift) {
+                saveShift.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const form = document.getElementById('shiftForm');
+                    if (!form) return;
                     
-                    // Aggiungi animazione alla nuova card
-                    addNewShiftCard(formData);
-                }, 1500);
-            });
+                    const formData = new FormData(form);
+                    
+                    showLoadingOverlay('Salvataggio turno...');
+                    
+                    setTimeout(() => {
+                        console.log('Turno salvato:', Object.fromEntries(formData));
+                        hideLoadingOverlay();
+                        showSuccess('Turno aggiunto con successo!');
+                        if (shiftModal) shiftModal.style.display = 'none';
+                        form.reset();
+                        
+                        // Aggiungi animazione alla nuova card
+                        addNewShiftCard(formData);
+                    }, 1500);
+                });
+            }
 
-            // Chiudi modal cliccando fuori
-            shiftModal.addEventListener('click', (e) => {
-                if (e.target === shiftModal) {
-                    shiftModal.style.display = 'none';
-                }
-            });
+            // Chiudi modal cliccando fuori (se esiste)
+            if (shiftModal) {
+                shiftModal.addEventListener('click', (e) => {
+                    if (e.target === shiftModal) {
+                        shiftModal.style.display = 'none';
+                    }
+                });
+            }
+            
+            console.log('✅ Gestione turni inizializzata');
         }
 
         // Funzioni per i turni
