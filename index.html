@@ -5011,7 +5011,7 @@
 
         // Gestione navigazione tra sezioni
         function handleNavigation(pageName) {
-            console.log('Gestione navigazione per:', pageName);
+            console.log('🚀 handleNavigation chiamata per:', pageName);
             
             const mainContent = document.querySelector('.dashboard-main');
             if (!mainContent) {
@@ -5026,6 +5026,7 @@
                 hideLoadingOverlay();
                 
                 if (pageName === 'overview') {
+                    console.log('📊 Caricamento sezione Overview...');
                     // Mostra la sezione overview originale
                     mainContent.innerHTML = `
                     <div class="page-section fade-in active" id="overviewSection">
@@ -5240,8 +5241,10 @@
                     }, 100);
                     
                 } else if (pageName === 'shifts') {
+                    console.log('🕐 Caricamento sezione Turni tramite showShiftsSection...');
                     showShiftsSection();
                 } else {
+                    console.log('🎯 Caricamento sezione', pageName, 'tramite loadDashboardSection...');
                     // Per tutte le altre sezioni, usa loadDashboardSection
                     loadDashboardSection(pageName);
                 }
@@ -6023,30 +6026,13 @@
         // Sistema di caricamento ottimizzato
         console.log('🚁 Sistema di caricamento ottimizzato attivo');
 
-        // Gestione sezioni dashboard
-        function initializeDashboardSections() {
-            const navItems = document.querySelectorAll('.nav-item[data-page]');
-            
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Rimuovi active da tutti gli elementi
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    
-                    // Aggiungi active all'elemento cliccato
-                    this.classList.add('active');
-                    
-                    // Carica la sezione
-                    const page = this.dataset.page;
-                    loadDashboardSection(page);
-                });
-            });
-        }
-
         function loadDashboardSection(section) {
+            console.log('🎯 loadDashboardSection chiamata per:', section);
             const mainContent = document.querySelector('.dashboard-main');
-            if (!mainContent) return;
+            if (!mainContent) {
+                console.error('❌ Elemento .dashboard-main non trovato!');
+                return;
+            }
 
             switch(section) {
                 case 'overview':
@@ -6298,6 +6284,7 @@
         }
 
         function loadPersonnelSection() {
+            console.log('👥 Caricamento sezione Personale...');
             const mainContent = document.querySelector('.dashboard-main');
             mainContent.innerHTML = `
                 <div class="page-header">
@@ -6431,6 +6418,7 @@
         }
 
         function loadShiftsSection() {
+            console.log('🕐 Caricamento sezione Turni...');
             const mainContent = document.querySelector('.dashboard-main');
             mainContent.innerHTML = `
                 <div class="page-header">
