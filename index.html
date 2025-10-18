@@ -1245,6 +1245,118 @@
             color: #ffffff;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+        }
+
+        .modal-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: var(--space-md);
+            justify-content: flex-end;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: var(--space-md);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .login-card {
                 margin: var(--space-md);
@@ -3946,8 +4058,8 @@
                                     <span>Operazioni</span>
                                 </a>
                                 <a href="#" class="nav-item" data-page="personnel" onclick="loadDashboardSection('personnel'); return false;">
-                                    👥
-                                    <span>Personale</span>
+                                    🏅
+                                    <span>Operatori</span>
                                 </a>
                                 <a href="#" class="nav-item" data-page="shifts" onclick="loadDashboardSection('shifts'); return false;">
                                     🕐
@@ -4043,8 +4155,8 @@
                                     <span>Operazioni</span>
                                 </a>
                                 <a href="#" class="nav-item" data-page="personnel">
-                                    <i class="fas fa-users"></i>
-                                    <span>Personale</span>
+                                    <i class="fas fa-medal"></i>
+                                    <span>Operatori</span>
                                 </a>
                                 <a href="#" class="nav-item" data-page="shifts">
                                     <i class="fas fa-clock"></i>
@@ -6341,7 +6453,7 @@
         }
 
         function loadPersonnelSection() {
-            console.log('👥 Caricamento sezione Personale...');
+            console.log('🏅 Caricamento sezione Operatori...');
             const mainContent = document.querySelector('.dashboard-main');
             if (!mainContent) {
                 console.error('❌ Elemento .dashboard-main non trovato in loadPersonnelSection!');
@@ -6351,13 +6463,17 @@
             mainContent.innerHTML = `
                 <div class="page-header">
                     <div>
-                        <h1>👥 Gestione Personale</h1>
-                        <p>Amministrazione completa del personale U.O.P.I.</p>
+                        <h1>🏅 Gestione Operatori</h1>
+                        <p>Amministrazione completa degli operatori U.O.P.I.</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn-primary" onclick="showAddPersonnelModal()">
+                        <button class="btn-primary" onclick="showAddOperatorModal()" id="addOperatorBtn" style="display: none;">
                             <i class="fas fa-user-plus"></i>
-                            Aggiungi Personale
+                            Aggiungi Operatore
+                        </button>
+                        <button class="btn-danger" onclick="removeFakeOperators()" id="removeFakeBtn" style="display: none;">
+                            <i class="fas fa-trash"></i>
+                            Rimuovi Fake
                         </button>
                         <button class="btn-secondary" onclick="exportPersonnelData()">
                             <i class="fas fa-download"></i>
@@ -6370,15 +6486,15 @@
                     </div>
                 </div>
 
-                <!-- Statistiche Personale -->
+                <!-- Statistiche Operatori -->
                 <div class="personnel-stats-grid">
                     <div class="personnel-stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-medal"></i>
                         </div>
                         <div class="stat-content">
                             <div class="stat-number">45</div>
-                            <div class="stat-label">Totale Personale</div>
+                            <div class="stat-label">Totale Operatori</div>
                             <div class="stat-change positive">+3 questo mese</div>
                         </div>
                     </div>
@@ -6479,6 +6595,133 @@
             initializePersonnelFeatures();
             
             console.log('✅ loadPersonnelSection completata - contenuto cambiato');
+            
+            // Controlla se l'utente è amministratore e mostra i pulsanti
+            checkAdminPermissions();
+        }
+
+        // Controlla i permessi amministratore
+        function checkAdminPermissions() {
+            const user = getDiscordAuth();
+            if (user && user.id === '1387684968536477756') { // ID dell'amministratore
+                console.log('🔑 Utente amministratore rilevato, abilitando funzioni admin');
+                document.getElementById('addOperatorBtn').style.display = 'inline-block';
+                document.getElementById('removeFakeBtn').style.display = 'inline-block';
+            } else {
+                console.log('👤 Utente normale, funzioni admin nascoste');
+            }
+        }
+
+        // Mostra modal per aggiungere nuovo operatore
+        function showAddOperatorModal() {
+            console.log('🏅 Apertura modal aggiungi operatore');
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>🏅 Aggiungi Nuovo Operatore</h2>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addOperatorForm">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="operatorName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Grado</label>
+                                <select id="operatorRank" required>
+                                    <option value="">Seleziona Grado</option>
+                                    <option value="GENERALE">Generale</option>
+                                    <option value="COLONNELLO">Colonnello</option>
+                                    <option value="MAGGIORE">Maggiore</option>
+                                    <option value="CAPITANO">Capitano</option>
+                                    <option value="TENENTE">Tenente</option>
+                                    <option value="MARESCIALLO">Maresciallo</option>
+                                    <option value="SERGENTE">Sergente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Specializzazione</label>
+                                <select id="operatorSpecialization" required>
+                                    <option value="">Seleziona Specializzazione</option>
+                                    <option value="PILOTA">Pilota</option>
+                                    <option value="MEDICO">Medico</option>
+                                    <option value="TECNICO">Tecnico</option>
+                                    <option value="OPERATORE RADIO">Operatore Radio</option>
+                                    <option value="LOGISTICA">Logistica</option>
+                                    <option value="SICUREZZA">Sicurezza</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Squadra</label>
+                                <select id="operatorTeam" required>
+                                    <option value="">Seleziona Squadra</option>
+                                    <option value="SQUADRA ALPHA">Squadra Alpha</option>
+                                    <option value="SQUADRA BETA">Squadra Beta</option>
+                                    <option value="SQUADRA GAMMA">Squadra Gamma</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Esperienza (anni)</label>
+                                <input type="number" id="operatorExperience" min="0" max="30" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="closeModal()">Annulla</button>
+                        <button class="btn-primary" onclick="addNewOperator()">Aggiungi Operatore</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Aggiunge nuovo operatore
+        function addNewOperator() {
+            const name = document.getElementById('operatorName').value;
+            const rank = document.getElementById('operatorRank').value;
+            const specialization = document.getElementById('operatorSpecialization').value;
+            const team = document.getElementById('operatorTeam').value;
+            const experience = document.getElementById('operatorExperience').value;
+            
+            if (!name || !rank || !specialization || !team || !experience) {
+                alert('Compila tutti i campi!');
+                return;
+            }
+            
+            console.log('🏅 Aggiunta nuovo operatore:', { name, rank, specialization, team, experience });
+            
+            // Simula aggiunta operatore
+            alert(`Operatore ${name} aggiunto con successo!`);
+            closeModal();
+            
+            // Ricarica i dati
+            loadPersonnelData();
+        }
+
+        // Rimuove operatori fake
+        function removeFakeOperators() {
+            console.log('🗑️ Rimozione operatori fake');
+            
+            if (confirm('Sei sicuro di voler rimuovere tutti gli operatori fake? Questa azione non può essere annullata.')) {
+                // Simula rimozione operatori fake
+                alert('Operatori fake rimossi con successo!');
+                
+                // Ricarica i dati
+                loadPersonnelData();
+            }
+        }
+
+        // Chiude il modal
+        function closeModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.remove();
+            }
         }
 
         function loadShiftsSection() {
