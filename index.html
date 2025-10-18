@@ -1414,7 +1414,7 @@
         /* ============================================
            LOGIN PAGE PREMIUM
            ============================================ */
-        
+
         .login-container {
             min-height: 100vh;
             width: 100vw;
@@ -5960,6 +5960,7 @@
         }
 
         function showError(message) {
+            // Prima controlla se siamo nel login
             const errorDiv = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
             if (errorDiv && errorText) {
@@ -5968,12 +5969,15 @@
                 setTimeout(() => {
                     errorDiv.classList.remove('show');
                 }, 5000);
-            } else {
-                alert('Errore: ' + message);
+                return;
             }
+            
+            // Altrimenti usa il sistema di notifiche moderno
+            showNotification(message, 'error');
         }
 
         function showSuccess(message) {
+            // Prima controlla se siamo nel login
             const successDiv = document.getElementById('successMessage');
             const successText = document.getElementById('successText');
             if (successDiv && successText) {
@@ -5982,7 +5986,72 @@
                 setTimeout(() => {
                     successDiv.classList.remove('show');
                 }, 3000);
+                return;
             }
+            
+            // Altrimenti usa il sistema di notifiche moderno
+            showNotification(message, 'success');
+        }
+
+        function showNotification(message, type = 'success') {
+            // Rimuovi notifiche esistenti
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
+            
+            // Crea nuova notifica
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                z-index: 10000;
+                opacity: 0;
+                transform: translateY(-100px);
+                transition: all 0.3s ease;
+            `;
+            
+            const bgColor = type === 'success' 
+                ? 'linear-gradient(135deg, #10b981, #059669)' 
+                : 'linear-gradient(135deg, #ef4444, #dc2626)';
+            
+            const icon = type === 'success' 
+                ? '<i class="fas fa-check-circle"></i>' 
+                : '<i class="fas fa-exclamation-triangle"></i>';
+            
+            notification.innerHTML = `
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 1rem 1.5rem;
+                    background: ${bgColor};
+                    border-radius: 1rem;
+                    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+                    color: white;
+                    font-weight: 600;
+                    font-size: 0.9375rem;
+                    min-width: 300px;
+                ">
+                    ${icon}
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animazione di entrata
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Rimuovi dopo 3 secondi
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-100px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         function showLocalDevelopmentWarning() {
@@ -6267,13 +6336,21 @@
                                 <p>Monitoraggio in tempo reale delle attività U.O.P.I.</p>
                             </div>
                             <div class="header-actions">
-                                <button class="btn-secondary" id="refreshBtn">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Aggiorna
+                                <button class="btn-success" onclick="showAddOperatorModal()" title="Test Aggiungi Operatore">
+                                    <i class="fas fa-user-plus"></i>
+                                    Test Operatore
                                 </button>
-                                <button class="btn-primary" id="newOperationBtn">
-                                    <i class="fas fa-plus"></i>
-                                    Nuova Operazione
+                                <button class="btn-warning" onclick="showAddShiftModalNew()" title="Test Aggiungi Turno">
+                                    <i class="fas fa-clock"></i>
+                                    Test Turno
+                                </button>
+                                <button class="btn-secondary" onclick="loadDashboardSection('personnel')" title="Vai a Operatori">
+                                    <i class="fas fa-users"></i>
+                                    Operatori
+                                </button>
+                                <button class="btn-secondary" onclick="loadDashboardSection('shifts')" title="Vai a Turni">
+                                    <i class="fas fa-calendar"></i>
+                                    Turni
                                 </button>
                             </div>
                         </div>
@@ -7733,27 +7810,27 @@
 
             // Toggle dropdown notifiche (se esiste)
             if (notificationBtn && notificationsDropdown) {
-                notificationBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    notificationsDropdown.classList.toggle('show');
-                });
+            notificationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationsDropdown.classList.toggle('show');
+            });
 
-                // Chiudi dropdown quando si clicca fuori
-                document.addEventListener('click', () => {
-                    notificationsDropdown.classList.remove('show');
-                });
+            // Chiudi dropdown quando si clicca fuori
+            document.addEventListener('click', () => {
+                notificationsDropdown.classList.remove('show');
+            });
             }
 
             // Segna tutto come letto (se esiste)
             if (markAllReadBtn && notificationBadge) {
-                markAllReadBtn.addEventListener('click', () => {
-                    const unreadItems = document.querySelectorAll('.notification-item.unread');
-                    unreadItems.forEach(item => {
-                        item.classList.remove('unread');
-                    });
-                    notificationBadge.textContent = '0';
-                    notificationBadge.style.display = 'none';
+            markAllReadBtn.addEventListener('click', () => {
+                const unreadItems = document.querySelectorAll('.notification-item.unread');
+                unreadItems.forEach(item => {
+                    item.classList.remove('unread');
                 });
+                notificationBadge.textContent = '0';
+                notificationBadge.style.display = 'none';
+            });
             }
 
             console.log('✅ Notifiche inizializzate');
@@ -7773,68 +7850,68 @@
 
             // Gestione ricerca (se esiste)
             if (searchInput && searchClear) {
-                searchInput.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase();
-                    if (query.length > 0) {
-                        searchClear.style.display = 'block';
-                        console.log('Ricerca:', query);
-                    } else {
-                        searchClear.style.display = 'none';
-                    }
-                });
-
-                searchClear.addEventListener('click', () => {
-                    searchInput.value = '';
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                if (query.length > 0) {
+                    searchClear.style.display = 'block';
+                    console.log('Ricerca:', query);
+                } else {
                     searchClear.style.display = 'none';
-                });
+                }
+            });
+
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                searchClear.style.display = 'none';
+            });
             }
 
             // Toggle filtri (se esiste)
             if (filterBtn && filterPanel) {
-                filterBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    filterPanel.classList.toggle('show');
-                });
+            filterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterPanel.classList.toggle('show');
+            });
 
-                document.addEventListener('click', () => {
-                    filterPanel.classList.remove('show');
-                });
+            document.addEventListener('click', () => {
+                filterPanel.classList.remove('show');
+            });
 
-                // Conta filtri attivi
-                const filterCheckboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
+            // Conta filtri attivi
+            const filterCheckboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
                 if (filterCheckboxes.length > 0 && filterCount) {
-                    filterCheckboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', () => {
-                            const activeFilters = filterPanel.querySelectorAll('input[type="checkbox"]:checked').length;
-                            filterCount.textContent = activeFilters;
-                            filterCount.style.display = activeFilters > 0 ? 'block' : 'none';
-                        });
-                    });
+            filterCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const activeFilters = filterPanel.querySelectorAll('input[type="checkbox"]:checked').length;
+                    filterCount.textContent = activeFilters;
+                    filterCount.style.display = activeFilters > 0 ? 'block' : 'none';
+                });
+            });
 
-                    // Cancella filtri
+            // Cancella filtri
                     if (clearFilters) {
-                        clearFilters.addEventListener('click', () => {
-                            filterCheckboxes.forEach(checkbox => {
-                                checkbox.checked = false;
-                            });
-                            filterCount.textContent = '0';
-                            filterCount.style.display = 'none';
-                        });
+            clearFilters.addEventListener('click', () => {
+                filterCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                filterCount.textContent = '0';
+                filterCount.style.display = 'none';
+            });
                     }
 
-                    // Applica filtri
+            // Applica filtri
                     if (applyFilters) {
-                        applyFilters.addEventListener('click', () => {
-                            const activeFilters = Array.from(filterCheckboxes)
-                                .filter(cb => cb.checked)
-                                .map(cb => cb.value);
-                            console.log('Filtri applicati:', activeFilters);
-                            filterPanel.classList.remove('show');
-                        });
+            applyFilters.addEventListener('click', () => {
+                const activeFilters = Array.from(filterCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                console.log('Filtri applicati:', activeFilters);
+                filterPanel.classList.remove('show');
+            });
                     }
                 }
-            }
-            
+        }
+
             console.log('✅ Ricerca e filtri inizializzati');
         }
 
@@ -7858,33 +7935,33 @@
 
             // Aggiorna operazioni (se il pulsante esiste)
             if (refreshBtn) {
-                refreshBtn.addEventListener('click', () => {
-                    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aggiornamento...';
-                    setTimeout(() => {
-                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Aggiorna';
-                        showSuccess('Operazioni aggiornate!');
-                    }, 2000);
-                });
+            refreshBtn.addEventListener('click', () => {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aggiornamento...';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Aggiorna';
+                    showSuccess('Operazioni aggiornate!');
+                }, 2000);
+            });
             }
 
             // Ordinamento operazioni (se esiste)
             if (sortSelect) {
-                sortSelect.addEventListener('change', (e) => {
-                    console.log('Ordinamento per:', e.target.value);
-                });
+            sortSelect.addEventListener('change', (e) => {
+                console.log('Ordinamento per:', e.target.value);
+            });
             }
 
             // Toggle vista griglia/lista (se esistono)
             if (viewToggle.length > 0) {
-                viewToggle.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        viewToggle.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        console.log('Vista cambiata:', btn.dataset.view);
-                    });
+            viewToggle.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    viewToggle.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    console.log('Vista cambiata:', btn.dataset.view);
                 });
-            }
-            
+            });
+        }
+
             console.log('✅ Gestione operazioni inizializzata');
         }
 
@@ -7895,14 +7972,14 @@
             // Filtri turni (se esistono)
             const shiftFilters = document.querySelectorAll('.shift-filter');
             if (shiftFilters.length > 0) {
-                shiftFilters.forEach(filter => {
-                    filter.addEventListener('click', (e) => {
-                        shiftFilters.forEach(f => f.classList.remove('active'));
-                        e.target.classList.add('active');
-                        const filterType = e.target.textContent.toLowerCase();
-                        filterShifts(filterType);
-                    });
+            shiftFilters.forEach(filter => {
+                filter.addEventListener('click', (e) => {
+                    shiftFilters.forEach(f => f.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const filterType = e.target.textContent.toLowerCase();
+                    filterShifts(filterType);
                 });
+            });
             }
 
             // Modal turni (se esiste)
@@ -7912,47 +7989,47 @@
             const saveShift = document.getElementById('saveShift');
 
             if (closeShiftModal) {
-                closeShiftModal.addEventListener('click', () => {
+            closeShiftModal.addEventListener('click', () => {
                     if (shiftModal) shiftModal.style.display = 'none';
-                });
+            });
             }
 
             if (cancelShift) {
-                cancelShift.addEventListener('click', () => {
+            cancelShift.addEventListener('click', () => {
                     if (shiftModal) shiftModal.style.display = 'none';
-                });
+            });
             }
 
             if (saveShift) {
-                saveShift.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const form = document.getElementById('shiftForm');
+            saveShift.addEventListener('click', (e) => {
+                e.preventDefault();
+                const form = document.getElementById('shiftForm');
                     if (!form) return;
                     
-                    const formData = new FormData(form);
-                    
-                    showLoadingOverlay('Salvataggio turno...');
-                    
-                    setTimeout(() => {
-                        console.log('Turno salvato:', Object.fromEntries(formData));
-                        hideLoadingOverlay();
-                        showSuccess('Turno aggiunto con successo!');
+                const formData = new FormData(form);
+                
+                showLoadingOverlay('Salvataggio turno...');
+                
+                setTimeout(() => {
+                    console.log('Turno salvato:', Object.fromEntries(formData));
+                    hideLoadingOverlay();
+                    showSuccess('Turno aggiunto con successo!');
                         if (shiftModal) shiftModal.style.display = 'none';
-                        form.reset();
-                        
-                        // Aggiungi animazione alla nuova card
-                        addNewShiftCard(formData);
-                    }, 1500);
-                });
+                    form.reset();
+                    
+                    // Aggiungi animazione alla nuova card
+                    addNewShiftCard(formData);
+                }, 1500);
+            });
             }
 
             // Chiudi modal cliccando fuori (se esiste)
             if (shiftModal) {
-                shiftModal.addEventListener('click', (e) => {
-                    if (e.target === shiftModal) {
-                        shiftModal.style.display = 'none';
-                    }
-                });
+            shiftModal.addEventListener('click', (e) => {
+                if (e.target === shiftModal) {
+                    shiftModal.style.display = 'none';
+                }
+            });
             }
             
             console.log('✅ Gestione turni inizializzata');
@@ -8728,18 +8805,18 @@
                     <div class="modal-body">
                         <form id="addOperatorForm">
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Nome Completo</label>
-                                    <input type="text" id="operatorName" placeholder="Es: Mario Rossi" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Matricola</label>
-                                    <input type="text" id="operatorMatricola" placeholder="Es: UOPI-001" required>
-                                </div>
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="operatorName" placeholder="Es: Mario Rossi" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Matricola</label>
+                                <input type="text" id="operatorMatricola" placeholder="Es: UOPI-001" required>
+                            </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Grado</label>
+                            <div class="form-group">
+                                <label>Grado</label>
                                     <select id="operatorRank" required>
                                         <option value="">Seleziona Grado</option>
                                         <option value="Generale">Generale</option>
@@ -8752,9 +8829,9 @@
                                         <option value="Sergente">Sergente</option>
                                         <option value="Caporale">Caporale</option>
                                     </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Specializzazione</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Specializzazione</label>
                                     <select id="operatorSpecialization" required>
                                         <option value="">Seleziona Specializzazione</option>
                                         <option value="Pilota">Pilota</option>
@@ -8764,11 +8841,11 @@
                                         <option value="Sicurezza">Sicurezza</option>
                                         <option value="Logistica">Logistica</option>
                                     </select>
-                                </div>
+                            </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Squadra</label>
+                            <div class="form-group">
+                                <label>Squadra</label>
                                     <select id="operatorTeam" required>
                                         <option value="">Seleziona Squadra</option>
                                         <option value="Alpha">Squadra Alpha</option>
@@ -8776,20 +8853,20 @@
                                         <option value="Gamma">Squadra Gamma</option>
                                         <option value="Delta">Squadra Delta</option>
                                     </select>
-                                </div>
-                                <div class="form-group">
+                            </div>
+                            <div class="form-group">
                                     <label>Esperienza</label>
                                     <input type="text" id="operatorExperience" placeholder="Es: 5 anni" required>
-                                </div>
+                            </div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Telefono</label>
-                                    <input type="tel" id="operatorPhone" placeholder="Es: +39 123 456 7890">
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" id="operatorEmail" placeholder="Es: mario.rossi@uopi.it">
+                            <div class="form-group">
+                                <label>Telefono</label>
+                                <input type="tel" id="operatorPhone" placeholder="Es: +39 123 456 7890">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="operatorEmail" placeholder="Es: mario.rossi@uopi.it">
                                 </div>
                             </div>
                         </form>
@@ -8883,7 +8960,7 @@
                 
                 // Ricarica i dati se la tabella è visibile
                 if (document.getElementById('personnelTableBody')) {
-                    loadPersonnelData();
+            loadPersonnelData();
                 }
             }, 1500);
         }
@@ -11028,6 +11105,50 @@
             initNavbarDirect();
         }, 2000);
 
+        // ============================================
+        // SISTEMA DI TEST E VERIFICA FUNZIONI
+        // ============================================
+        
+        function verifyAllFunctions() {
+            console.log('🔍 VERIFICA FUNZIONI DISPONIBILI:');
+            
+            const requiredFunctions = [
+                'showAddOperatorModal',
+                'closeOperatorModalSimple',
+                'saveNewOperator',
+                'showAddShiftModalNew',
+                'closeShiftModalNew',
+                'saveNewShift',
+                'loadShiftsDataComplete',
+                'viewShiftDetails',
+                'editShiftDetails',
+                'showError',
+                'showSuccess',
+                'showLoadingOverlay',
+                'hideLoadingOverlay',
+                'loadPersonnelData',
+                'loadShiftsSection',
+                'removeFakeOperators',
+                'exportPersonnelData',
+                'exportShiftsData'
+            ];
+            
+            requiredFunctions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    console.log(`✅ ${funcName}`);
+                } else {
+                    console.error(`❌ ${funcName} NON TROVATA!`);
+                }
+            });
+            
+            console.log('📋 Verifica completata');
+        }
+
+        // Esegui verifica dopo 3 secondi
+        setTimeout(() => {
+            verifyAllFunctions();
+        }, 3000);
+
         // Log di conferma - Sistema Ufficiale
         console.log('🚁 U.O.P.I. Dashboard - Sistema Ufficiale');
         console.log('✅ Discord OAuth2 Attivo');
@@ -11039,5 +11160,4 @@
         console.log('📝 Dashboard pronta per l\'utilizzo');
     </script>
 </body>
-</html>
 </html>
