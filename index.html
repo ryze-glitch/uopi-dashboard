@@ -2819,12 +2819,12 @@
                     <span id="successText">Autenticazione completata con successo!</span>
                 </div>
                 
-                <button id="discordBtn" class="demo-btn">
-                <div class="demo-icon">
-                    <i class="fab fa-discord"></i>
-                </div>
-                <span>Accedi con Discord</span>
-                </button>
+                            <button id="discordBtn" class="demo-btn">
+                                <div class="demo-icon">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <span>Accedi Con Discord</span>
+                            </button>
                 
                 
                 <div class="login-footer">
@@ -2857,190 +2857,57 @@
             return window.location.protocol === 'file:';
         }
 
-        // Sistema di memorizzazione autorizzazione Discord permanente
+        // Sistema semplice di autorizzazione Discord
         function saveDiscordAuth(userData, token) {
             const authData = {
                 user: userData,
                 token: token,
                 timestamp: Date.now(),
-                expires: Date.now() + (30 * 24 * 60 * 60 * 1000), // 30 giorni
-                authorized: true,
-                permanent: true
+                loggedIn: true
             };
             
-            // Salva in localStorage per persistenza
             localStorage.setItem('discord_auth', JSON.stringify(authData));
-            
-            // Salva anche in sessionStorage per sicurezza
-            sessionStorage.setItem('discord_session', JSON.stringify({
-                userId: userData.id,
-                username: userData.username,
-                authorized: true
-            }));
-            
-            // Imposta cookie per persistenza cross-session
-            const cookieValue = encodeURIComponent(JSON.stringify({
-                userId: userData.id,
-                authorized: true,
-                timestamp: Date.now()
-            }));
-            document.cookie = `discord_auth=${cookieValue}; max-age=${30 * 24 * 60 * 60}; path=/; secure; samesite=strict`;
-            
-            console.log('Autorizzazione Discord permanente salvata');
+            console.log('Login Discord salvato');
         }
 
         function getDiscordAuth() {
             try {
-                // Prima controlla localStorage
-                let authData = localStorage.getItem('discord_auth');
-                if (authData) {
-                    const parsed = JSON.parse(authData);
-                    
-                    // Controlla se l'autorizzazione è scaduta
-                    if (Date.now() > parsed.expires) {
-                        localStorage.removeItem('discord_auth');
-                        sessionStorage.removeItem('discord_session');
-                        console.log('Autorizzazione Discord scaduta, rimossa');
-                        return null;
-                    }
-                    
-                    return parsed;
+                const authData = localStorage.getItem('discord_auth');
+                if (!authData) return null;
+                
+                const parsed = JSON.parse(authData);
+                
+                // Verifica che l'utente sia ancora autorizzato
+                if (!AUTHORIZED_USERS[parsed.user.id]) {
+                    localStorage.removeItem('discord_auth');
+                    return null;
                 }
                 
-                // Se non c'è in localStorage, controlla i cookie
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    const [name, value] = cookie.trim().split('=');
-                    if (name === 'discord_auth') {
-                        const cookieData = JSON.parse(decodeURIComponent(value));
-                        if (cookieData.authorized && cookieData.userId) {
-                            // Ricostruisci i dati di autorizzazione dai cookie
-                            return {
-                                user: { id: cookieData.userId },
-                                authorized: true,
-                                permanent: true,
-                                fromCookie: true
-                            };
-                        }
-                    }
-                }
-                
-                return null;
+                return parsed;
             } catch (error) {
                 console.error('Errore nel recupero autorizzazione:', error);
                 localStorage.removeItem('discord_auth');
-                sessionStorage.removeItem('discord_session');
                 return null;
             }
         }
 
         function clearDiscordAuth() {
-            // Rimuovi solo la sessione attiva, mantieni l'autorizzazione permanente
             localStorage.removeItem('discord_auth');
-            sessionStorage.removeItem('discord_session');
-            
-            // Imposta flag di logout per evitare accesso automatico
-            sessionStorage.setItem('user_logged_out', 'true');
-            
-            // NON rimuovere i cookie - mantieni l'autorizzazione permanente
-            console.log('Sessione Discord chiusa, autorizzazione permanente mantenuta');
+            console.log('Logout Discord completato');
         }
 
-
-        function isDiscordAuthValid() {
+        function isLoggedIn() {
             const authData = getDiscordAuth();
-            if (!authData) return false;
-            
-            // Verifica che l'utente sia ancora autorizzato
-            const isUserAuthorized = AUTHORIZED_USERS[authData.user.id] !== undefined;
-            
-            // Se l'autorizzazione è permanente e l'utente è autorizzato, non richiedere nuova autorizzazione
-            if (authData.permanent && isUserAuthorized) {
-                console.log('Autorizzazione permanente valida trovata');
-                return true;
-            }
-            
-            return false;
-        }
-
-        function hasUserPreviouslyAuthorized() {
-            // Controlla se l'utente ha mai autorizzato l'applicazione
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'discord_auth') {
-                    try {
-                        const cookieData = JSON.parse(decodeURIComponent(value));
-                        if (cookieData.authorized && cookieData.userId) {
-                            return {
-                                userId: cookieData.userId,
-                                timestamp: cookieData.timestamp
-                            };
-                        }
-                    } catch (e) {
-                        continue;
-                    }
-                }
-            }
-            return false;
+            return authData && authData.loggedIn;
         }
 
 
         function logoutDiscord() {
-            // Rimuovi solo la sessione attiva, mantieni l'autorizzazione permanente
             clearDiscordAuth();
+            showSuccess('Logout completato');
             
-            // Mostra messaggio di logout
-            showSuccess('Logout completato - autorizzazione mantenuta');
-            
-            // Torna alla schermata di login senza ricaricare la pagina
             setTimeout(() => {
-                // Nascondi la dashboard e mostra la schermata di login
-                document.getElementById('app').innerHTML = `
-                    <div class="login-container">
-                        <div class="login-card">
-                            <div class="login-header">
-                                <img src="https://i.imgur.com/B6E4u1X.png" alt="UOPI Logo" class="login-logo">
-                                <div class="login-badge">
-                                    <i class="fas fa-shield-alt"></i>
-                                    <span>Sistema Sicuro</span>
-                                </div>
-                            </div>
-                            
-                            <h1 class="login-title">U.O.P.I.</h1>
-                            <p class="login-subtitle">Unità Operativa di Primo Intervento</p>
-                            <p class="login-description">Sistema di gestione operativa modernizzato con design professionale e funzionalità avanzate.</p>
-                            
-                            <div id="errorMessage" class="error-message">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span id="errorText">Errore durante l'autenticazione</span>
-                            </div>
-                            
-                            <div id="successMessage" class="success-message">
-                                <i class="fas fa-check-circle"></i>
-                                <span id="successText">Autenticazione completata con successo!</span>
-                            </div>
-                            
-                            <button id="discordBtn" class="demo-btn">
-                                <div class="demo-icon">
-                                    <i class="fab fa-discord"></i>
-                                </div>
-                                <span>Accedi con Discord</span>
-                            </button>
-                            
-                            <div class="login-footer">
-                                <p>Sistema di gestione operativa U.O.P.I.</p>
-                                <p>Per supporto tecnico contatta l'amministratore</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Aggiorna il bottone Discord per mostrare l'accesso diretto disponibile
-                updateDiscordButton();
-                
-                // NON mostrare messaggio automatico - l'utente deve cliccare il bottone
-                
+                location.reload();
             }, 1500);
         }
 
@@ -3074,115 +2941,30 @@
             // Warning rimosso - sistema funziona solo con Discord
         }
 
-        // Handler per il bottone Discord - ora gestito in updateDiscordButton()
-
-        // Aggiorna il bottone Discord se c'è già un'autorizzazione
-        function updateDiscordButton() {
-            const btn = document.getElementById('discordBtn');
-            if (!btn) return;
+        // Handler semplice per il bottone Discord
+        document.getElementById('discordBtn').addEventListener('click', function() {
+            // Mostra animazione di caricamento
+            this.innerHTML = `
+                <div class="demo-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <span>Reindirizzamento a Discord...</span>
+            `;
+            this.disabled = true;
             
-            // Controlla se l'utente ha fatto logout
-            const userLoggedOut = sessionStorage.getItem('user_logged_out');
-            
-            if (isDiscordAuthValid() && !userLoggedOut) {
-                const authData = getDiscordAuth();
-                btn.innerHTML = `
-                    <div class="demo-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <span>Accesso automatico disponibile</span>
-                `;
-                btn.style.opacity = '0.7';
-                btn.title = `Autorizzato come ${authData.user.username}`;
-                btn.disabled = true;
-            } else if (hasUserPreviouslyAuthorized()) {
-                const prevAuth = hasUserPreviouslyAuthorized();
-                btn.innerHTML = `
-                    <div class="demo-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <span>Accesso diretto (già autorizzato)</span>
-                `;
-                btn.style.opacity = '0.8';
-                btn.title = 'Hai già autorizzato questa applicazione';
-                btn.disabled = false;
-                btn.onclick = async function() {
-                    // Accesso diretto senza richiedere nuova autorizzazione
-                    showSuccess('Accesso diretto in corso...');
-                    
-                    // Rimuovi il flag di logout se presente
-                    sessionStorage.removeItem('user_logged_out');
-                    
-                    try {
-                        // Prova a recuperare i dati reali dell'utente dai dati salvati
-                        const authData = getDiscordAuth();
-                        let userData;
-                        
-                        if (authData && authData.user && authData.user.username) {
-                            // Usa i dati salvati se disponibili
-                            userData = authData.user;
-                            console.log('Usando dati salvati per accesso diretto:', userData);
-                        } else {
-                            // Fallback: usa i dati dell'utente autorizzato
-                            const userInfo = AUTHORIZED_USERS[prevAuth.userId];
-                            userData = { 
-                                id: prevAuth.userId, 
-                                username: userInfo.fullName || 'Utente Autorizzato',
-                                discriminator: '0000',
-                                avatar: null
-                            };
-                            console.log('Usando dati fallback per accesso diretto:', userData);
-                        }
-                        
-                        const userInfo = AUTHORIZED_USERS[prevAuth.userId];
-                        showModernDashboard(userData, userInfo);
-                        
-                    } catch (error) {
-                        console.error('Errore nell\'accesso diretto:', error);
-                        showError('Errore durante l\'accesso diretto');
-                    }
-                };
-            } else {
-                btn.innerHTML = `
-                    <div class="demo-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <span>Accedi con Discord</span>
-                `;
-                btn.style.opacity = '1';
-                btn.title = '';
-                btn.disabled = false;
-                btn.onclick = function() {
-                    // Mostra animazione di caricamento
-                    this.innerHTML = `
-                        <div class="demo-icon">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </div>
-                        <span>Reindirizzamento a Discord...</span>
-                    `;
-                    this.disabled = true;
-                    
-                    // Redirect a Discord OAuth2
-                    const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
-                    window.location.href = url;
-                };
-            }
-        }
+            // Redirect a Discord OAuth2
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+            window.location.href = url;
+        });
 
         // Gestione callback OAuth2
         window.addEventListener('load', () => {
             showLocalDevelopmentWarning();
             
-            // Aggiorna il bottone Discord
-            updateDiscordButton();
-            
-            // Controlla se l'utente ha fatto logout
-            const userLoggedOut = sessionStorage.getItem('user_logged_out');
-            
-            // Verifica se c'è già un'autorizzazione valida salvata
-            if (isDiscordAuthValid() && !userLoggedOut) {
+            // Verifica se l'utente è già loggato
+            if (isLoggedIn()) {
                 const authData = getDiscordAuth();
-                console.log('Autorizzazione Discord trovata, accesso automatico...');
+                console.log('Utente già loggato, accesso automatico...');
                 showSuccess('Accesso automatico in corso...');
                 
                 setTimeout(() => {
@@ -3190,19 +2972,6 @@
                     showModernDashboard(authData.user, userInfo);
                 }, 1500);
                 return;
-            }
-            
-            // Se l'utente ha fatto logout, rimuovi il flag
-            if (userLoggedOut) {
-                sessionStorage.removeItem('user_logged_out');
-                console.log('Utente ha fatto logout, accesso diretto disponibile');
-                // NON mostrare messaggio automatico
-            }
-            
-            // Se non c'è autorizzazione valida ma l'utente ha autorizzato prima
-            if (hasUserPreviouslyAuthorized() && !userLoggedOut) {
-                console.log('Utente ha autorizzato precedentemente, accesso diretto disponibile');
-                // NON mostrare messaggio automatico
             }
             
             const hash = window.location.hash;
@@ -3243,10 +3012,7 @@
                 const userInfo = AUTHORIZED_USERS[user.id];
                 showSuccess(`Benvenuto ${user.username}!`);
                 
-                // Rimuovi il flag di logout se presente
-                sessionStorage.removeItem('user_logged_out');
-                
-                // Salva l'autorizzazione per le prossime volte
+                // Salva il login
                 saveDiscordAuth(user, token);
                 
                 // Mostra dashboard moderna
@@ -3266,7 +3032,7 @@
                             <div class="demo-icon">
                                 <i class="fab fa-discord"></i>
                             </div>
-                            <span>Accedi con Discord</span>
+                            <span>Accedi Con Discord</span>
                         `;
                         btn.disabled = false;
                     }
@@ -3276,19 +3042,6 @@
 
         // Dashboard moderna e completa
         function showModernDashboard(user, userInfo) {
-            // Assicurati che i dati dell'utente siano validi
-            if (!user || !user.id) {
-                console.error('Dati utente non validi:', user);
-                showError('Errore: dati utente non validi');
-                return;
-            }
-            
-            // Assicurati che il nome utente sia sempre presente
-            if (!user.username) {
-                user.username = userInfo.fullName || 'Utente Autorizzato';
-                console.log('Nome utente mancante, usando fallback:', user.username);
-            }
-            
             document.getElementById('app').innerHTML = `
                 <div class="dashboard-container">
                     <!-- Header -->
@@ -3381,7 +3134,7 @@
                                     <div class="user-avatar">
                                         <i class="fas fa-user-shield"></i>
                                     </div>
-                                    <span class="user-name">${user.username || userInfo.fullName || 'Utente Autorizzato'}</span>
+                                    <span class="user-name">${user.username}</span>
                                 </div>
                                 <button class="icon-btn logout" onclick="logoutDiscord()">
                                     <i class="fas fa-sign-out-alt"></i>
