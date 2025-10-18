@@ -5053,6 +5053,9 @@
                                 <button class="btn-secondary" onclick="testHeaderNav()" style="background: #9b59b6; color: white;">
                                     🎯 Test Header Nav
                                 </button>
+                                <button class="btn-secondary" onclick="testDirectContentChange()" style="background: #e74c3c; color: white;">
+                                    🔥 Test Diretto
+                                </button>
                             </div>
                         </div>
 
@@ -6044,43 +6047,63 @@
                 return;
             }
 
+            console.log('📋 Contenuto attuale prima del cambio:', mainContent.innerHTML.substring(0, 100) + '...');
+
             switch(section) {
                 case 'overview':
+                    console.log('📊 Caricamento sezione Overview...');
                     loadOverviewSection();
                     break;
                 case 'operations':
+                    console.log('🚁 Caricamento sezione Operazioni...');
                     loadOperationsSection();
                     break;
                 case 'personnel':
+                    console.log('👥 Caricamento sezione Personale...');
                     loadPersonnelSection();
                     break;
                 case 'shifts':
+                    console.log('🕐 Caricamento sezione Turni...');
                     loadShiftsSection();
                     break;
                 case 'reports':
+                    console.log('📈 Caricamento sezione Report...');
                     loadReportsSection();
                     break;
                 case 'equipment':
+                    console.log('🔧 Caricamento sezione Equipaggiamento...');
                     loadEquipmentSection();
                     break;
                 case 'communications':
+                    console.log('📡 Caricamento sezione Comunicazioni...');
                     loadCommunicationsSection();
                     break;
                 case 'training':
+                    console.log('🎓 Caricamento sezione Formazione...');
                     loadTrainingSection();
                     break;
                 case 'settings':
+                    console.log('⚙️ Caricamento sezione Impostazioni...');
                     loadSettingsSection();
                     break;
                 case 'logs':
+                    console.log('📝 Caricamento sezione Log...');
                     loadLogsSection();
                     break;
                 case 'backup':
+                    console.log('💾 Caricamento sezione Backup...');
                     loadBackupSection();
                     break;
                 default:
+                    console.warn('⚠️ Sezione non riconosciuta:', section);
                     loadOverviewSection();
             }
+
+            // Verifica che il contenuto sia cambiato
+            setTimeout(() => {
+                console.log('📋 Contenuto dopo il cambio:', mainContent.innerHTML.substring(0, 100) + '...');
+                console.log('✅ Cambio sezione completato per:', section);
+            }, 100);
         }
 
         function loadOverviewSection() {
@@ -6296,6 +6319,11 @@
         function loadPersonnelSection() {
             console.log('👥 Caricamento sezione Personale...');
             const mainContent = document.querySelector('.dashboard-main');
+            if (!mainContent) {
+                console.error('❌ Elemento .dashboard-main non trovato in loadPersonnelSection!');
+                return;
+            }
+            console.log('📋 Prima del cambio - contenuto:', mainContent.innerHTML.substring(0, 50) + '...');
             mainContent.innerHTML = `
                 <div class="page-header">
                     <div>
@@ -6425,6 +6453,8 @@
             
             // Inizializza le funzionalità
             initializePersonnelFeatures();
+            
+            console.log('✅ loadPersonnelSection completata - contenuto cambiato');
         }
 
         function loadShiftsSection() {
@@ -7689,6 +7719,36 @@
             } else {
                 console.error('❌ Elemento Personale non trovato nella navbar header!');
             }
+        }
+
+        // Test diretto del cambio di contenuto
+        function testDirectContentChange() {
+            console.log('🔥 TEST DIRETTO CAMBIO CONTENUTO');
+            
+            const mainContent = document.querySelector('.dashboard-main');
+            if (!mainContent) {
+                console.error('❌ Elemento .dashboard-main non trovato!');
+                return;
+            }
+            
+            console.log('📋 Contenuto attuale:', mainContent.innerHTML.substring(0, 100) + '...');
+            
+            // Cambia direttamente il contenuto
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <h1>🔥 TEST DIRETTO FUNZIONA!</h1>
+                    <p>Se vedi questo, il cambio di contenuto funziona!</p>
+                </div>
+                <div style="padding: 20px; background: #e74c3c; color: white; border-radius: 10px;">
+                    <h2>✅ Il sistema di cambio contenuto funziona!</h2>
+                    <p>Il problema potrebbe essere negli event listener della navbar.</p>
+                    <button onclick="loadDashboardSection('personnel')" style="background: white; color: #e74c3c; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                        Testa Personale
+                    </button>
+                </div>
+            `;
+            
+            console.log('✅ Contenuto cambiato direttamente!');
         }
 
         // Inizializza le sezioni quando la dashboard viene caricata
