@@ -2825,6 +2825,842 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ===== STILI PERSONALE ===== */
+        
+        .personnel-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .personnel-stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .personnel-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .personnel-stat-card .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .personnel-stat-card .stat-content {
+            flex: 1;
+        }
+
+        .personnel-stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .personnel-stat-card .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .personnel-stat-card .stat-change {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .personnel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            background: white;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .personnel-table-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .personnel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .personnel-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .personnel-table th:hover {
+            background: #f1f5f9;
+        }
+
+        .personnel-table th i {
+            margin-right: 0.5rem;
+            color: #9ca3af;
+        }
+
+        .personnel-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+
+        .personnel-row:hover {
+            background: #f8fafc;
+        }
+
+        .personnel-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .personnel-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .personnel-name {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .personnel-id {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .rank-badge, .specialization-badge, .status-badge, .team-badge, .experience-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rank-badge.colonnello { background: #fef3c7; color: #92400e; }
+        .rank-badge.maggiore { background: #dbeafe; color: #1e40af; }
+        .rank-badge.capitano { background: #d1fae5; color: #065f46; }
+        .rank-badge.tenente { background: #f3e8ff; color: #7c3aed; }
+        .rank-badge.sergente { background: #fce7f3; color: #be185d; }
+        .rank-badge.maresciallo { background: #e0f2fe; color: #0c4a6e; }
+
+        .specialization-badge {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .status-badge.available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.on-duty {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.on-leave {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .team-badge.alpha { background: #dbeafe; color: #1e40af; }
+        .team-badge.beta { background: #d1fae5; color: #065f46; }
+        .team-badge.gamma { background: #f3e8ff; color: #7c3aed; }
+
+        .experience-badge {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .personnel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .btn-action.view {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-action.edit {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-action.assign {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .btn-action.contact {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .page-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* ===== STILI TURNI ===== */
+        
+        .shifts-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .shift-stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .shift-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .shift-stat-card .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .shift-stat-card .stat-content {
+            flex: 1;
+        }
+
+        .shift-stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .shift-stat-card .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .shift-stat-card .stat-change {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .shifts-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .shift-filters {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .shift-search {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .shift-search i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .shift-search input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            background: white;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .shift-search input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .shifts-view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .view-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .shifts-grid-container {
+            margin-bottom: 2rem;
+        }
+
+        .shifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .shift-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .shift-card.morning {
+            border-left-color: #f59e0b;
+        }
+
+        .shift-card.afternoon {
+            border-left-color: #3b82f6;
+        }
+
+        .shift-card.night {
+            border-left-color: #6366f1;
+        }
+
+        .shift-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .shift-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .shift-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shift-type.morning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .shift-type.afternoon {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .shift-type.night {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .shift-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shift-status.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .shift-status.scheduled {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .shift-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 1rem 0;
+        }
+
+        .shift-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .shift-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .shift-detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shift-detail-value {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .shift-team {
+            margin-bottom: 1rem;
+        }
+
+        .shift-team-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .team-member {
+            padding: 0.25rem 0.75rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .shift-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .shift-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .shift-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-shift {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-shift.view {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn-shift.edit {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-shift.assign {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .btn-shift:hover {
+            transform: scale(1.05);
+        }
+
+        /* Timeline e Calendario */
+        .shifts-timeline, .shifts-calendar-view {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .timeline-header, .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-controls, .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .timeline-btn, .calendar-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .timeline-btn:hover, .calendar-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: #f8fafc;
+        }
+
+        .timeline-item.active {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .timeline-time {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            min-width: 80px;
+        }
+
+        .timeline-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .timeline-content p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .timeline-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-status.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .timeline-status.scheduled {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+        }
+
+        .calendar-day {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            min-height: 120px;
+        }
+
+        .day-header {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .day-shifts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .shift-item {
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .shift-item.morning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .shift-item.afternoon {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .shift-item.night {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .personnel-controls, .shifts-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-buttons, .shift-filters {
+                justify-content: center;
+            }
+
+            .shifts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shift-details {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -2930,6 +3766,15 @@
         function isLoggedIn() {
             const authData = getDiscordAuth();
             return authData && authData.loggedIn;
+        }
+
+        function cleanURL() {
+            // Rimuovi i parametri dall'URL per renderlo pulito
+            if (window.location.hash) {
+                // Usa replaceState per non aggiungere una nuova voce nella cronologia
+                window.history.replaceState(null, null, window.location.pathname);
+                console.log('URL pulito - parametri token rimossi');
+            }
         }
 
 
@@ -3045,6 +3890,9 @@
                 
                 // Salva il login
                 saveDiscordAuth(user, token);
+                
+                // Pulisci l'URL rimuovendo i parametri del token
+                cleanURL();
                 
                 // Mostra dashboard moderna
                 setTimeout(() => {
@@ -5441,92 +6289,132 @@
             mainContent.innerHTML = `
                 <div class="page-header">
                     <div>
-                        <h1>Personale</h1>
-                        <p>Gestione del personale U.O.P.I.</p>
+                        <h1>👥 Gestione Personale</h1>
+                        <p>Amministrazione completa del personale U.O.P.I.</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn-primary">
-                            <i class="fas fa-plus"></i>
+                        <button class="btn-primary" onclick="showAddPersonnelModal()">
+                            <i class="fas fa-user-plus"></i>
                             Aggiungi Personale
                         </button>
-                        <button class="btn-secondary">
+                        <button class="btn-secondary" onclick="exportPersonnelData()">
                             <i class="fas fa-download"></i>
-                            Esporta
+                            Esporta Dati
+                        </button>
+                        <button class="btn-secondary" onclick="showPersonnelFilters()">
+                            <i class="fas fa-filter"></i>
+                            Filtri
                         </button>
                     </div>
                 </div>
 
-                <div class="personnel-stats">
-                    <div class="personnel-stat">
-                        <div class="stat-number">45</div>
-                        <div class="stat-label">Totale Personale</div>
+                <!-- Statistiche Personale -->
+                <div class="personnel-stats-grid">
+                    <div class="personnel-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">45</div>
+                            <div class="stat-label">Totale Personale</div>
+                            <div class="stat-change positive">+3 questo mese</div>
+                        </div>
                     </div>
-                    <div class="personnel-stat">
-                        <div class="stat-number">38</div>
-                        <div class="stat-label">Disponibili</div>
+                    <div class="personnel-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">38</div>
+                            <div class="stat-label">Disponibili</div>
+                            <div class="stat-change neutral">84% del totale</div>
+                        </div>
                     </div>
-                    <div class="personnel-stat">
-                        <div class="stat-number">7</div>
-                        <div class="stat-label">In Servizio</div>
+                    <div class="personnel-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">7</div>
+                            <div class="stat-label">In Servizio</div>
+                            <div class="stat-change active">Attualmente attivi</div>
+                        </div>
+                    </div>
+                    <div class="personnel-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">In Ferie</div>
+                            <div class="stat-change neutral">Nessuno in ferie</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="personnel-table">
-                    <table>
+                <!-- Filtri e Ricerca -->
+                <div class="personnel-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="personnelSearch" placeholder="Cerca per nome, grado o specializzazione..." onkeyup="filterPersonnel()">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" onclick="filterPersonnelByStatus('all')">Tutti</button>
+                        <button class="filter-btn" onclick="filterPersonnelByStatus('available')">Disponibili</button>
+                        <button class="filter-btn" onclick="filterPersonnelByStatus('on-duty')">In Servizio</button>
+                        <button class="filter-btn" onclick="filterPersonnelByStatus('on-leave')">In Ferie</button>
+                    </div>
+                </div>
+
+                <!-- Tabella Personale Interattiva -->
+                <div class="personnel-table-container">
+                    <table class="personnel-table" id="personnelTable">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Ruolo</th>
-                                <th>Stato</th>
-                                <th>Squadra</th>
+                                <th onclick="sortPersonnel('name')">
+                                    <i class="fas fa-sort"></i> Nome Completo
+                                </th>
+                                <th onclick="sortPersonnel('rank')">
+                                    <i class="fas fa-sort"></i> Grado
+                                </th>
+                                <th onclick="sortPersonnel('specialization')">
+                                    <i class="fas fa-sort"></i> Specializzazione
+                                </th>
+                                <th onclick="sortPersonnel('status')">
+                                    <i class="fas fa-sort"></i> Stato
+                                </th>
+                                <th onclick="sortPersonnel('team')">
+                                    <i class="fas fa-sort"></i> Squadra
+                                </th>
+                                <th onclick="sortPersonnel('experience')">
+                                    <i class="fas fa-sort"></i> Esperienza
+                                </th>
                                 <th>Azioni</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="personnel-info">
-                                        <div class="personnel-avatar">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <div class="personnel-name">Marco Rossi</div>
-                                            <div class="personnel-id">ID: 001</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Comandante</td>
-                                <td><span class="status-badge available">Disponibile</span></td>
-                                <td>Alpha</td>
-                                <td>
-                                    <button class="btn-action">Modifica</button>
-                                    <button class="btn-action">Dettagli</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="personnel-info">
-                                        <div class="personnel-avatar">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <div class="personnel-name">Giulia Bianchi</div>
-                                            <div class="personnel-id">ID: 002</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Vice Comandante</td>
-                                <td><span class="status-badge on-duty">In Servizio</span></td>
-                                <td>Beta</td>
-                                <td>
-                                    <button class="btn-action">Modifica</button>
-                                    <button class="btn-action">Dettagli</button>
-                                </td>
-                            </tr>
+                        <tbody id="personnelTableBody">
+                            <!-- Dati caricati dinamicamente -->
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Paginazione -->
+                <div class="pagination">
+                    <button class="page-btn" onclick="changePage('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-info">Pagina <span id="currentPage">1</span> di <span id="totalPages">3</span></span>
+                    <button class="page-btn" onclick="changePage('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             `;
+
+            // Carica i dati del personale
+            loadPersonnelData();
+            
+            // Inizializza le funzionalità
+            initializePersonnelFeatures();
         }
 
         function loadShiftsSection() {
@@ -5534,59 +6422,166 @@
             mainContent.innerHTML = `
                 <div class="page-header">
                     <div>
-                        <h1>Turni</h1>
-                        <p>Gestione turni e programmazione</p>
+                        <h1>🕐 Gestione Turni</h1>
+                        <p>Programmazione e monitoraggio turni operativi</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn-primary">
+                        <button class="btn-primary" onclick="showAddShiftModal()">
                             <i class="fas fa-plus"></i>
                             Nuovo Turno
                         </button>
-                        <button class="btn-secondary">
-                            <i class="fas fa-calendar"></i>
-                            Calendario
+                        <button class="btn-secondary" onclick="showShiftCalendar()">
+                            <i class="fas fa-calendar-alt"></i>
+                            Vista Calendario
+                        </button>
+                        <button class="btn-secondary" onclick="exportShiftsData()">
+                            <i class="fas fa-download"></i>
+                            Esporta Turni
                         </button>
                     </div>
                 </div>
 
-                <div class="shifts-calendar">
-                    <div class="calendar-header">
-                        <h3>Calendario Turni - Dicembre 2024</h3>
-                        <div class="calendar-controls">
-                            <button class="btn-calendar">←</button>
-                            <span>Dicembre 2024</span>
-                            <button class="btn-calendar">→</button>
+                <!-- Statistiche Turni -->
+                <div class="shifts-stats-grid">
+                    <div class="shift-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">24</div>
+                            <div class="stat-label">Turni Settimanali</div>
+                            <div class="stat-change positive">+2 questa settimana</div>
                         </div>
                     </div>
-                    
-                    <div class="calendar-grid">
-                        <div class="calendar-day">
-                            <div class="day-header">Lun 2</div>
-                            <div class="day-shifts">
-                                <div class="shift-item morning">M - Squadra A</div>
-                                <div class="shift-item afternoon">P - Squadra B</div>
-                                <div class="shift-item night">N - Squadra C</div>
-                            </div>
+                    <div class="shift-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
                         </div>
-                        <div class="calendar-day">
-                            <div class="day-header">Mar 3</div>
-                            <div class="day-shifts">
-                                <div class="shift-item morning">M - Squadra B</div>
-                                <div class="shift-item afternoon">P - Squadra C</div>
-                                <div class="shift-item night">N - Squadra A</div>
-                            </div>
+                        <div class="stat-content">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Turni Attivi</div>
+                            <div class="stat-change active">In corso ora</div>
                         </div>
-                        <div class="calendar-day">
-                            <div class="day-header">Mer 4</div>
-                            <div class="day-shifts">
-                                <div class="shift-item morning">M - Squadra C</div>
-                                <div class="shift-item afternoon">P - Squadra A</div>
-                                <div class="shift-item night">N - Squadra B</div>
-                            </div>
+                    </div>
+                    <div class="shift-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">16</div>
+                            <div class="stat-label">Turni Programmati</div>
+                            <div class="stat-change neutral">Prossimi 7 giorni</div>
+                        </div>
+                    </div>
+                    <div class="shift-stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">45</div>
+                            <div class="stat-label">Personale Assegnato</div>
+                            <div class="stat-change positive">100% copertura</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Filtri Turni -->
+                <div class="shifts-controls">
+                    <div class="shift-filters">
+                        <button class="filter-btn active" onclick="filterShiftsByType('all')">
+                            <i class="fas fa-list"></i> Tutti i Turni
+                        </button>
+                        <button class="filter-btn" onclick="filterShiftsByType('morning')">
+                            <i class="fas fa-sun"></i> Mattina (06:00-14:00)
+                        </button>
+                        <button class="filter-btn" onclick="filterShiftsByType('afternoon')">
+                            <i class="fas fa-cloud-sun"></i> Pomeriggio (14:00-22:00)
+                        </button>
+                        <button class="filter-btn" onclick="filterShiftsByType('night')">
+                            <i class="fas fa-moon"></i> Notte (22:00-06:00)
+                        </button>
+                    </div>
+                    <div class="shift-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="shiftSearch" placeholder="Cerca per squadra, responsabile o data..." onkeyup="searchShifts()">
+                    </div>
+                </div>
+
+                <!-- Vista Turni -->
+                <div class="shifts-view-toggle">
+                    <button class="view-btn active" onclick="switchShiftsView('grid')">
+                        <i class="fas fa-th"></i> Griglia
+                    </button>
+                    <button class="view-btn" onclick="switchShiftsView('list')">
+                        <i class="fas fa-list"></i> Lista
+                    </button>
+                    <button class="view-btn" onclick="switchShiftsView('timeline')">
+                        <i class="fas fa-timeline"></i> Timeline
+                    </button>
+                </div>
+
+                <!-- Griglia Turni Interattiva -->
+                <div class="shifts-grid-container" id="shiftsGridContainer">
+                    <div class="shifts-grid" id="shiftsGrid">
+                        <!-- Turni caricati dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Vista Timeline -->
+                <div class="shifts-timeline" id="shiftsTimeline" style="display: none;">
+                    <div class="timeline-header">
+                        <h3>Timeline Turni - Oggi</h3>
+                        <div class="timeline-controls">
+                            <button class="timeline-btn" onclick="changeTimelineDay('prev')">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="timelineDate">18 Dicembre 2024</span>
+                            <button class="timeline-btn" onclick="changeTimelineDay('next')">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="timeline-content" id="timelineContent">
+                        <!-- Timeline caricata dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Calendario Turni -->
+                <div class="shifts-calendar-view" id="shiftsCalendarView" style="display: none;">
+                    <div class="calendar-header">
+                        <h3>Calendario Turni - Dicembre 2024</h3>
+                        <div class="calendar-controls">
+                            <button class="calendar-btn" onclick="changeCalendarMonth('prev')">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="calendarMonth">Dicembre 2024</span>
+                            <button class="calendar-btn" onclick="changeCalendarMonth('next')">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendario caricato dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Paginazione -->
+                <div class="pagination">
+                    <button class="page-btn" onclick="changeShiftsPage('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-info">Pagina <span id="shiftsCurrentPage">1</span> di <span id="shiftsTotalPages">2</span></span>
+                    <button class="page-btn" onclick="changeShiftsPage('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             `;
+
+            // Carica i dati dei turni
+            loadShiftsData();
+            
+            // Inizializza le funzionalità
+            initializeShiftsFeatures();
         }
 
         function loadReportsSection() {
@@ -5979,6 +6974,578 @@
                     </div>
                 </div>
             `;
+        }
+
+        // ===== FUNZIONI PERSONALE =====
+        
+        // Dati mock del personale
+        const personnelData = [
+            {
+                id: 1,
+                name: "Marco Rossi",
+                rank: "Colonnello",
+                specialization: "Pilota",
+                status: "available",
+                team: "Alpha",
+                experience: "15 anni",
+                phone: "+39 123 456 7890",
+                email: "marco.rossi@uopi.it",
+                avatar: "MR"
+            },
+            {
+                id: 2,
+                name: "Giulia Bianchi",
+                rank: "Maggiore",
+                specialization: "Medico",
+                status: "on-duty",
+                team: "Beta",
+                experience: "12 anni",
+                phone: "+39 123 456 7891",
+                email: "giulia.bianchi@uopi.it",
+                avatar: "GB"
+            },
+            {
+                id: 3,
+                name: "Luca Verdi",
+                rank: "Capitano",
+                specialization: "Tecnico",
+                status: "available",
+                team: "Gamma",
+                experience: "8 anni",
+                phone: "+39 123 456 7892",
+                email: "luca.verdi@uopi.it",
+                avatar: "LV"
+            },
+            {
+                id: 4,
+                name: "Anna Neri",
+                rank: "Tenente",
+                specialization: "Operatore Radio",
+                status: "on-duty",
+                team: "Alpha",
+                experience: "6 anni",
+                phone: "+39 123 456 7893",
+                email: "anna.neri@uopi.it",
+                avatar: "AN"
+            },
+            {
+                id: 5,
+                name: "Francesco Blu",
+                rank: "Sergente",
+                specialization: "Sicurezza",
+                status: "available",
+                team: "Beta",
+                experience: "4 anni",
+                phone: "+39 123 456 7894",
+                email: "francesco.blu@uopi.it",
+                avatar: "FB"
+            },
+            {
+                id: 6,
+                name: "Elena Gialli",
+                rank: "Maresciallo",
+                specialization: "Logistica",
+                status: "on-leave",
+                team: "Gamma",
+                experience: "10 anni",
+                phone: "+39 123 456 7895",
+                email: "elena.gialli@uopi.it",
+                avatar: "EG"
+            }
+        ];
+
+        let currentPersonnelPage = 1;
+        let personnelPerPage = 10;
+        let currentPersonnelFilter = 'all';
+        let currentPersonnelSort = 'name';
+
+        function loadPersonnelData() {
+            const tbody = document.getElementById('personnelTableBody');
+            if (!tbody) return;
+
+            let filteredData = filterPersonnelData();
+            let sortedData = sortPersonnelData(filteredData);
+            
+            const startIndex = (currentPersonnelPage - 1) * personnelPerPage;
+            const endIndex = startIndex + personnelPerPage;
+            const pageData = sortedData.slice(startIndex, endIndex);
+
+            tbody.innerHTML = pageData.map(person => `
+                <tr class="personnel-row" data-person-id="${person.id}">
+                    <td>
+                        <div class="personnel-info">
+                            <div class="personnel-avatar">
+                                <span>${person.avatar}</span>
+                            </div>
+                            <div>
+                                <div class="personnel-name">${person.name}</div>
+                                <div class="personnel-id">ID: ${person.id.toString().padStart(3, '0')}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="rank-badge ${person.rank.toLowerCase()}">${person.rank}</span>
+                    </td>
+                    <td>
+                        <span class="specialization-badge">${person.specialization}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${person.status}">
+                            ${person.status === 'available' ? 'Disponibile' : 
+                              person.status === 'on-duty' ? 'In Servizio' : 'In Ferie'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="team-badge ${person.team.toLowerCase()}">Squadra ${person.team}</span>
+                    </td>
+                    <td>
+                        <span class="experience-badge">${person.experience}</span>
+                    </td>
+                    <td>
+                        <div class="personnel-actions">
+                            <button class="btn-action view" onclick="viewPersonnelDetails(${person.id})" title="Visualizza Dettagli">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-action edit" onclick="editPersonnel(${person.id})" title="Modifica">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action assign" onclick="assignPersonnelToShift(${person.id})" title="Assegna Turno">
+                                <i class="fas fa-calendar-plus"></i>
+                            </button>
+                            <button class="btn-action contact" onclick="contactPersonnel(${person.id})" title="Contatta">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updatePersonnelPagination(sortedData.length);
+        }
+
+        function filterPersonnelData() {
+            const searchTerm = document.getElementById('personnelSearch')?.value.toLowerCase() || '';
+            
+            return personnelData.filter(person => {
+                const matchesSearch = !searchTerm || 
+                    person.name.toLowerCase().includes(searchTerm) ||
+                    person.rank.toLowerCase().includes(searchTerm) ||
+                    person.specialization.toLowerCase().includes(searchTerm) ||
+                    person.team.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = currentPersonnelFilter === 'all' || person.status === currentPersonnelFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+        }
+
+        function sortPersonnelData(data) {
+            return data.sort((a, b) => {
+                switch(currentPersonnelSort) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'rank':
+                        const rankOrder = ['Generale', 'Colonnello', 'Maggiore', 'Capitano', 'Tenente', 'Sottotenente', 'Maresciallo', 'Sergente', 'Caporale', 'Soldato'];
+                        return rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank);
+                    case 'specialization':
+                        return a.specialization.localeCompare(b.specialization);
+                    case 'status':
+                        return a.status.localeCompare(b.status);
+                    case 'team':
+                        return a.team.localeCompare(b.team);
+                    case 'experience':
+                        return parseInt(a.experience) - parseInt(b.experience);
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function filterPersonnel() {
+            currentPersonnelPage = 1;
+            loadPersonnelData();
+        }
+
+        function filterPersonnelByStatus(status) {
+            currentPersonnelFilter = status;
+            currentPersonnelPage = 1;
+            
+            // Aggiorna i pulsanti di filtro
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadPersonnelData();
+        }
+
+        function sortPersonnel(sortBy) {
+            currentPersonnelSort = sortBy;
+            loadPersonnelData();
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filterPersonnelData().length / personnelPerPage);
+            
+            if (direction === 'prev' && currentPersonnelPage > 1) {
+                currentPersonnelPage--;
+            } else if (direction === 'next' && currentPersonnelPage < totalPages) {
+                currentPersonnelPage++;
+            }
+            
+            loadPersonnelData();
+        }
+
+        function updatePersonnelPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / personnelPerPage);
+            document.getElementById('currentPage').textContent = currentPersonnelPage;
+            document.getElementById('totalPages').textContent = totalPages;
+        }
+
+        function viewPersonnelDetails(personId) {
+            const person = personnelData.find(p => p.id === personId);
+            if (!person) return;
+
+            showPersonnelDetailsModal(person);
+        }
+
+        function editPersonnel(personId) {
+            const person = personnelData.find(p => p.id === personId);
+            if (!person) return;
+
+            showEditPersonnelModal(person);
+        }
+
+        function assignPersonnelToShift(personId) {
+            const person = personnelData.find(p => p.id === personId);
+            if (!person) return;
+
+            showAssignShiftModal(person);
+        }
+
+        function contactPersonnel(personId) {
+            const person = personnelData.find(p => p.id === personId);
+            if (!person) return;
+
+            // Simula chiamata
+            showSuccess(`Chiamata a ${person.name} in corso...`);
+        }
+
+        function showAddPersonnelModal() {
+            showSuccess('Modal aggiungi personale aperto');
+        }
+
+        function exportPersonnelData() {
+            showSuccess('Esportazione dati personale in corso...');
+        }
+
+        function showPersonnelFilters() {
+            showSuccess('Filtri avanzati personale aperti');
+        }
+
+        function initializePersonnelFeatures() {
+            // Inizializza funzionalità aggiuntive
+            console.log('Funzionalità personale inizializzate');
+        }
+
+        // ===== FUNZIONI TURNI =====
+        
+        // Dati mock dei turni
+        const shiftsData = [
+            {
+                id: 1,
+                type: 'morning',
+                team: 'Alpha',
+                leader: 'Dr. Marco Rossi',
+                date: '18 Dicembre 2024',
+                startTime: '06:00',
+                endTime: '14:00',
+                status: 'active',
+                members: ['Anna Bianchi', 'Luca Verdi', 'Sara Neri', 'Marco Blu'],
+                location: 'Base Principale',
+                notes: 'Turno mattutino standard'
+            },
+            {
+                id: 2,
+                type: 'afternoon',
+                team: 'Beta',
+                leader: 'Dr.ssa Elena Gialli',
+                date: '18 Dicembre 2024',
+                startTime: '14:00',
+                endTime: '22:00',
+                status: 'scheduled',
+                members: ['Giulia Rosa', 'Paolo Viola', 'Chiara Marroni', 'Andrea Celesti'],
+                location: 'Base Principale',
+                notes: 'Turno pomeridiano con pattugliamento'
+            },
+            {
+                id: 3,
+                type: 'night',
+                team: 'Gamma',
+                leader: 'Dr. Francesco Grigi',
+                date: '18-19 Dicembre 2024',
+                startTime: '22:00',
+                endTime: '06:00',
+                status: 'scheduled',
+                members: ['Roberto Azzurri', 'Federica Coralli', 'Simone Ocra'],
+                location: 'Base Principale',
+                notes: 'Turno notturno con controllo territorio'
+            },
+            {
+                id: 4,
+                type: 'morning',
+                team: 'Beta',
+                leader: 'Dr.ssa Alessia Turchese',
+                date: '19 Dicembre 2024',
+                startTime: '06:00',
+                endTime: '14:00',
+                status: 'scheduled',
+                members: ['Massimo Giada', 'Elena Malachite', 'Riccardo Smeraldo'],
+                location: 'Base Principale',
+                notes: 'Turno mattutino con esercitazione'
+            }
+        ];
+
+        let currentShiftsPage = 1;
+        let shiftsPerPage = 6;
+        let currentShiftsFilter = 'all';
+        let currentShiftsView = 'grid';
+
+        function loadShiftsData() {
+            const shiftsGrid = document.getElementById('shiftsGrid');
+            if (!shiftsGrid) return;
+
+            let filteredData = filterShiftsData();
+            let pageData = paginateShiftsData(filteredData);
+
+            if (currentShiftsView === 'grid') {
+                shiftsGrid.innerHTML = pageData.map(shift => `
+                    <div class="shift-card ${shift.type}" data-shift-id="${shift.id}">
+                        <div class="shift-header">
+                            <div class="shift-type ${shift.type}">
+                                <i class="fas fa-${shift.type === 'morning' ? 'sun' : shift.type === 'afternoon' ? 'cloud-sun' : 'moon'}"></i>
+                                ${shift.type === 'morning' ? 'Mattina' : shift.type === 'afternoon' ? 'Pomeriggio' : 'Notte'}
+                            </div>
+                            <div class="shift-status ${shift.status}">
+                                ${shift.status === 'active' ? 'Attivo' : 'Programmato'}
+                            </div>
+                        </div>
+                        <h3 class="shift-title">Turno ${shift.type === 'morning' ? 'Mattina' : shift.type === 'afternoon' ? 'Pomeriggio' : 'Notte'} - Squadra ${shift.team}</h3>
+                        <div class="shift-details">
+                            <div class="shift-detail">
+                                <span class="shift-detail-label">Orario</span>
+                                <span class="shift-detail-value">${shift.startTime} - ${shift.endTime}</span>
+                            </div>
+                            <div class="shift-detail">
+                                <span class="shift-detail-label">Data</span>
+                                <span class="shift-detail-value">${shift.date}</span>
+                            </div>
+                            <div class="shift-detail">
+                                <span class="shift-detail-label">Responsabile</span>
+                                <span class="shift-detail-value">${shift.leader}</span>
+                            </div>
+                            <div class="shift-detail">
+                                <span class="shift-detail-label">Stato</span>
+                                <span class="shift-detail-value">${shift.status === 'active' ? 'In corso' : 'In attesa'}</span>
+                            </div>
+                        </div>
+                        <div class="shift-team">
+                            <div class="shift-team-label">Team Assegnato</div>
+                            <div class="team-members">
+                                ${shift.members.map(member => `<span class="team-member">${member}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="shift-actions">
+                            <div class="shift-time">
+                                <i class="fas fa-clock"></i>
+                                ${shift.status === 'active' ? 'In corso' : `Inizio previsto ${shift.startTime}`}
+                            </div>
+                            <div class="shift-buttons">
+                                <button class="btn-shift view" onclick="viewShiftDetails(${shift.id})">Dettagli</button>
+                                <button class="btn-shift edit" onclick="editShift(${shift.id})">Modifica</button>
+                                <button class="btn-shift assign" onclick="assignPersonnelToShift(${shift.id})">Assegna</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateShiftsPagination(filteredData.length);
+        }
+
+        function filterShiftsData() {
+            const searchTerm = document.getElementById('shiftSearch')?.value.toLowerCase() || '';
+            
+            return shiftsData.filter(shift => {
+                const matchesSearch = !searchTerm || 
+                    shift.team.toLowerCase().includes(searchTerm) ||
+                    shift.leader.toLowerCase().includes(searchTerm) ||
+                    shift.date.toLowerCase().includes(searchTerm) ||
+                    shift.members.some(member => member.toLowerCase().includes(searchTerm));
+                
+                const matchesType = currentShiftsFilter === 'all' || shift.type === currentShiftsFilter;
+                
+                return matchesSearch && matchesType;
+            });
+        }
+
+        function paginateShiftsData(data) {
+            const startIndex = (currentShiftsPage - 1) * shiftsPerPage;
+            const endIndex = startIndex + shiftsPerPage;
+            return data.slice(startIndex, endIndex);
+        }
+
+        function filterShiftsByType(type) {
+            currentShiftsFilter = type;
+            currentShiftsPage = 1;
+            
+            // Aggiorna i pulsanti di filtro
+            document.querySelectorAll('.shift-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadShiftsData();
+        }
+
+        function searchShifts() {
+            currentShiftsPage = 1;
+            loadShiftsData();
+        }
+
+        function switchShiftsView(view) {
+            currentShiftsView = view;
+            
+            // Aggiorna i pulsanti di vista
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Mostra/nascondi le diverse viste
+            document.getElementById('shiftsGridContainer').style.display = view === 'grid' ? 'block' : 'none';
+            document.getElementById('shiftsTimeline').style.display = view === 'timeline' ? 'block' : 'none';
+            document.getElementById('shiftsCalendarView').style.display = view === 'calendar' ? 'block' : 'none';
+            
+            if (view === 'timeline') {
+                loadTimelineView();
+            } else if (view === 'calendar') {
+                loadCalendarView();
+            }
+        }
+
+        function changeShiftsPage(direction) {
+            const totalPages = Math.ceil(filterShiftsData().length / shiftsPerPage);
+            
+            if (direction === 'prev' && currentShiftsPage > 1) {
+                currentShiftsPage--;
+            } else if (direction === 'next' && currentShiftsPage < totalPages) {
+                currentShiftsPage++;
+            }
+            
+            loadShiftsData();
+        }
+
+        function updateShiftsPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / shiftsPerPage);
+            document.getElementById('shiftsCurrentPage').textContent = currentShiftsPage;
+            document.getElementById('shiftsTotalPages').textContent = totalPages;
+        }
+
+        function viewShiftDetails(shiftId) {
+            const shift = shiftsData.find(s => s.id === shiftId);
+            if (!shift) return;
+
+            showShiftDetailsModal(shift);
+        }
+
+        function editShift(shiftId) {
+            const shift = shiftsData.find(s => s.id === shiftId);
+            if (!shift) return;
+
+            showEditShiftModal(shift);
+        }
+
+        function showAddShiftModal() {
+            showSuccess('Modal nuovo turno aperto');
+        }
+
+        function showShiftCalendar() {
+            switchShiftsView('calendar');
+        }
+
+        function exportShiftsData() {
+            showSuccess('Esportazione turni in corso...');
+        }
+
+        function loadTimelineView() {
+            const timelineContent = document.getElementById('timelineContent');
+            if (!timelineContent) return;
+
+            timelineContent.innerHTML = `
+                <div class="timeline-item active">
+                    <div class="timeline-time">06:00</div>
+                    <div class="timeline-content">
+                        <h4>Turno Mattina - Squadra Alpha</h4>
+                        <p>Dr. Marco Rossi</p>
+                        <span class="timeline-status active">In corso</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">14:00</div>
+                    <div class="timeline-content">
+                        <h4>Turno Pomeriggio - Squadra Beta</h4>
+                        <p>Dr.ssa Elena Gialli</p>
+                        <span class="timeline-status scheduled">Programmato</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">22:00</div>
+                    <div class="timeline-content">
+                        <h4>Turno Notte - Squadra Gamma</h4>
+                        <p>Dr. Francesco Grigi</p>
+                        <span class="timeline-status scheduled">Programmato</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadCalendarView() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            if (!calendarGrid) return;
+
+            calendarGrid.innerHTML = `
+                <div class="calendar-day">
+                    <div class="day-header">Lun 18</div>
+                    <div class="day-shifts">
+                        <div class="shift-item morning">M - Alpha</div>
+                        <div class="shift-item afternoon">P - Beta</div>
+                        <div class="shift-item night">N - Gamma</div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    <div class="day-header">Mar 19</div>
+                    <div class="day-shifts">
+                        <div class="shift-item morning">M - Beta</div>
+                        <div class="shift-item afternoon">P - Gamma</div>
+                        <div class="shift-item night">N - Alpha</div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    <div class="day-header">Mer 20</div>
+                    <div class="day-shifts">
+                        <div class="shift-item morning">M - Gamma</div>
+                        <div class="shift-item afternoon">P - Alpha</div>
+                        <div class="shift-item night">N - Beta</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeTimelineDay(direction) {
+            showSuccess(`Timeline ${direction === 'prev' ? 'giorno precedente' : 'giorno successivo'}`);
+        }
+
+        function changeCalendarMonth(direction) {
+            showSuccess(`Calendario ${direction === 'prev' ? 'mese precedente' : 'mese successivo'}`);
+        }
+
+        function initializeShiftsFeatures() {
+            console.log('Funzionalità turni inizializzate');
         }
 
         // Inizializza le sezioni quando la dashboard viene caricata
