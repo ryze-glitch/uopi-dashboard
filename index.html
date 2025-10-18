@@ -8912,14 +8912,19 @@
         function loadShiftsSection() {
             console.log('🕐 Caricamento sezione Turni...');
             const mainContent = document.querySelector('.dashboard-main');
+            if (!mainContent) {
+                console.error('❌ Elemento .dashboard-main non trovato!');
+                return;
+            }
+            
             mainContent.innerHTML = `
-                <div class="page-header">
+                <div class="page-header fade-in">
                     <div>
                         <h1>🕐 Gestione Turni</h1>
                         <p>Programmazione e monitoraggio turni operativi</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn-primary" onclick="showAddShiftModal()">
+                        <button class="btn-primary" onclick="showAddShiftModalNew()">
                             <i class="fas fa-plus"></i>
                             Nuovo Turno
                         </button>
@@ -9070,11 +9075,13 @@
                 </div>
             `;
 
-            // Carica i dati dei turni
-            loadShiftsData();
+            // Carica i dati dei turni con la funzione completa
+            console.log('🕐 Chiamata loadShiftsDataComplete...');
+            setTimeout(() => {
+                loadShiftsDataComplete();
+            }, 100);
             
-            // Inizializza le funzionalità
-            initializeShiftsFeatures();
+            console.log('✅ Sezione turni caricata');
         }
 
         function loadReportsSection() {
@@ -10150,6 +10157,265 @@
             });
         }
 
+        // ============================================
+        // FUNZIONI MODAL TURNI - VERSIONE FUNZIONANTE
+        // ============================================
+        
+        function showAddShiftModalNew() {
+            console.log('🕐 Apertura modal nuovo turno');
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.opacity = '0';
+            modal.innerHTML = `
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3>🕐 Aggiungi Nuovo Turno</h3>
+                        <button class="modal-close" onclick="closeShiftModalNew()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addShiftFormNew">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Tipo Turno</label>
+                                    <select id="newShiftType" required>
+                                        <option value="">Seleziona Tipo</option>
+                                        <option value="morning">🌅 Mattina (06:00 - 14:00)</option>
+                                        <option value="afternoon">🌤️ Pomeriggio (14:00 - 22:00)</option>
+                                        <option value="night">🌙 Notte (22:00 - 06:00)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Data Turno</label>
+                                    <input type="date" id="newShiftDate" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Squadra</label>
+                                    <select id="newShiftTeam" required>
+                                        <option value="">Seleziona Squadra</option>
+                                        <option value="Alpha">Squadra Alpha</option>
+                                        <option value="Beta">Squadra Beta</option>
+                                        <option value="Gamma">Squadra Gamma</option>
+                                        <option value="Delta">Squadra Delta</option>
+                                        <option value="Echo">Squadra Echo</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Responsabile</label>
+                                    <input type="text" id="newShiftLeader" placeholder="Es: Dr. Mario Rossi" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Membri Team (separati da virgola)</label>
+                                <input type="text" id="newShiftMembers" placeholder="Es: Anna Bianchi, Luca Verdi, Sara Neri" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Note</label>
+                                <textarea id="newShiftNotes" rows="3" placeholder="Note aggiuntive sul turno..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="closeShiftModalNew()">
+                            <i class="fas fa-times"></i>
+                            Annulla
+                        </button>
+                        <button class="btn-primary" onclick="saveNewShift()">
+                            <i class="fas fa-save"></i>
+                            Salva Turno
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Animazione di apertura
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // Chiudi cliccando fuori
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeShiftModalNew();
+                }
+            });
+        }
+
+        function closeShiftModalNew() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
+        function saveNewShift() {
+            const type = document.getElementById('newShiftType')?.value;
+            const date = document.getElementById('newShiftDate')?.value;
+            const team = document.getElementById('newShiftTeam')?.value;
+            const leader = document.getElementById('newShiftLeader')?.value;
+            const members = document.getElementById('newShiftMembers')?.value;
+            const notes = document.getElementById('newShiftNotes')?.value || '';
+            
+            if (!type || !date || !team || !leader || !members) {
+                showError('⚠️ Compila tutti i campi obbligatori!');
+                return;
+            }
+            
+            console.log('🕐 Salvataggio nuovo turno:', { 
+                type, date, team, leader, members, notes 
+            });
+            
+            // Mostra loading
+            showLoadingOverlay('Salvataggio turno...');
+            
+            setTimeout(() => {
+                hideLoadingOverlay();
+                
+                const typeName = type === 'morning' ? 'Mattina' : type === 'afternoon' ? 'Pomeriggio' : 'Notte';
+                showSuccess(`✅ Turno ${typeName} - Squadra ${team} aggiunto con successo!`);
+                closeShiftModalNew();
+                
+                // Ricarica i dati se la griglia è visibile
+                const shiftsGrid = document.getElementById('shiftsGrid');
+                if (shiftsGrid) {
+                    loadShiftsDataComplete();
+                }
+            }, 1500);
+        }
+
+        // Carica dati turni completi
+        function loadShiftsDataComplete() {
+            const shiftsGrid = document.getElementById('shiftsGrid');
+            if (!shiftsGrid) {
+                console.warn('⚠️ shiftsGrid non trovato');
+                return;
+            }
+            
+            console.log('🕐 Caricamento dati turni completi...');
+            
+            const shifts = [
+                {
+                    id: 1,
+                    type: 'morning',
+                    title: 'Turno Mattina - Squadra Alpha',
+                    time: '06:00 - 14:00',
+                    date: '18 Ottobre 2025',
+                    leader: 'Dr. Mario Rossi',
+                    status: 'active',
+                    team: ['Anna Bianchi', 'Luca Verdi', 'Sara Neri', 'Marco Blu']
+                },
+                {
+                    id: 2,
+                    type: 'afternoon',
+                    title: 'Turno Pomeriggio - Squadra Beta',
+                    time: '14:00 - 22:00',
+                    date: '18 Ottobre 2025',
+                    leader: 'Dr.ssa Elena Gialli',
+                    status: 'scheduled',
+                    team: ['Giulia Rosa', 'Paolo Viola', 'Chiara Marroni', 'Andrea Celesti']
+                },
+                {
+                    id: 3,
+                    type: 'night',
+                    title: 'Turno Notte - Squadra Gamma',
+                    time: '22:00 - 06:00',
+                    date: '18-19 Ottobre 2025',
+                    leader: 'Dr. Francesco Rossi',
+                    status: 'scheduled',
+                    team: ['Marco Bianchi', 'Laura Verdi', 'Giuseppe Neri', 'Francesca Blu']
+                }
+            ];
+            
+            shiftsGrid.innerHTML = shifts.map((shift, index) => `
+                <div class="shift-card fade-in fade-in-delay-${index + 1}" data-shift-type="${shift.type}">
+                    <div class="shift-header">
+                        <div class="shift-type ${shift.type}">
+                            <i class="fas fa-${shift.type === 'morning' ? 'sun' : shift.type === 'afternoon' ? 'cloud-sun' : 'moon'}"></i>
+                            ${shift.type === 'morning' ? 'Mattina' : shift.type === 'afternoon' ? 'Pomeriggio' : 'Notte'}
+                        </div>
+                        <div class="shift-status ${shift.status}">
+                            ${shift.status === 'active' ? 'Attivo' : 'Programmato'}
+                        </div>
+                    </div>
+                    <h3 class="shift-title">${shift.title}</h3>
+                    <div class="shift-details">
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Orario</span>
+                            <span class="shift-detail-value">${shift.time}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Data</span>
+                            <span class="shift-detail-value">${shift.date}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Responsabile</span>
+                            <span class="shift-detail-value">${shift.leader}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Stato</span>
+                            <span class="shift-detail-value">${shift.status === 'active' ? 'In corso' : 'In attesa'}</span>
+                        </div>
+                    </div>
+                    <div class="shift-team">
+                        <div class="shift-team-label">Team Assegnato</div>
+                        <div class="team-members">
+                            ${shift.team.map(member => `<span class="team-member">${member}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="shift-actions">
+                        <div class="shift-time">
+                            <i class="fas fa-clock"></i>
+                            ${shift.status === 'active' ? `Iniziato alle ${shift.time.split(' - ')[0]}` : `Inizio previsto ${shift.time.split(' - ')[0]}`}
+                        </div>
+                        <div class="shift-buttons">
+                            <button class="btn-shift view" onclick="viewShiftDetails(${shift.id})">Dettagli</button>
+                            <button class="btn-shift edit" onclick="editShiftDetails(${shift.id})">Modifica</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            console.log('✅ Dati turni caricati');
+        }
+
+        // Funzioni di supporto per i turni
+        function viewShiftDetails(shiftId) {
+            console.log('👁️ Visualizzazione dettagli turno:', shiftId);
+            showLoadingOverlay('Caricamento dettagli...');
+            setTimeout(() => {
+                hideLoadingOverlay();
+                showSuccess(`Dettagli turno #${shiftId} - Funzionalità in sviluppo`);
+            }, 1000);
+        }
+
+        function editShiftDetails(shiftId) {
+            console.log('✏️ Modifica turno:', shiftId);
+            showSuccess(`Modifica turno #${shiftId} - Funzionalità in sviluppo`);
+        }
+
+        function showShiftCalendar() {
+            console.log('📅 Vista calendario');
+            showSuccess('Vista calendario - Funzionalità in sviluppo');
+        }
+
+        function exportShiftsData() {
+            console.log('📥 Esportazione turni');
+            showLoadingOverlay('Esportazione in corso...');
+            setTimeout(() => {
+                hideLoadingOverlay();
+                showSuccess('✅ Dati turni esportati con successo!');
+            }, 1500);
+        }
+
         // Funzione per aggiungere operatori
         function addOperator() {
             console.log('👥 Aggiunta nuovo operatore...');
@@ -10159,27 +10425,36 @@
         }
 
         function showAddOperatorModal() {
+            console.log('👥 Apertura modal aggiungi operatore');
+            
             // Crea modal dinamico
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
+            modal.style.opacity = '0';
             modal.innerHTML = `
                 <div class="modal-container">
                     <div class="modal-header">
-                        <h3>Aggiungi Nuovo Operatore</h3>
-                        <button class="modal-close" onclick="closeModal(this)">
+                        <h3>👥 Aggiungi Nuovo Operatore</h3>
+                        <button class="modal-close" onclick="closeOperatorModalSimple()">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="addOperatorForm">
+                        <form id="addOperatorFormNew">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="operatorName">Nome Completo</label>
-                                    <input type="text" id="operatorName" name="name" required>
+                                    <label>Nome Completo</label>
+                                    <input type="text" id="newOperatorName" placeholder="Es: Mario Rossi" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="operatorRank">Grado</label>
-                                    <select id="operatorRank" name="rank" required>
+                                    <label>Matricola</label>
+                                    <input type="text" id="newOperatorMatricola" placeholder="Es: UOPI-001" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Grado</label>
+                                    <select id="newOperatorRank" required>
                                         <option value="">Seleziona Grado</option>
                                         <option value="Generale">Generale</option>
                                         <option value="Colonnello">Colonnello</option>
@@ -10190,14 +10465,11 @@
                                         <option value="Maresciallo">Maresciallo</option>
                                         <option value="Sergente">Sergente</option>
                                         <option value="Caporale">Caporale</option>
-                                        <option value="Soldato">Soldato</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="form-row">
                                 <div class="form-group">
-                                    <label for="operatorSpecialization">Specializzazione</label>
-                                    <select id="operatorSpecialization" name="specialization" required>
+                                    <label>Specializzazione</label>
+                                    <select id="newOperatorSpecialization" required>
                                         <option value="">Seleziona Specializzazione</option>
                                         <option value="Pilota">Pilota</option>
                                         <option value="Medico">Medico</option>
@@ -10207,9 +10479,11 @@
                                         <option value="Logistica">Logistica</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="form-group">
-                                    <label for="operatorTeam">Squadra</label>
-                                    <select id="operatorTeam" name="team" required>
+                                    <label>Squadra</label>
+                                    <select id="newOperatorTeam" required>
                                         <option value="">Seleziona Squadra</option>
                                         <option value="Alpha">Squadra Alpha</option>
                                         <option value="Beta">Squadra Beta</option>
@@ -10217,28 +10491,31 @@
                                         <option value="Delta">Squadra Delta</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label>Esperienza</label>
+                                    <input type="text" id="newOperatorExperience" placeholder="Es: 5 anni" required>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="operatorPhone">Telefono</label>
-                                    <input type="tel" id="operatorPhone" name="phone" required>
+                                    <label>Telefono</label>
+                                    <input type="tel" id="newOperatorPhone" placeholder="Es: +39 123 456 7890">
                                 </div>
                                 <div class="form-group">
-                                    <label for="operatorEmail">Email</label>
-                                    <input type="email" id="operatorEmail" name="email" required>
+                                    <label>Email</label>
+                                    <input type="email" id="newOperatorEmail" placeholder="Es: mario.rossi@uopi.it">
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="operatorExperience">Esperienza</label>
-                                <input type="text" id="operatorExperience" name="experience" placeholder="Es: 5 anni" required>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn-secondary" onclick="closeModal(this)">Annulla</button>
-                        <button type="button" class="btn-primary" onclick="saveOperator()">
+                        <button class="btn-secondary" onclick="closeOperatorModalSimple()">
+                            <i class="fas fa-times"></i>
+                            Annulla
+                        </button>
+                        <button class="btn-primary" onclick="saveNewOperator()">
                             <i class="fas fa-save"></i>
-                            Salva Operatore
+                            Aggiungi Operatore
                         </button>
                     </div>
                 </div>
@@ -10246,10 +10523,61 @@
             
             document.body.appendChild(modal);
             
-            // Animazione di entrata
+            // Animazione di apertura
             setTimeout(() => {
                 modal.style.opacity = '1';
             }, 10);
+            
+            // Chiudi cliccando fuori
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeOperatorModalSimple();
+                }
+            });
+        }
+
+        function closeOperatorModalSimple() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
+        function saveNewOperator() {
+            const name = document.getElementById('newOperatorName')?.value;
+            const matricola = document.getElementById('newOperatorMatricola')?.value;
+            const rank = document.getElementById('newOperatorRank')?.value;
+            const specialization = document.getElementById('newOperatorSpecialization')?.value;
+            const team = document.getElementById('newOperatorTeam')?.value;
+            const experience = document.getElementById('newOperatorExperience')?.value;
+            const phone = document.getElementById('newOperatorPhone')?.value || 'Non specificato';
+            const email = document.getElementById('newOperatorEmail')?.value || 'Non specificato';
+            
+            if (!name || !matricola || !rank || !specialization || !team || !experience) {
+                showError('⚠️ Compila tutti i campi obbligatori!');
+                return;
+            }
+            
+            console.log('👥 Salvataggio nuovo operatore:', { 
+                name, matricola, rank, specialization, team, experience, phone, email 
+            });
+            
+            // Mostra loading
+            showLoadingOverlay('Salvataggio operatore...');
+            
+            setTimeout(() => {
+                hideLoadingOverlay();
+                showSuccess(`✅ Operatore ${name} aggiunto con successo!`);
+                closeOperatorModalSimple();
+                
+                // Ricarica la tabella se visibile
+                if (document.getElementById('personnelTableBody')) {
+                    loadPersonnelData();
+                }
+            }, 1500);
         }
 
         function saveOperator() {
@@ -10711,4 +11039,5 @@
         console.log('📝 Dashboard pronta per l\'utilizzo');
     </script>
 </body>
+</html>
 </html>
