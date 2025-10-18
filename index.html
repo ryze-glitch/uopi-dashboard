@@ -563,6 +563,14 @@
             justify-content: center;
             color: white;
             font-size: 1.2rem;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .user-details {
@@ -585,6 +593,29 @@
             display: flex;
             align-items: center;
             gap: var(--space-sm);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .user-discriminator {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+        }
+
+        .user-id {
+            font-size: 0.7rem;
+            color: #666;
+            font-family: monospace;
         }
 
         .logout-btn {
@@ -3132,9 +3163,16 @@
                                 </div>
                                 <div class="user-profile">
                                     <div class="user-avatar">
-                                        <i class="fas fa-user-shield"></i>
+                                        <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=32" 
+                                             alt="Avatar" 
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <i class="fas fa-user-shield" style="display: none;"></i>
                                     </div>
-                                    <span class="user-name">${user.username}</span>
+                                    <div class="user-details">
+                                        <span class="user-name">${user.username}</span>
+                                        <span class="user-discriminator">#${user.discriminator}</span>
+                                        <span class="user-id">ID: ${user.id}</span>
+                                    </div>
                                 </div>
                                 <button class="icon-btn logout" onclick="logoutDiscord()">
                                     <i class="fas fa-sign-out-alt"></i>
@@ -5123,6 +5161,830 @@
 
         // Sistema di caricamento ottimizzato
         console.log('🚁 Sistema di caricamento ottimizzato attivo');
+
+        // Gestione sezioni dashboard
+        function initializeDashboardSections() {
+            const navItems = document.querySelectorAll('.nav-item[data-page]');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Rimuovi active da tutti gli elementi
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Aggiungi active all'elemento cliccato
+                    this.classList.add('active');
+                    
+                    // Carica la sezione
+                    const page = this.dataset.page;
+                    loadDashboardSection(page);
+                });
+            });
+        }
+
+        function loadDashboardSection(section) {
+            const mainContent = document.querySelector('.dashboard-main');
+            if (!mainContent) return;
+
+            switch(section) {
+                case 'overview':
+                    loadOverviewSection();
+                    break;
+                case 'operations':
+                    loadOperationsSection();
+                    break;
+                case 'personnel':
+                    loadPersonnelSection();
+                    break;
+                case 'shifts':
+                    loadShiftsSection();
+                    break;
+                case 'reports':
+                    loadReportsSection();
+                    break;
+                case 'equipment':
+                    loadEquipmentSection();
+                    break;
+                case 'communications':
+                    loadCommunicationsSection();
+                    break;
+                case 'training':
+                    loadTrainingSection();
+                    break;
+                case 'settings':
+                    loadSettingsSection();
+                    break;
+                case 'logs':
+                    loadLogsSection();
+                    break;
+                case 'backup':
+                    loadBackupSection();
+                    break;
+                default:
+                    loadOverviewSection();
+            }
+        }
+
+        function loadOverviewSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Panoramica</h1>
+                        <p>Monitoraggio in tempo reale delle attività U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuova Operazione
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-helicopter"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Operazioni Attive</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +2 oggi
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Personale Disponibile</div>
+                            <div class="stat-change neutral">
+                                <i class="fas fa-minus"></i>
+                                Stabile
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Turni Attivi</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +1 oggi
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">92%</div>
+                            <div class="stat-label">Equipaggiamento Operativo</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +3% questa settimana
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Operazioni per Giorno</h3>
+                            <div class="chart-controls">
+                                <button class="chart-btn">Ultimi 7 giorni</button>
+                                <button class="chart-btn">Ultimi 30 giorni</button>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Grafico operazioni giornaliere</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Distribuzione Turni</h3>
+                            <div class="chart-controls">
+                                <button class="chart-btn">Settimana corrente</button>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">
+                            <i class="fas fa-chart-pie"></i>
+                            <p>Grafico distribuzione turni</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadOperationsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Operazioni</h1>
+                        <p>Gestione e monitoraggio delle operazioni U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuova Operazione
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-filter"></i>
+                            Filtri
+                        </button>
+                    </div>
+                </div>
+
+                <div class="operations-grid">
+                    <div class="operation-card urgent">
+                        <div class="operation-header">
+                            <div class="operation-id">OP-2024-001</div>
+                            <div class="operation-status urgent">URGENTE</div>
+                        </div>
+                        <h3>Intervento Zona Nord</h3>
+                        <p>Richiesta intervento immediato per emergenza stradale</p>
+                        <div class="operation-details">
+                            <div class="operation-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Via Roma, 123</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>Iniziata 14:30</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-users"></i>
+                                <span>Squadra Alpha</span>
+                            </div>
+                        </div>
+                        <div class="operation-actions">
+                            <button class="btn-operation view">Dettagli</button>
+                            <button class="btn-operation edit">Modifica</button>
+                        </div>
+                    </div>
+
+                    <div class="operation-card active">
+                        <div class="operation-header">
+                            <div class="operation-id">OP-2024-002</div>
+                            <div class="operation-status active">ATTIVA</div>
+                        </div>
+                        <h3>Controllo Territorio</h3>
+                        <p>Pattugliamento programmato zona centro</p>
+                        <div class="operation-details">
+                            <div class="operation-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Centro Storico</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>Iniziata 10:00</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-users"></i>
+                                <span>Squadra Beta</span>
+                            </div>
+                        </div>
+                        <div class="operation-actions">
+                            <button class="btn-operation view">Dettagli</button>
+                            <button class="btn-operation edit">Modifica</button>
+                        </div>
+                    </div>
+
+                    <div class="operation-card completed">
+                        <div class="operation-header">
+                            <div class="operation-id">OP-2024-003</div>
+                            <div class="operation-status completed">COMPLETATA</div>
+                        </div>
+                        <h3>Supporto Evento</h3>
+                        <p>Controllo sicurezza durante manifestazione</p>
+                        <div class="operation-details">
+                            <div class="operation-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Piazza Municipio</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>Completata 18:00</span>
+                            </div>
+                            <div class="operation-detail">
+                                <i class="fas fa-users"></i>
+                                <span>Squadra Gamma</span>
+                            </div>
+                        </div>
+                        <div class="operation-actions">
+                            <button class="btn-operation view">Dettagli</button>
+                            <button class="btn-operation report">Report</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadPersonnelSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Personale</h1>
+                        <p>Gestione del personale U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Aggiungi Personale
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Esporta
+                        </button>
+                    </div>
+                </div>
+
+                <div class="personnel-stats">
+                    <div class="personnel-stat">
+                        <div class="stat-number">45</div>
+                        <div class="stat-label">Totale Personale</div>
+                    </div>
+                    <div class="personnel-stat">
+                        <div class="stat-number">38</div>
+                        <div class="stat-label">Disponibili</div>
+                    </div>
+                    <div class="personnel-stat">
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">In Servizio</div>
+                    </div>
+                </div>
+
+                <div class="personnel-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Ruolo</th>
+                                <th>Stato</th>
+                                <th>Squadra</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="personnel-info">
+                                        <div class="personnel-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="personnel-name">Marco Rossi</div>
+                                            <div class="personnel-id">ID: 001</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Comandante</td>
+                                <td><span class="status-badge available">Disponibile</span></td>
+                                <td>Alpha</td>
+                                <td>
+                                    <button class="btn-action">Modifica</button>
+                                    <button class="btn-action">Dettagli</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="personnel-info">
+                                        <div class="personnel-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div class="personnel-name">Giulia Bianchi</div>
+                                            <div class="personnel-id">ID: 002</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Vice Comandante</td>
+                                <td><span class="status-badge on-duty">In Servizio</span></td>
+                                <td>Beta</td>
+                                <td>
+                                    <button class="btn-action">Modifica</button>
+                                    <button class="btn-action">Dettagli</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function loadShiftsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Turni</h1>
+                        <p>Gestione turni e programmazione</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuovo Turno
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-calendar"></i>
+                            Calendario
+                        </button>
+                    </div>
+                </div>
+
+                <div class="shifts-calendar">
+                    <div class="calendar-header">
+                        <h3>Calendario Turni - Dicembre 2024</h3>
+                        <div class="calendar-controls">
+                            <button class="btn-calendar">←</button>
+                            <span>Dicembre 2024</span>
+                            <button class="btn-calendar">→</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="calendar-day">
+                            <div class="day-header">Lun 2</div>
+                            <div class="day-shifts">
+                                <div class="shift-item morning">M - Squadra A</div>
+                                <div class="shift-item afternoon">P - Squadra B</div>
+                                <div class="shift-item night">N - Squadra C</div>
+                            </div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-header">Mar 3</div>
+                            <div class="day-shifts">
+                                <div class="shift-item morning">M - Squadra B</div>
+                                <div class="shift-item afternoon">P - Squadra C</div>
+                                <div class="shift-item night">N - Squadra A</div>
+                            </div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="day-header">Mer 4</div>
+                            <div class="day-shifts">
+                                <div class="shift-item morning">M - Squadra C</div>
+                                <div class="shift-item afternoon">P - Squadra A</div>
+                                <div class="shift-item night">N - Squadra B</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadReportsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Report</h1>
+                        <p>Report e statistiche operazioni</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuovo Report
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Esporta
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>Report Giornaliero</h3>
+                            <span class="report-date">${new Date().toLocaleDateString()}</span>
+                        </div>
+                        <div class="report-content">
+                            <div class="report-stat">
+                                <span class="stat-label">Operazioni</span>
+                                <span class="stat-value">8</span>
+                            </div>
+                            <div class="report-stat">
+                                <span class="stat-label">Personale Impiegato</span>
+                                <span class="stat-value">24</span>
+                            </div>
+                            <div class="report-stat">
+                                <span class="stat-label">Ore Totali</span>
+                                <span class="stat-value">192</span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-report">Visualizza</button>
+                            <button class="btn-report">Scarica</button>
+                        </div>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>Report Settimanale</h3>
+                            <span class="report-date">Settimana 48</span>
+                        </div>
+                        <div class="report-content">
+                            <div class="report-stat">
+                                <span class="stat-label">Operazioni</span>
+                                <span class="stat-value">45</span>
+                            </div>
+                            <div class="report-stat">
+                                <span class="stat-label">Personale Impiegato</span>
+                                <span class="stat-value">42</span>
+                            </div>
+                            <div class="report-stat">
+                                <span class="stat-label">Ore Totali</span>
+                                <span class="stat-value">1,344</span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button class="btn-report">Visualizza</button>
+                            <button class="btn-report">Scarica</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadEquipmentSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Equipaggiamento</h1>
+                        <p>Gestione equipaggiamento e manutenzione</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Aggiungi Equipaggiamento
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-wrench"></i>
+                            Manutenzione
+                        </button>
+                    </div>
+                </div>
+
+                <div class="equipment-stats">
+                    <div class="equipment-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-helicopter"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Elicotteri</div>
+                            <div class="stat-status">2 Operativi</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Veicoli</div>
+                            <div class="stat-status">11 Operativi</div>
+                        </div>
+                    </div>
+                    <div class="equipment-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Attrezzature</div>
+                            <div class="stat-status">42 Operative</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="equipment-list">
+                    <div class="equipment-item">
+                        <div class="equipment-icon">
+                            <i class="fas fa-helicopter"></i>
+                        </div>
+                        <div class="equipment-info">
+                            <h4>Elicottero Alpha-1</h4>
+                            <p>Modello: AW139 | Anno: 2020</p>
+                            <div class="equipment-status">
+                                <span class="status-badge operational">Operativo</span>
+                                <span class="maintenance-date">Prossima manutenzione: 15/01/2025</span>
+                            </div>
+                        </div>
+                        <div class="equipment-actions">
+                            <button class="btn-equipment">Dettagli</button>
+                            <button class="btn-equipment">Manutenzione</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadCommunicationsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Comunicazioni</h1>
+                        <p>Sistema di comunicazioni U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuovo Messaggio
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-broadcast-tower"></i>
+                            Broadcast
+                        </button>
+                    </div>
+                </div>
+
+                <div class="communications-grid">
+                    <div class="comm-channel">
+                        <div class="channel-header">
+                            <h3>Canale Principale</h3>
+                            <span class="channel-status active">Attivo</span>
+                        </div>
+                        <div class="channel-messages">
+                            <div class="message">
+                                <div class="message-sender">Comando</div>
+                                <div class="message-content">Operazione Alpha-1 completata con successo</div>
+                                <div class="message-time">14:30</div>
+                            </div>
+                            <div class="message">
+                                <div class="message-sender">Squadra Beta</div>
+                                <div class="message-content">Richiesta supporto zona centro</div>
+                                <div class="message-time">14:25</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comm-channel">
+                        <div class="channel-header">
+                            <h3>Canale Emergenze</h3>
+                            <span class="channel-status emergency">Emergenza</span>
+                        </div>
+                        <div class="channel-messages">
+                            <div class="message emergency">
+                                <div class="message-sender">Sistema</div>
+                                <div class="message-content">Allerta: Incidente stradale Via Roma</div>
+                                <div class="message-time">14:35</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadTrainingSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Formazione</h1>
+                        <p>Gestione formazione e addestramento</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuovo Corso
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-calendar"></i>
+                            Programma
+                        </button>
+                    </div>
+                </div>
+
+                <div class="training-courses">
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h3>Corso Base Sicurezza</h3>
+                            <span class="course-status scheduled">Programmato</span>
+                        </div>
+                        <div class="course-info">
+                            <div class="course-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>15 Dicembre 2024</span>
+                            </div>
+                            <div class="course-detail">
+                                <i class="fas fa-users"></i>
+                                <span>12 Partecipanti</span>
+                            </div>
+                            <div class="course-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>8 ore</span>
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn-course">Dettagli</button>
+                            <button class="btn-course">Modifica</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadSettingsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Impostazioni</h1>
+                        <p>Configurazione sistema U.O.P.I.</p>
+                    </div>
+                </div>
+
+                <div class="settings-sections">
+                    <div class="settings-section">
+                        <h3>Generale</h3>
+                        <div class="setting-item">
+                            <label>Nome Sistema</label>
+                            <input type="text" value="U.O.P.I. - IPRP X" class="setting-input">
+                        </div>
+                        <div class="setting-item">
+                            <label>Fuso Orario</label>
+                            <select class="setting-select">
+                                <option>Europe/Rome</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Sicurezza</h3>
+                        <div class="setting-item">
+                            <label>Timeout Sessione</label>
+                            <input type="number" value="30" class="setting-input">
+                        </div>
+                        <div class="setting-item">
+                            <label>Log Accessi</label>
+                            <input type="checkbox" checked>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadLogsSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Log Sistema</h1>
+                        <p>Monitoraggio attività sistema</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-secondary">
+                            <i class="fas fa-download"></i>
+                            Esporta Log
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-trash"></i>
+                            Pulisci Log
+                        </button>
+                    </div>
+                </div>
+
+                <div class="logs-container">
+                    <div class="log-entry">
+                        <div class="log-time">14:35:22</div>
+                        <div class="log-level info">INFO</div>
+                        <div class="log-message">Utente dxrk.ryze ha effettuato il login</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">14:30:15</div>
+                        <div class="log-level warning">WARN</div>
+                        <div class="log-message">Timeout connessione database</div>
+                    </div>
+                    <div class="log-entry">
+                        <div class="log-time">14:25:08</div>
+                        <div class="log-level error">ERROR</div>
+                        <div class="log-message">Errore caricamento dashboard</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadBackupSection() {
+            const mainContent = document.querySelector('.dashboard-main');
+            mainContent.innerHTML = `
+                <div class="page-header">
+                    <div>
+                        <h1>Backup</h1>
+                        <p>Gestione backup e ripristino</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            Nuovo Backup
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-upload"></i>
+                            Ripristina
+                        </button>
+                    </div>
+                </div>
+
+                <div class="backup-stats">
+                    <div class="backup-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">2.4 GB</div>
+                            <div class="stat-label">Dimensione Backup</div>
+                        </div>
+                    </div>
+                    <div class="backup-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Backup Disponibili</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="backup-list">
+                    <div class="backup-item">
+                        <div class="backup-info">
+                            <h4>Backup Completo</h4>
+                            <p>Creato: ${new Date().toLocaleDateString()}</p>
+                            <p>Dimensione: 2.4 GB</p>
+                        </div>
+                        <div class="backup-actions">
+                            <button class="btn-backup">Scarica</button>
+                            <button class="btn-backup">Ripristina</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Inizializza le sezioni quando la dashboard viene caricata
+        setTimeout(() => {
+            initializeDashboardSections();
+        }, 1000);
 
         // Log di conferma - Sistema Ufficiale
         console.log('🚁 U.O.P.I. Dashboard - Sistema Ufficiale');
