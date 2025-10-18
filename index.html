@@ -2985,6 +2985,9 @@
             localStorage.removeItem('discord_auth');
             sessionStorage.removeItem('discord_session');
             
+            // Imposta flag di logout per evitare accesso automatico
+            sessionStorage.setItem('user_logged_out', 'true');
+            
             // NON rimuovere i cookie - mantieni l'autorizzazione permanente
             console.log('Sessione Discord chiusa, autorizzazione permanente mantenuta');
         }
@@ -3119,10 +3122,7 @@
                 // Aggiorna il bottone Discord per mostrare l'accesso diretto disponibile
                 updateDiscordButton();
                 
-                // Mostra messaggio che l'accesso diretto è disponibile
-                setTimeout(() => {
-                    showSuccess('Accesso diretto disponibile - clicca il bottone per entrare');
-                }, 500);
+                // NON mostrare messaggio automatico - l'utente deve cliccare il bottone
                 
             }, 1500);
         }
@@ -3164,7 +3164,10 @@
             const btn = document.getElementById('discordBtn');
             if (!btn) return;
             
-            if (isDiscordAuthValid()) {
+            // Controlla se l'utente ha fatto logout
+            const userLoggedOut = sessionStorage.getItem('user_logged_out');
+            
+            if (isDiscordAuthValid() && !userLoggedOut) {
                 const authData = getDiscordAuth();
                 btn.innerHTML = `
                     <div class="demo-icon">
@@ -3185,9 +3188,14 @@
                 `;
                 btn.style.opacity = '0.8';
                 btn.title = 'Hai già autorizzato questa applicazione';
+                btn.disabled = false;
                 btn.onclick = function() {
                     // Accesso diretto senza richiedere nuova autorizzazione
                     showSuccess('Accesso diretto in corso...');
+                    
+                    // Rimuovi il flag di logout se presente
+                    sessionStorage.removeItem('user_logged_out');
+                    
                     setTimeout(() => {
                         const userInfo = AUTHORIZED_USERS[prevAuth.userId];
                         const mockUser = { id: prevAuth.userId, username: 'Utente Autorizzato' };
@@ -3228,8 +3236,11 @@
             // Aggiorna il bottone Discord
             updateDiscordButton();
             
+            // Controlla se l'utente ha fatto logout
+            const userLoggedOut = sessionStorage.getItem('user_logged_out');
+            
             // Verifica se c'è già un'autorizzazione valida salvata
-            if (isDiscordAuthValid()) {
+            if (isDiscordAuthValid() && !userLoggedOut) {
                 const authData = getDiscordAuth();
                 console.log('Autorizzazione Discord trovata, accesso automatico...');
                 showSuccess('Accesso automatico in corso...');
@@ -3241,10 +3252,17 @@
                 return;
             }
             
-            // Se non c'è autorizzazione valida ma l'utente ha autorizzato prima, mostra messaggio
-            if (hasUserPreviouslyAuthorized()) {
+            // Se l'utente ha fatto logout, rimuovi il flag
+            if (userLoggedOut) {
+                sessionStorage.removeItem('user_logged_out');
+                console.log('Utente ha fatto logout, accesso diretto disponibile');
+                // NON mostrare messaggio automatico
+            }
+            
+            // Se non c'è autorizzazione valida ma l'utente ha autorizzato prima
+            if (hasUserPreviouslyAuthorized() && !userLoggedOut) {
                 console.log('Utente ha autorizzato precedentemente, accesso diretto disponibile');
-                showSuccess('Accesso diretto disponibile - clicca il bottone per entrare');
+                // NON mostrare messaggio automatico
             }
             
             const hash = window.location.hash;
@@ -3284,6 +3302,9 @@
 
                 const userInfo = AUTHORIZED_USERS[user.id];
                 showSuccess(`Benvenuto ${user.username}!`);
+                
+                // Rimuovi il flag di logout se presente
+                sessionStorage.removeItem('user_logged_out');
                 
                 // Salva l'autorizzazione per le prossime volte
                 saveDiscordAuth(user, token);
