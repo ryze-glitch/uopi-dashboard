@@ -4861,6 +4861,7 @@
             // Inizializza la navigazione dopo il caricamento
             setTimeout(() => {
                 initializeNavigation();
+                forceInitializeNavigation(); // FORZA INIZIALIZZAZIONE
             }, 1000);
         }
 
@@ -5042,6 +5043,12 @@
                                 </button>
                                 <button class="btn-primary" id="newOperationBtn">
                                     ➕ Nuova Operazione
+                                </button>
+                                <button class="btn-secondary" onclick="forceInitializeNavigation()" style="background: #ff6b6b; color: white;">
+                                    🔧 Debug Nav
+                                </button>
+                                <button class="btn-secondary" onclick="loadDashboardSection('personnel')" style="background: #4ecdc4; color: white;">
+                                    👥 Test Personale
                                 </button>
                             </div>
                         </div>
@@ -7549,9 +7556,71 @@
             console.log('Funzionalità turni inizializzate');
         }
 
+        // FORZA INIZIALIZZAZIONE NAVIGAZIONE - SOLUZIONE DEFINITIVA
+        function forceInitializeNavigation() {
+            console.log('🔥 FORZA INIZIALIZZAZIONE NAVIGAZIONE');
+            
+            // Rimuovi tutti gli event listener esistenti
+            const allNavItems = document.querySelectorAll('.nav-item');
+            allNavItems.forEach(item => {
+                const newItem = item.cloneNode(true);
+                item.parentNode.replaceChild(newItem, item);
+            });
+            
+            // Aspetta che il DOM sia pronto
+            setTimeout(() => {
+                const navItems = document.querySelectorAll('.nav-item');
+                console.log('🎯 Elementi trovati dopo clonazione:', navItems.length);
+                
+                navItems.forEach((item, index) => {
+                    console.log(`🔗 Elemento ${index + 1}:`, item.dataset.page);
+                    
+                    // Aggiungi stile cliccabile
+                    item.style.cursor = 'pointer';
+                    item.style.transition = 'all 0.3s ease';
+                    
+                    // Event listener per click
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        console.log('🖱️ CLICK SU:', this.dataset.page);
+                        
+                        // Rimuovi active da tutti
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        
+                        // Aggiungi active a questo
+                        this.classList.add('active');
+                        
+                        // Carica la sezione
+                        const section = this.dataset.page;
+                        console.log('🚀 CARICAMENTO SEZIONE:', section);
+                        
+                        // Chiama direttamente loadDashboardSection
+                        loadDashboardSection(section);
+                    });
+                    
+                    // Hover effects
+                    item.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.05)';
+                        this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    });
+                    
+                    item.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                        if (!this.classList.contains('active')) {
+                            this.style.backgroundColor = 'transparent';
+                        }
+                    });
+                });
+                
+                console.log('✅ NAVIGAZIONE FORZATA INIZIALIZZATA');
+            }, 100);
+        }
+
         // Inizializza le sezioni quando la dashboard viene caricata
         setTimeout(() => {
-            initializeNavigation();
+            forceInitializeNavigation();
         }, 1000);
 
         // Log di conferma - Sistema Ufficiale
