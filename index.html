@@ -5050,6 +5050,9 @@
                                 <button class="btn-secondary" onclick="loadDashboardSection('personnel')" style="background: #4ecdc4; color: white;">
                                     👥 Test Personale
                                 </button>
+                                <button class="btn-secondary" onclick="testHeaderNav()" style="background: #9b59b6; color: white;">
+                                    🎯 Test Header Nav
+                                </button>
                             </div>
                         </div>
 
@@ -7560,62 +7563,132 @@
         function forceInitializeNavigation() {
             console.log('🔥 FORZA INIZIALIZZAZIONE NAVIGAZIONE');
             
-            // Rimuovi tutti gli event listener esistenti
-            const allNavItems = document.querySelectorAll('.nav-item');
-            allNavItems.forEach(item => {
+            // Gestisci NAVBAR DELL'HEADER (in alto)
+            const headerNavItems = document.querySelectorAll('.main-nav .nav-item');
+            console.log('🎯 Navbar header trovata:', headerNavItems.length, 'elementi');
+            
+            headerNavItems.forEach((item, index) => {
+                console.log(`🔗 Header Nav ${index + 1}:`, item.dataset.page);
+                
+                // Rimuovi event listener esistenti clonando l'elemento
                 const newItem = item.cloneNode(true);
                 item.parentNode.replaceChild(newItem, item);
-            });
-            
-            // Aspetta che il DOM sia pronto
-            setTimeout(() => {
-                const navItems = document.querySelectorAll('.nav-item');
-                console.log('🎯 Elementi trovati dopo clonazione:', navItems.length);
                 
-                navItems.forEach((item, index) => {
-                    console.log(`🔗 Elemento ${index + 1}:`, item.dataset.page);
+                // Aggiungi stile cliccabile
+                item.style.cursor = 'pointer';
+                item.style.transition = 'all 0.3s ease';
+                
+                // Event listener per click
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    // Aggiungi stile cliccabile
-                    item.style.cursor = 'pointer';
-                    item.style.transition = 'all 0.3s ease';
+                    console.log('🖱️ CLICK HEADER NAV SU:', this.dataset.page);
                     
-                    // Event listener per click
-                    item.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        console.log('🖱️ CLICK SU:', this.dataset.page);
-                        
-                        // Rimuovi active da tutti
-                        navItems.forEach(nav => nav.classList.remove('active'));
-                        
-                        // Aggiungi active a questo
-                        this.classList.add('active');
-                        
-                        // Carica la sezione
-                        const section = this.dataset.page;
-                        console.log('🚀 CARICAMENTO SEZIONE:', section);
-                        
-                        // Chiama direttamente loadDashboardSection
-                        loadDashboardSection(section);
-                    });
+                    // Rimuovi active da tutti gli elementi dell'header
+                    headerNavItems.forEach(nav => nav.classList.remove('active'));
                     
-                    // Hover effects
-                    item.addEventListener('mouseenter', function() {
-                        this.style.transform = 'scale(1.05)';
-                        this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                    });
+                    // Aggiungi active a questo
+                    this.classList.add('active');
                     
-                    item.addEventListener('mouseleave', function() {
-                        this.style.transform = 'scale(1)';
-                        if (!this.classList.contains('active')) {
-                            this.style.backgroundColor = 'transparent';
-                        }
-                    });
+                    // Carica la sezione
+                    const section = this.dataset.page;
+                    console.log('🚀 CARICAMENTO SEZIONE HEADER:', section);
+                    
+                    // Chiama direttamente loadDashboardSection
+                    loadDashboardSection(section);
                 });
                 
-                console.log('✅ NAVIGAZIONE FORZATA INIZIALIZZATA');
-            }, 100);
+                // Hover effects
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    if (!this.classList.contains('active')) {
+                        this.style.backgroundColor = 'transparent';
+                    }
+                });
+            });
+            
+            // Gestisci SIDEBAR NAV (laterale)
+            const sidebarNavItems = document.querySelectorAll('.sidebar-nav .nav-item');
+            console.log('🎯 Sidebar nav trovata:', sidebarNavItems.length, 'elementi');
+            
+            sidebarNavItems.forEach((item, index) => {
+                console.log(`🔗 Sidebar Nav ${index + 1}:`, item.dataset.page);
+                
+                // Rimuovi event listener esistenti clonando l'elemento
+                const newItem = item.cloneNode(true);
+                item.parentNode.replaceChild(newItem, item);
+                
+                // Aggiungi stile cliccabile
+                item.style.cursor = 'pointer';
+                item.style.transition = 'all 0.3s ease';
+                
+                // Event listener per click
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('🖱️ CLICK SIDEBAR NAV SU:', this.dataset.page);
+                    
+                    // Rimuovi active da tutti gli elementi della sidebar
+                    sidebarNavItems.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Aggiungi active a questo
+                    this.classList.add('active');
+                    
+                    // Carica la sezione
+                    const section = this.dataset.page;
+                    console.log('🚀 CARICAMENTO SEZIONE SIDEBAR:', section);
+                    
+                    // Chiama direttamente loadDashboardSection
+                    loadDashboardSection(section);
+                });
+                
+                // Hover effects
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    if (!this.classList.contains('active')) {
+                        this.style.backgroundColor = 'transparent';
+                    }
+                });
+            });
+            
+            console.log('✅ NAVIGAZIONE FORZATA INIZIALIZZATA - Header:', headerNavItems.length, 'Sidebar:', sidebarNavItems.length);
+        }
+
+        // Test specifico per la navbar dell'header
+        function testHeaderNav() {
+            console.log('🎯 TEST HEADER NAVBAR');
+            
+            const headerNavItems = document.querySelectorAll('.main-nav .nav-item');
+            console.log('📊 Elementi header trovati:', headerNavItems.length);
+            
+            headerNavItems.forEach((item, index) => {
+                console.log(`🔗 Elemento ${index + 1}:`, {
+                    page: item.dataset.page,
+                    text: item.textContent.trim(),
+                    hasActive: item.classList.contains('active')
+                });
+            });
+            
+            // Test click su Personale
+            const personnelNav = document.querySelector('.main-nav .nav-item[data-page="personnel"]');
+            if (personnelNav) {
+                console.log('👥 Test click su Personale...');
+                personnelNav.click();
+            } else {
+                console.error('❌ Elemento Personale non trovato nella navbar header!');
+            }
         }
 
         // Inizializza le sezioni quando la dashboard viene caricata
