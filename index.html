@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>U.O.P.I. - IPRP X</title>
     
+    <!-- Redirect dopo login con token -->
+    <script>
+        // Controlla se c'è un token nell'URL (dopo login)
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+            // Redirect al file HTML stesso per processare il token
+            window.location.href = window.location.origin + '/UOPI_IPRPX.html' + window.location.hash;
+        }
+    </script>
+    
     <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -101,6 +110,135 @@
         /* Mantieni testo bianco nella sezione di login */
         .login-container,
         .login-container * {
+            color: #ffffff !important;
+        }
+
+        /* SISTEMA VISUALIZZAZIONE - CSS PULITO E FUNZIONALE */
+        
+        /* Pulsanti principali con stile pulito */
+        .btn-primary {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: #2d3748;
+            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            text-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: #4a5568;
+            border: 2px solid #cbd5e0;
+            font-weight: 500;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            color: #742a2a;
+            border: 2px solid #fc8181;
+        }
+
+        /* Testi secondari con contrasto migliorato */
+        .stat-label, .shift-detail-label, .shift-team-label {
+            color: #ffffff;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .page-header p, .brand-info p {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Pulsanti specifici con stile coerente */
+        .btn-shift, .btn-operation, .btn-report {
+            background: #ffffff;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        .btn-shift:hover, .btn-operation:hover, .btn-report:hover {
+            background: #f7fafc;
+            color: #1a202c;
+            transform: translateY(-1px);
+        }
+
+        /* Filtri con stile migliorato */
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3748;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: #ffffff;
+            color: #2d3748;
+            border: 2px solid #4299e1;
+        }
+
+        /* Migliora leggibilità generale */
+        .dashboard-main * {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Assicura che i testi siano visibili */
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        p, span, div {
+            color: #ffffff;
+        }
+
+        /* SISTEMA SEZIONI BUGGATE */
+        
+        /* Assicura che le sezioni siano sempre visibili */
+        .page-section, .shifts-section, .operations-section {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
+        }
+
+        /* Fix per le card che potrebbero non apparire */
+        .stat-card, .shift-card, .operation-card {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: all 0.3s ease;
+        }
+
+        /* Fix per la navigazione */
+        .nav-item {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* Fix per i contenuti dinamici */
+        .dashboard-main {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* Assicura che i testi nelle card siano visibili */
+        .stat-card *, .shift-card *, .operation-card * {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Fix per le tabelle */
+        .personnel-table th, .personnel-table td {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Fix per i modal */
+        .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            color: #ffffff;
+        }
+
+        .modal-content * {
             color: #ffffff !important;
         }
 
@@ -3824,7 +3962,7 @@
         // Utenti autorizzati - solo il tuo ID
         const AUTHORIZED_USERS = {
             '1387684968536477756': { 
-                rank: 'Comandante Generale', 
+                rank: 'Comandante', 
                 fullName: 'Admin Sistema', 
                 isAdmin: true, 
                 canAddPersonnel: true 
@@ -5180,6 +5318,9 @@
                                 <button class="btn-secondary" onclick="loadDashboardSection('personnel')" style="background: #27ae60; color: white;">
                                     ✅ TEST FINALE
                                 </button>
+                                <button class="btn-danger" onclick="fixAllVisualBugs()" style="background: #e74c3c; color: white; font-weight: bold;">
+                                    🔧 RIPARA BUG
+                                </button>
                             </div>
                         </div>
 
@@ -6160,9 +6301,67 @@
             }, 300000);
         }
 
+        // SISTEMA ANTI-BUG - FUNZIONE DI RIPARAZIONE
+        function fixAllVisualBugs() {
+            console.log('🔧 Avvio riparazione bug visuali...');
+            
+            // 1. Assicura che tutti gli elementi siano visibili
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(el => {
+                if (el.style.opacity === '0' || el.style.visibility === 'hidden') {
+                    el.style.opacity = '1';
+                    el.style.visibility = 'visible';
+                }
+            });
+            
+            // 2. Sistema i testi invisibili
+            const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, label');
+            textElements.forEach(el => {
+                if (el.style.color === 'transparent' || el.style.color === 'rgba(0,0,0,0)') {
+                    el.style.color = '#ffffff';
+                    el.style.textShadow = '0 1px 2px rgba(0,0,0,0.3)';
+                }
+            });
+            
+            // 3. Sistema le card
+            const cards = document.querySelectorAll('.stat-card, .shift-card, .operation-card');
+            cards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.transform = 'none';
+                card.style.visibility = 'visible';
+            });
+            
+            // 4. Sistema la navigazione
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.style.opacity = '1';
+                item.style.visibility = 'visible';
+            });
+            
+            // 5. Sistema i pulsanti
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if (btn.style.display === 'none') {
+                    btn.style.display = 'inline-block';
+                }
+                btn.style.opacity = '1';
+                btn.style.visibility = 'visible';
+            });
+            
+            console.log('✅ Riparazione bug completata');
+        }
+
         // Sistema di caricamento ottimizzato
         console.log('🚁 Sistema di caricamento ottimizzato attivo');
 
+        // Inizializza le sezioni quando la dashboard viene caricata
+        setTimeout(() => {
+            initNavbarDirect();
+            // Sistema tutti i bug visuali
+            fixAllVisualBugs();
+        }, 2000);
+
+        // Sistema bug anche quando cambia sezione
         function loadDashboardSection(section) {
             console.log('🎯 loadDashboardSection chiamata per:', section);
             const mainContent = document.querySelector('.dashboard-main');
@@ -6237,6 +6436,8 @@
             setTimeout(() => {
                 console.log('📋 Contenuto dopo il cambio:', mainContent.innerHTML.substring(0, 100) + '...');
                 console.log('✅ Cambio sezione completato per:', section);
+                // Sistema i bug dopo il cambio di sezione
+                fixAllVisualBugs();
             }, 100);
         }
 
@@ -6601,12 +6802,18 @@
         // Controlla i permessi amministratore
         function checkAdminPermissions() {
             const user = getDiscordAuth();
-            if (user && user.id === '1387684968536477756') { // ID della dirigenza
+            if (user && user.user && user.user.id === '1387684968536477756') { // ID della dirigenza
                 console.log('🔑 Utente dirigenza rilevato, abilitando funzioni admin');
-                document.getElementById('addOperatorBtn').style.display = 'inline-block';
-                document.getElementById('removeFakeBtn').style.display = 'inline-block';
+                const addBtn = document.getElementById('addOperatorBtn');
+                const removeBtn = document.getElementById('removeFakeBtn');
+                if (addBtn) addBtn.style.display = 'inline-block';
+                if (removeBtn) removeBtn.style.display = 'inline-block';
             } else {
                 console.log('👤 Utente normale, funzioni admin nascoste');
+                const addBtn = document.getElementById('addOperatorBtn');
+                const removeBtn = document.getElementById('removeFakeBtn');
+                if (addBtn) addBtn.style.display = 'none';
+                if (removeBtn) removeBtn.style.display = 'none';
             }
         }
 
@@ -7980,6 +8187,173 @@
             } else {
                 console.error('❌ Elemento Personale non trovato!');
             }
+        }
+
+        // Inizializza le funzionalità dei turni
+        function initializeShiftsFeatures() {
+            console.log('🕐 Inizializzazione funzionalità turni...');
+            
+            // Carica i dati dei turni
+            loadShiftsData();
+            
+            // Inizializza i filtri
+            initializeShiftFilters();
+            
+            console.log('✅ Funzionalità turni inizializzate');
+        }
+
+        // Carica i dati dei turni
+        function loadShiftsData() {
+            const shiftsGrid = document.getElementById('shiftsGrid');
+            if (!shiftsGrid) return;
+            
+            // Dati di esempio per i turni
+            const shiftsData = [
+                {
+                    id: 1,
+                    type: 'morning',
+                    title: 'Turno Mattina - Squadra Alpha',
+                    time: '06:00 - 14:00',
+                    date: '18 Ottobre 2025',
+                    leader: 'Dr. Mario Rossi',
+                    status: 'active',
+                    team: ['Anna Bianchi', 'Luca Verdi', 'Sara Neri', 'Marco Blu']
+                },
+                {
+                    id: 2,
+                    type: 'afternoon',
+                    title: 'Turno Pomeriggio - Squadra Beta',
+                    time: '14:00 - 22:00',
+                    date: '18 Ottobre 2025',
+                    leader: 'Dr.ssa Elena Gialli',
+                    status: 'scheduled',
+                    team: ['Giulia Rosa', 'Paolo Viola', 'Chiara Marroni', 'Andrea Celesti']
+                },
+                {
+                    id: 3,
+                    type: 'night',
+                    title: 'Turno Notte - Squadra Gamma',
+                    time: '22:00 - 06:00',
+                    date: '18 Ottobre 2025',
+                    leader: 'Dr. Francesco Rossi',
+                    status: 'scheduled',
+                    team: ['Marco Bianchi', 'Laura Verdi', 'Giuseppe Neri', 'Francesca Blu']
+                }
+            ];
+            
+            // Genera le card dei turni
+            shiftsGrid.innerHTML = shiftsData.map(shift => `
+                <div class="shift-card fade-in" data-shift-type="${shift.type}">
+                    <div class="shift-header">
+                        <div class="shift-type ${shift.type}">
+                            <i class="fas fa-${shift.type === 'morning' ? 'sun' : shift.type === 'afternoon' ? 'cloud-sun' : 'moon'}"></i>
+                            ${shift.type === 'morning' ? 'Mattina' : shift.type === 'afternoon' ? 'Pomeriggio' : 'Notte'}
+                        </div>
+                        <div class="shift-status ${shift.status}">
+                            ${shift.status === 'active' ? 'Attivo' : 'Programmato'}
+                        </div>
+                    </div>
+                    <h3 class="shift-title">${shift.title}</h3>
+                    <div class="shift-details">
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Orario</span>
+                            <span class="shift-detail-value">${shift.time}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Data</span>
+                            <span class="shift-detail-value">${shift.date}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Responsabile</span>
+                            <span class="shift-detail-value">${shift.leader}</span>
+                        </div>
+                        <div class="shift-detail">
+                            <span class="shift-detail-label">Stato</span>
+                            <span class="shift-detail-value">${shift.status === 'active' ? 'In corso' : 'In attesa'}</span>
+                        </div>
+                    </div>
+                    <div class="shift-team">
+                        <div class="shift-team-label">Team Assegnato</div>
+                        <div class="team-members">
+                            ${shift.team.map(member => `<span class="team-member">${member}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="shift-actions">
+                        <div class="shift-time">
+                            <i class="fas fa-clock"></i>
+                            ${shift.status === 'active' ? `Iniziato alle ${shift.time.split(' - ')[0]}` : `Inizio previsto ${shift.time.split(' - ')[0]}`}
+                        </div>
+                        <div class="shift-buttons">
+                            <button class="btn-shift view" onclick="viewShift(${shift.id})">Dettagli</button>
+                            <button class="btn-shift edit" onclick="editShift(${shift.id})">Modifica</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Inizializza i filtri dei turni
+        function initializeShiftFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Funzioni per i filtri dei turni
+        function filterShiftsByType(type) {
+            const shiftCards = document.querySelectorAll('.shift-card');
+            shiftCards.forEach(card => {
+                if (type === 'all' || card.dataset.shiftType === type) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Funzioni per la ricerca dei turni
+        function searchShifts() {
+            const searchTerm = document.getElementById('shiftSearch').value.toLowerCase();
+            const shiftCards = document.querySelectorAll('.shift-card');
+            
+            shiftCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Funzioni per le azioni sui turni
+        function viewShift(shiftId) {
+            console.log('Visualizza turno:', shiftId);
+            alert(`Visualizzazione dettagli turno ${shiftId}`);
+        }
+
+        function editShift(shiftId) {
+            console.log('Modifica turno:', shiftId);
+            alert(`Modifica turno ${shiftId}`);
+        }
+
+        function showAddShiftModal() {
+            console.log('Apertura modal nuovo turno');
+            alert('Modal per aggiungere nuovo turno');
+        }
+
+        function showShiftCalendar() {
+            console.log('Visualizzazione calendario turni');
+            alert('Vista calendario turni');
+        }
+
+        function exportShiftsData() {
+            console.log('Esportazione dati turni');
+            alert('Esportazione dati turni');
         }
 
         // FORZA CAMBIO PAGINA - SOLUZIONE DEFINITIVA
