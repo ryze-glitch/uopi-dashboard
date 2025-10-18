@@ -585,52 +585,6 @@
             display: flex;
             align-items: center;
             gap: var(--space-sm);
-            cursor: pointer;
-            padding: var(--space-xs);
-            border-radius: var(--radius-md);
-            transition: all var(--transition-normal);
-        }
-
-        .user-profile:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .user-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius-md);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            min-width: 200px;
-            z-index: 1000;
-            overflow: hidden;
-        }
-
-        .user-menu-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            color: #374151;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .user-menu-item:last-child {
-            border-bottom: none;
-        }
-
-        .user-menu-item:hover {
-            background: #f9fafb;
-            color: var(--primary);
-        }
-
-        .user-menu-item i {
-            width: 16px;
-            text-align: center;
         }
 
         .logout-btn {
@@ -2992,16 +2946,6 @@
             console.log('Sessione Discord chiusa, autorizzazione permanente mantenuta');
         }
 
-        function clearAllDiscordAuth() {
-            // Funzione per rimuovere completamente l'autorizzazione (solo per admin)
-            localStorage.removeItem('discord_auth');
-            sessionStorage.removeItem('discord_session');
-            
-            // Rimuovi anche i cookie
-            document.cookie = 'discord_auth=; max-age=0; path=/';
-            
-            console.log('Autorizzazione Discord rimossa completamente');
-        }
 
         function isDiscordAuthValid() {
             const authData = getDiscordAuth();
@@ -3041,33 +2985,6 @@
             return false;
         }
 
-        function toggleUserMenu() {
-            const menu = document.getElementById('userMenu');
-            if (menu) {
-                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-
-        // Chiudi il menu utente quando si clicca fuori
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('userMenu');
-            const profile = document.querySelector('.user-profile');
-            
-            if (menu && profile && !profile.contains(event.target) && !menu.contains(event.target)) {
-                menu.style.display = 'none';
-            }
-        });
-
-        function revokeAllAuth() {
-            if (confirm('Sei sicuro di voler rimuovere completamente l\'autorizzazione Discord? Dovrai riautorizzare l\'applicazione.')) {
-                clearAllDiscordAuth();
-                showSuccess('Autorizzazione Discord rimossa completamente');
-                
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
-            }
-        }
 
         function logoutDiscord() {
             // Rimuovi solo la sessione attiva, mantieni l'autorizzazione permanente
@@ -3189,18 +3106,41 @@
                 btn.style.opacity = '0.8';
                 btn.title = 'Hai già autorizzato questa applicazione';
                 btn.disabled = false;
-                btn.onclick = function() {
+                btn.onclick = async function() {
                     // Accesso diretto senza richiedere nuova autorizzazione
                     showSuccess('Accesso diretto in corso...');
                     
                     // Rimuovi il flag di logout se presente
                     sessionStorage.removeItem('user_logged_out');
                     
-                    setTimeout(() => {
+                    try {
+                        // Prova a recuperare i dati reali dell'utente dai dati salvati
+                        const authData = getDiscordAuth();
+                        let userData;
+                        
+                        if (authData && authData.user && authData.user.username) {
+                            // Usa i dati salvati se disponibili
+                            userData = authData.user;
+                            console.log('Usando dati salvati per accesso diretto:', userData);
+                        } else {
+                            // Fallback: usa i dati dell'utente autorizzato
+                            const userInfo = AUTHORIZED_USERS[prevAuth.userId];
+                            userData = { 
+                                id: prevAuth.userId, 
+                                username: userInfo.fullName || 'Utente Autorizzato',
+                                discriminator: '0000',
+                                avatar: null
+                            };
+                            console.log('Usando dati fallback per accesso diretto:', userData);
+                        }
+                        
                         const userInfo = AUTHORIZED_USERS[prevAuth.userId];
-                        const mockUser = { id: prevAuth.userId, username: 'Utente Autorizzato' };
-                        showModernDashboard(mockUser, userInfo);
-                    }, 1000);
+                        showModernDashboard(userData, userInfo);
+                        
+                    } catch (error) {
+                        console.error('Errore nell\'accesso diretto:', error);
+                        showError('Errore durante l\'accesso diretto');
+                    }
                 };
             } else {
                 btn.innerHTML = `
@@ -3336,6 +3276,19 @@
 
         // Dashboard moderna e completa
         function showModernDashboard(user, userInfo) {
+            // Assicurati che i dati dell'utente siano validi
+            if (!user || !user.id) {
+                console.error('Dati utente non validi:', user);
+                showError('Errore: dati utente non validi');
+                return;
+            }
+            
+            // Assicurati che il nome utente sia sempre presente
+            if (!user.username) {
+                user.username = userInfo.fullName || 'Utente Autorizzato';
+                console.log('Nome utente mancante, usando fallback:', user.username);
+            }
+            
             document.getElementById('app').innerHTML = `
                 <div class="dashboard-container">
                     <!-- Header -->
@@ -3424,24 +3377,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="user-profile" style="position: relative;">
-                                    <div class="user-avatar" onclick="toggleUserMenu()">
+                                <div class="user-profile">
+                                    <div class="user-avatar">
                                         <i class="fas fa-user-shield"></i>
                                     </div>
-                                    <span class="user-name">${user.username}</span>
-                                    
-                                    <!-- User Menu Dropdown -->
-                                    <div class="user-menu" id="userMenu" style="display: none;">
-                                        <div class="user-menu-item" onclick="logoutDiscord()">
-                                            <i class="fas fa-sign-out-alt"></i>
-                                            <span>Logout</span>
-                                        </div>
-                                        <div class="user-menu-item" onclick="revokeAllAuth()">
-                                            <i class="fas fa-ban"></i>
-                                            <span>Rimuovi Autorizzazione</span>
-                                        </div>
-                                    </div>
+                                    <span class="user-name">${user.username || userInfo.fullName || 'Utente Autorizzato'}</span>
                                 </div>
+                                <button class="icon-btn logout" onclick="logoutDiscord()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
                             </div>
                         </div>
                     </header>
