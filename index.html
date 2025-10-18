@@ -4950,16 +4950,28 @@
 
         // Inizializza la navigazione
         function initializeNavigation() {
+            console.log('🔧 Inizializzazione navigazione...');
+            
             // Rimuovi event listeners esistenti per evitare duplicati
             const existingNavItems = document.querySelectorAll('.nav-item');
+            console.log('📋 Elementi nav-item trovati:', existingNavItems.length);
+            
             existingNavItems.forEach(item => {
                 const newItem = item.cloneNode(true);
                 item.parentNode.replaceChild(newItem, item);
             });
             
             const navItems = document.querySelectorAll('.nav-item');
+            console.log('🎯 Elementi nav-item dopo clonazione:', navItems.length);
             
-            navItems.forEach(item => {
+            if (navItems.length === 0) {
+                console.warn('⚠️ Nessun elemento .nav-item trovato!');
+                return;
+            }
+            
+            navItems.forEach((item, index) => {
+                console.log(`🔗 Inizializzazione elemento ${index + 1}:`, item.dataset.page);
+                
                 // Aggiungi stile per indicare che è cliccabile
                 item.style.cursor = 'pointer';
                 item.title = 'Clicca per navigare';
@@ -4994,7 +5006,7 @@
                 });
             });
             
-            console.log('Navigazione inizializzata con', navItems.length, 'elementi');
+            console.log('✅ Navigazione inizializzata con', navItems.length, 'elementi');
         }
 
         // Gestione navigazione tra sezioni
@@ -5230,7 +5242,8 @@
                 } else if (pageName === 'shifts') {
                     showShiftsSection();
                 } else {
-                    showUnderConstruction(pageName);
+                    // Per tutte le altre sezioni, usa loadDashboardSection
+                    loadDashboardSection(pageName);
                 }
                 
                 // Re-inizializza la navigazione dopo il cambio di contenuto
@@ -7548,27 +7561,9 @@
             console.log('Funzionalità turni inizializzate');
         }
 
-        // Funzione per inizializzare le sezioni della dashboard
-        function initializeDashboardSections() {
-            console.log('Inizializzazione sezioni dashboard...');
-            
-            // Aggiungi event listeners ai link della navbar
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const section = item.getAttribute('data-page');
-                    console.log('Sezione cliccata:', section);
-                    loadDashboardSection(section);
-                });
-            });
-            
-            console.log('Sezioni dashboard inizializzate');
-        }
-
         // Inizializza le sezioni quando la dashboard viene caricata
         setTimeout(() => {
-            initializeDashboardSections();
+            initializeNavigation();
         }, 1000);
 
         // Log di conferma - Sistema Ufficiale
