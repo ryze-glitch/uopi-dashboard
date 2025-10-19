@@ -5401,57 +5401,6 @@
         }
 
         // ========== GESTIONE PAGINE ==========
-        function loadPage(page) {
-            console.log('📄 Caricamento pagina:', page);
-            
-            // Aggiorna navigazione
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event?.target?.classList.add('active');
-            
-            const content = document.getElementById('mainContent');
-            
-            // Animazione di uscita
-            content.style.opacity = '0';
-            content.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-            switch(page) {
-                case 'overview':
-                    content.innerHTML = getOverviewPage();
-                    break;
-                case 'personnel':
-                    content.innerHTML = getPersonnelPage();
-                    break;
-                case 'shifts':
-                    content.innerHTML = getShiftsPage();
-                    break;
-                case 'operations':
-                    content.innerHTML = getOperationsPage();
-                    break;
-                case 'status':
-                    content.innerHTML = getStatusPage();
-                    break;
-                    case 'credits':
-                        content.innerHTML = getCreditsPage();
-                    break;
-            }
-                
-                // Animazione di entrata
-                content.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                content.style.opacity = '1';
-                content.style.transform = 'translateY(0)';
-                
-                // Animazione delle card
-                setTimeout(() => {
-                    const cards = content.querySelectorAll('.card');
-                    cards.forEach((card, index) => {
-                        card.style.animationDelay = `${index * 0.1}s`;
-                    });
-                }, 100);
-            }, 200);
-        }
 
         function getOverviewPage() {
             // Calcola statistiche reali basate sui dati
