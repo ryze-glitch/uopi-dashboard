@@ -3594,8 +3594,9 @@
 
         .shifts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
+            justify-items: center;
         }
 
         .shift-card {
@@ -4187,6 +4188,217 @@
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
+        /* ========== SHIFT CARD VERTICALI ========== */
+        .shift-card-vertical {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .shift-card-vertical:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .shift-card-vertical.activation {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .shift-card-vertical.deactivation {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .shift-card-header {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .shift-icon-vertical {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            margin-right: 1rem;
+        }
+
+        .shift-card-vertical.activation .shift-icon-vertical {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .shift-card-vertical.deactivation .shift-icon-vertical {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .shift-title-vertical {
+            flex: 1;
+        }
+
+        .shift-title-vertical h3 {
+            color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .shift-title-vertical p {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .shift-status-vertical {
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .shift-status-vertical.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .shift-status-vertical.completed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .shift-card-content {
+            padding: 1.25rem;
+        }
+
+        .shift-details-vertical {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item-vertical {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item-vertical:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .detail-icon-vertical {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+
+        .detail-info-vertical {
+            flex: 1;
+        }
+
+        .detail-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            display: block;
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .operators-vertical {
+            margin-bottom: 1.5rem;
+        }
+
+        .operators-header-vertical {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .operators-list-vertical {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .operator-card-vertical {
+            padding: 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .operator-card-vertical:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .operator-name {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .shift-action-vertical {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .shift-action-vertical:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .shifts-day-header {
@@ -4244,22 +4456,27 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 350px;
+            width: 100vw;
             height: 100vh;
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
             backdrop-filter: blur(24px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
         }
 
         .login-content {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             width: 100%;
+            max-width: 500px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
         }
 
         .login-logo {
@@ -4307,6 +4524,11 @@
             min-height: 100vh;
             width: calc(100% - 350px);
             overflow-x: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .main-content.hidden {
+            display: none;
         }
 
         .content {
@@ -5977,30 +6199,82 @@
             const cardType = isDeactivation ? 'deactivation' : 'activation';
 
             return `
-                <div class="shift-card-ultra-compact ${cardType}">
-                    <div class="shift-main-ultra">
-                        <div class="shift-icon-ultra">
+                <div class="shift-card-vertical ${cardType}">
+                    <!-- Header Card -->
+                    <div class="shift-card-header">
+                        <div class="shift-icon-vertical">
                             <i class="fas ${isDeactivation ? 'fa-stop-circle' : 'fa-play-circle'}"></i>
                         </div>
-                        <div class="shift-content-ultra">
-                            <div class="shift-title-ultra">
-                                <span class="title-text">${isDeactivation ? 'Disattivazione' : 'Attivazione'}</span>
-                                <span class="status-badge-ultra ${shift.status === 'Attivo' ? 'active' : 'completed'}">${statusText}</span>
+                        <div class="shift-title-vertical">
+                            <h3>${isDeactivation ? 'Disattivazione Pattuglia' : 'Attivazione Pattuglia'}</h3>
+                            <p>${isDeactivation ? 'Turno Completato' : shift.patrolTypeName || 'Pattugliamento Cittadino'}</p>
+                        </div>
+                        <div class="shift-status-vertical ${shift.status === 'Attivo' ? 'active' : 'completed'}">
+                            ${statusText}
+                        </div>
+                    </div>
+
+                    <!-- Content Card -->
+                    <div class="shift-card-content">
+                        <div class="shift-details-vertical">
+                            <div class="detail-item-vertical">
+                                <div class="detail-icon-vertical">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="detail-info-vertical">
+                                    <span class="detail-label">Orario</span>
+                                    <span class="detail-value">${isDeactivation ? shift.activationTime : shift.patrolTime}</span>
+                                </div>
                             </div>
-                            <div class="shift-info-ultra">
-                                <span class="info-item"><i class="fas fa-clock"></i> ${isDeactivation ? shift.activationTime : shift.patrolTime}</span>
-                                <span class="info-item"><i class="fas fa-calendar"></i> ${shift.createdDate}</span>
-                                <span class="info-item"><i class="fas fa-user"></i> ${shift.managedBy}</span>
-                                <span class="info-item"><i class="fas fa-car"></i> ${shift.vehicle}</span>
+                            <div class="detail-item-vertical">
+                                <div class="detail-icon-vertical">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="detail-info-vertical">
+                                    <span class="detail-label">Data</span>
+                                    <span class="detail-value">${shift.createdDate}</span>
+                                </div>
                             </div>
-                            <div class="operators-ultra">
-                                <span class="ops-label">${isDeactivation ? 'Rientro' : 'Uscita'}:</span>
-                                <span class="operator-ultra">${shift.operator1Name}</span>
-                                <span class="operator-ultra">${shift.operator2Name}</span>
+                            <div class="detail-item-vertical">
+                                <div class="detail-icon-vertical">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="detail-info-vertical">
+                                    <span class="detail-label">Gestito da</span>
+                                    <span class="detail-value">${shift.managedBy}</span>
+                                </div>
+                            </div>
+                            <div class="detail-item-vertical">
+                                <div class="detail-icon-vertical">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="detail-info-vertical">
+                                    <span class="detail-label">Veicolo</span>
+                                    <span class="detail-value">${shift.vehicle}</span>
+                                </div>
                             </div>
                         </div>
-                        <button class="edit-btn-ultra" onclick="editShift('${shift.id}')">
+
+                        <!-- Operatori Section -->
+                        <div class="operators-vertical">
+                            <div class="operators-header-vertical">
+                                <i class="fas fa-users"></i>
+                                <span>Operatori ${isDeactivation ? 'in Rientro' : 'in Uscita'}</span>
+                            </div>
+                            <div class="operators-list-vertical">
+                                <div class="operator-card-vertical">
+                                    <span class="operator-name">${shift.operator1Name}</span>
+                                </div>
+                                <div class="operator-card-vertical">
+                                    <span class="operator-name">${shift.operator2Name}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button class="shift-action-vertical" onclick="editShift('${shift.id}')">
                             <i class="fas fa-edit"></i>
+                            <span>Modifica Turno</span>
                         </button>
                     </div>
                 </div>
@@ -8194,6 +8468,7 @@
             }
             
             if (mainContent) {
+                mainContent.classList.remove('hidden');
                 mainContent.classList.add('full-width');
             }
             
@@ -8289,6 +8564,7 @@
             }
             
             if (mainContent) {
+                mainContent.classList.add('hidden');
                 mainContent.classList.remove('full-width');
             }
             
@@ -8344,6 +8620,7 @@
                     }
                     
                     if (mainContent) {
+                        mainContent.classList.remove('hidden');
                         mainContent.classList.add('full-width');
                     }
                     
@@ -8645,6 +8922,12 @@
 
         // Avvia inizializzazione
         initializeSystem();
+
+        // Nascondi il main-content all'inizio per mostrare solo il login
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.classList.add('hidden');
+        }
 
         console.log('✅ Sistema caricato - VERSIONE PULITA');
     </script>
