@@ -744,6 +744,12 @@
                         transform-origin: left;
                         animation: progressBar ${notification.duration}ms linear forwards;
                     "></div>
+                    <style>
+                        @keyframes progressBar {
+                            from { transform: scaleX(0); }
+                            to { transform: scaleX(1); }
+                        }
+                    </style>
                 `;
                 
                 container.appendChild(notificationEl);
@@ -989,38 +995,73 @@
 
         // ========== GESTIONE OPERATORI ==========
         function addOperator() {
-            UI.modal('Aggiungi Operatore', `
+            UI.modal('Aggiungi Nuovo Operatore', `
                 <div style="display: grid; gap: 1.5rem;">
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Nome Operatore</label>
-                        <input type="text" id="operatorName" placeholder="Es. Mario Rossi" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                    <!-- Informazioni Personali -->
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <i class="fas fa-user" style="color: #3b82f6; font-size: 1.25rem;"></i>
+                            <h3 style="color: #e2e8f0; margin: 0; font-size: 1rem; font-weight: 600;">Informazioni Personali</h3>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Nome</label>
+                                <input type="text" id="operatorFirstName" placeholder="Nome" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Cognome</label>
+                                <input type="text" id="operatorLastName" placeholder="Cognome" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Discord Tag</label>
-                        <input type="text" id="operatorDiscord" placeholder="Es. mario.rossi#1234" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+
+                    <!-- Qualifica Professionale -->
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <i class="fas fa-graduation-cap" style="color: #10b981; font-size: 1.25rem;"></i>
+                            <h3 style="color: #e2e8f0; margin: 0; font-size: 1rem; font-weight: 600;">Qualifica Professionale</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Qualifica</label>
+                            <select id="operatorRole" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                                <option value="">Seleziona qualifica...</option>
+                                <option value="comandante">Comandante</option>
+                                <option value="vice-comandante">Vice Comandante</option>
+                                <option value="capo-squadra">Capo Squadra</option>
+                                <option value="operatore">Operatore</option>
+                                <option value="recluta">Recluta</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Ruolo</label>
-                        <select id="operatorRole" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
-                            <option value="comandante">Comandante</option>
-                            <option value="vice-comandante">Vice Comandante</option>
-                            <option value="capo-squadra">Capo Squadra</option>
-                            <option value="operatore">Operatore</option>
-                            <option value="recluta">Recluta</option>
-                        </select>
+
+                    <!-- Informazioni Discord -->
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <i class="fab fa-discord" style="color: #5865f2; font-size: 1.25rem;"></i>
+                            <h3 style="color: #e2e8f0; margin: 0; font-size: 1rem; font-weight: 600;">Informazioni Discord</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Tag Discord</label>
+                            <input type="text" id="operatorDiscord" placeholder="username#0000" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem;">Formato: username#0000</div>
+                        </div>
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Status</label>
-                        <select id="operatorStatus" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
-                            <option value="Disponibile">Disponibile</option>
-                            <option value="In Servizio">In Servizio</option>
-                            <option value="Fuori Servizio">Fuori Servizio</option>
-                            <option value="Assente">Assente</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Note</label>
-                        <textarea id="operatorNotes" placeholder="Note aggiuntive..." style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem; min-height: 80px; resize: vertical;"></textarea>
+
+                    <!-- Ruolo Aggiuntivo -->
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <i class="fas fa-users" style="color: #f59e0b; font-size: 1.25rem;"></i>
+                            <h3 style="color: #e2e8f0; margin: 0; font-size: 1rem; font-weight: 600;">Ruolo Aggiuntivo</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Seleziona ruolo aggiuntivo</label>
+                            <select id="operatorStatus" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                                <option value="Disponibile">Disponibile</option>
+                                <option value="In Servizio">In Servizio</option>
+                                <option value="Fuori Servizio">Fuori Servizio</option>
+                                <option value="Assente">Assente</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             `, `
@@ -1030,20 +1071,22 @@
         }
 
         function saveNewOperator() {
-            const name = document.getElementById('operatorName').value.trim();
+            const firstName = document.getElementById('operatorFirstName').value.trim();
+            const lastName = document.getElementById('operatorLastName').value.trim();
             const discord = document.getElementById('operatorDiscord').value.trim();
             const role = document.getElementById('operatorRole').value;
             const status = document.getElementById('operatorStatus').value;
-            const notes = document.getElementById('operatorNotes').value.trim();
 
-            if (!name || !discord) {
-                UI.notify('Nome e Discord Tag sono obbligatori', 'error', '❌ Errore');
+            if (!firstName || !lastName || !discord || !role) {
+                UI.notify('Tutti i campi sono obbligatori', 'error', '❌ Errore');
                 return;
             }
 
+            const fullName = `${firstName} ${lastName}`;
+
             // Verifica se l'operatore esiste già
             const existingOperator = operators.find(op => 
-                op.name.toLowerCase() === name.toLowerCase() || 
+                op.name.toLowerCase() === fullName.toLowerCase() || 
                 op.discordTag.toLowerCase() === discord.toLowerCase()
             );
 
@@ -1054,11 +1097,11 @@
 
             const newOperator = {
                 id: Date.now().toString(),
-                name: name,
+                name: fullName,
                 discordTag: discord,
                 role: role,
                 status: status,
-                notes: notes,
+                notes: '',
                 joinDate: new Date().toLocaleDateString('it-IT'),
                 lastActivity: new Date().toLocaleDateString('it-IT')
             };
@@ -1067,7 +1110,7 @@
             saveOperators();
 
             UI.closeModal();
-            UI.notify(`Operatore ${name} aggiunto con successo!`, 'success', '✅ Operatore Aggiunto');
+            UI.notify(`Operatore ${fullName} aggiunto con successo!`, 'success', '✅ Operatore Aggiunto');
             
             // Ricarica la pagina se siamo nella sezione gerarchia
             if (document.querySelector('.nav-btn.active')?.textContent.includes('Gerarchia')) {
@@ -1587,21 +1630,35 @@
             const inServiceOperators = operators.filter(op => op.status === 'In Servizio').length;
             const offlineOperators = operators.filter(op => op.status === 'Fuori Servizio' || op.status === 'Assente').length;
 
-            // Raggruppa operatori per ruolo
-            const operatorsByRole = {
-                'comandante': operators.filter(op => op.role === 'comandante'),
-                'vice-comandante': operators.filter(op => op.role === 'vice-comandante'),
-                'capo-squadra': operators.filter(op => op.role === 'capo-squadra'),
-                'operatore': operators.filter(op => op.role === 'operatore'),
-                'recluta': operators.filter(op => op.role === 'recluta')
+            // Raggruppa operatori per nuclei (vecchio metodo)
+            const nucleiOperators = {
+                'dirigenziale': operators.filter(op => op.role === 'comandante' || op.role === 'vice-comandante'),
+                'amministrativo': operators.filter(op => op.role === 'capo-squadra'),
+                'operativo': operators.filter(op => op.role === 'operatore' || op.role === 'recluta')
             };
 
-            const roleColors = {
-                'comandante': { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', border: 'rgba(245, 158, 11, 0.3)' },
-                'vice-comandante': { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)', border: 'rgba(139, 92, 246, 0.3)' },
-                'capo-squadra': { color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)', border: 'rgba(59, 130, 246, 0.3)' },
-                'operatore': { color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)' },
-                'recluta': { color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)', border: 'rgba(148, 163, 184, 0.3)' }
+            const nucleiInfo = {
+                'dirigenziale': {
+                    name: 'Nucleo Dirigenziale',
+                    description: 'Responsabili delle decisioni strategiche e della direzione operativa dell\'unità.',
+                    color: '#ef4444',
+                    icon: 'crown',
+                    icon2: 'ribbon'
+                },
+                'amministrativo': {
+                    name: 'Nucleo Amministrativo',
+                    description: 'Gestione documentale, amministrazione e supporto logistico alle operazioni.',
+                    color: '#10b981',
+                    icon: 'file-alt',
+                    icon2: 'folder'
+                },
+                'operativo': {
+                    name: 'Nucleo Operativo',
+                    description: 'Personale operativo specializzato nell\'esecuzione diretta delle missioni.',
+                    color: '#3b82f6',
+                    icon: 'shield-alt',
+                    icon2: 'users'
+                }
             };
 
             const statusColors = {
@@ -1675,34 +1732,67 @@
                         </div>
                     </div>
                 ` : `
-                    <!-- Gerarchia per Ruoli -->
+                    <!-- Gerarchia per Nuclei (Vecchio Metodo) -->
                     <div style="display: grid; gap: 2rem;">
-                        ${Object.entries(operatorsByRole).map(([role, roleOperators]) => {
-                            if (roleOperators.length === 0) return '';
+                        ${Object.entries(nucleiOperators).map(([nucleo, nucleoOperators]) => {
+                            if (nucleoOperators.length === 0) return '';
                             
-                            const roleColor = roleColors[role];
-                            const roleNames = {
-                                'comandante': 'Comandante',
-                                'vice-comandante': 'Vice Comandante',
-                                'capo-squadra': 'Capo Squadra',
-                                'operatore': 'Operatore',
-                                'recluta': 'Recluta'
-                            };
+                            const nucleoInfo = nucleiInfo[nucleo];
+                            const availableCount = nucleoOperators.filter(op => op.status === 'Disponibile').length;
 
                             return `
-                                <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid ${roleColor.border};">
+                                <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255, 255, 255, 0.1);">
                                     <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-                                        <h2 style="color: #e2e8f0; margin: 0; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
-                                            <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; background: ${roleColor.bg}; display: flex; align-items: center; justify-content: center; color: ${roleColor.color}; font-size: 1.25rem;">
-                                                <i class="fas fa-${role === 'comandante' ? 'crown' : role === 'vice-comandante' ? 'user-tie' : role === 'capo-squadra' ? 'user-shield' : role === 'operatore' ? 'user' : 'user-plus'}"></i>
-                                            </div>
-                                            ${roleNames[role]} (${roleOperators.length})
+                                        <h2 style="color: ${nucleoInfo.color}; margin: 0; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
+                                            <i class="fas fa-${nucleoInfo.icon}" style="color: ${nucleoInfo.color};"></i>
+                                            <i class="fas fa-${nucleoInfo.icon2}" style="color: ${nucleoInfo.color};"></i>
+                                            ${nucleoInfo.name}
                                         </h2>
+                                        <p style="color: #e2e8f0; margin: 0.5rem 0 0 0; font-size: 0.875rem; line-height: 1.4;">
+                                            ${nucleoInfo.description}
+                                        </p>
+                                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                            <div style="
+                                                padding: 0.5rem 1rem;
+                                                border-radius: 0.5rem;
+                                                background: ${nucleoInfo.color}20;
+                                                color: ${nucleoInfo.color};
+                                                font-size: 0.875rem;
+                                                font-weight: 600;
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 0.5rem;
+                                            ">
+                                                <i class="fas fa-users"></i>
+                                                ${nucleoOperators.length} Operatori
+                                            </div>
+                                            <div style="
+                                                padding: 0.5rem 1rem;
+                                                border-radius: 0.5rem;
+                                                background: rgba(16, 185, 129, 0.2);
+                                                color: #10b981;
+                                                font-size: 0.875rem;
+                                                font-weight: 600;
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 0.5rem;
+                                            ">
+                                                <i class="fas fa-check"></i>
+                                                ${availableCount} Disponibili
+                                            </div>
+                                        </div>
                                     </div>
                                     <div style="padding: 1rem 1.5rem;">
                                         <div style="display: grid; gap: 1rem;">
-                                            ${roleOperators.map(operator => {
+                                            ${nucleoOperators.map(operator => {
                                                 const statusColor = statusColors[operator.status];
+                                                const roleNames = {
+                                                    'comandante': 'Comandante',
+                                                    'vice-comandante': 'Vice Comandante',
+                                                    'capo-squadra': 'Capo Squadra',
+                                                    'operatore': 'Operatore',
+                                                    'recluta': 'Recluta'
+                                                };
                                                 return `
                                                     <div style="
                                                         background: rgba(255, 255, 255, 0.05);
@@ -1719,7 +1809,7 @@
                                                                 width: 2.5rem;
                                                                 height: 2.5rem;
                                                                 border-radius: 50%;
-                                                                background: linear-gradient(135deg, ${roleColor.color}, ${roleColor.color}dd);
+                                                                background: linear-gradient(135deg, ${nucleoInfo.color}, ${nucleoInfo.color}dd);
                                                                 display: flex;
                                                                 align-items: center;
                                                                 justify-content: center;
@@ -1732,6 +1822,7 @@
                                                             <div>
                                                                 <div style="font-weight: 600; color: #e2e8f0; margin-bottom: 0.25rem;">${operator.name}</div>
                                                                 <div style="font-size: 0.875rem; color: #94a3b8;">${operator.discordTag}</div>
+                                                                <div style="font-size: 0.75rem; color: ${nucleoInfo.color}; font-weight: 600; margin-top: 0.25rem;">${roleNames[operator.role]}</div>
                                                                 ${operator.notes ? `<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; font-style: italic;">${operator.notes}</div>` : ''}
                                                             </div>
                                                         </div>
