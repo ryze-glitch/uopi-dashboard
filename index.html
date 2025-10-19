@@ -4621,13 +4621,31 @@
                     <button onclick="loginWithDiscord()" class="login-btn">
                         <i class="fab fa-discord"></i> Accedi con Discord
                     </button>
-                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                        <button onclick="testLoginAdmin()" class="login-btn test-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); flex: 1;">
-                            <i class="fas fa-crown"></i> Test Admin
-                        </button>
-                        <button onclick="testLoginOperator()" class="login-btn test-btn" style="background: linear-gradient(135deg, #10b981, #059669); flex: 1;">
-                            <i class="fas fa-user"></i> Test Operatore
-                        </button>
+                    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="testLoginAdmin()" class="login-btn test-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); flex: 1;">
+                                <i class="fas fa-crown"></i> Test Admin
+                            </button>
+                            <button onclick="testLoginOperator()" class="login-btn test-btn" style="background: linear-gradient(135deg, #10b981, #059669); flex: 1;">
+                                <i class="fas fa-user"></i> Test Operatore
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="debugAccessControl()" class="login-btn test-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); flex: 1;">
+                                <i class="fas fa-bug"></i> Debug Access Control
+                            </button>
+                            <button onclick="resetSampleData()" class="login-btn test-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); flex: 1;">
+                                <i class="fas fa-refresh"></i> Reset Data
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="syncDataFromCloud()" class="login-btn test-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2); flex: 1;">
+                                <i class="fas fa-cloud-download-alt"></i> Sincronizza
+                            </button>
+                            <button onclick="exportDataToCloud()" class="login-btn test-btn" style="background: linear-gradient(135deg, #10b981, #059669); flex: 1;">
+                                <i class="fas fa-cloud-upload-alt"></i> Esporta
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4655,6 +4673,7 @@
                         <div class="avatar">d</div>
                         <div>
                             <div style="font-weight:700;font-size:1rem">dxrk.ryze</div>
+                            <div style="font-size:0.75rem;color:#64748b;font-weight:500">#0001</div>
                             <div style="font-size:0.875rem;color:#94a3b8;font-weight:600">Dirigenza</div>
                         </div>
                         <i class="fas fa-chevron-down" style="font-size:0.75rem;color:#94a3b8;transition:transform 0.3s ease"></i>
@@ -4688,6 +4707,17 @@
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
         const ADMIN_ID = '1387684968536477756';
+
+        // ========== CONFIGURAZIONE JSONBIN ==========
+        const JSONBIN_CONFIG = {
+            binId: '68f55fc2ae596e708f1daead',
+            secretKey: '$2a$10$qeINWX5SEES6HeEYUUyPPeBKvSP/.MkmetQMgtDs.iRPwiMAnEh3O',
+            apiUrl: 'https://api.jsonbin.io/v3/b/',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': '$2a$10$qeINWX5SEES6HeEYUUyPPeBKvSP/.MkmetQMgtDs.iRPwiMAnEh3O'
+            }
+        };
 
         // ========== SISTEMA DI SICUREZZA DISCORD ==========
         const DISCORD_AUTH = {
@@ -4729,8 +4759,21 @@
             
             // Ottiene il livello di accesso
             getAccessLevel: function(discordId) {
-                if (this.isAdmin(discordId)) return 'admin';
-                if (this.isOperator(discordId)) return 'operator';
+                console.log('🔍 DISCORD_AUTH.getAccessLevel chiamata con ID:', discordId);
+                const isAdmin = this.isAdmin(discordId);
+                const isOperator = this.isOperator(discordId);
+                console.log('  - isAdmin:', isAdmin);
+                console.log('  - isOperator:', isOperator);
+                
+                if (isAdmin) {
+                    console.log('  - Restituisco: admin');
+                    return 'admin';
+                }
+                if (isOperator) {
+                    console.log('  - Restituisco: operator');
+                    return 'operator';
+                }
+                console.log('  - Restituisco: none');
                 return 'none';
             }
         };
@@ -4899,7 +4942,120 @@
 
         // Funzioni specifiche per operatori
         function saveOperators() {
-            return saveToStorage(STORAGE_KEYS.OPERATORS, operators);
+            // Salva nel localStorage come backup
+            saveToStorage(STORAGE_KEYS.OPERATORS, operators);
+            // Salva anche su JSONBin (async, non blocca l'UI)
+            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
+            return true;
+        }
+
+        // ========== FUNZIONI JSONBIN ==========
+        
+        // Carica tutti i dati da JSONBin
+        async function loadDataFromJSONBin() {
+            try {
+                console.log('🔄 Caricamento dati da JSONBin...');
+                
+                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
+                    headers: {
+                        'X-Master-Key': JSONBIN_CONFIG.secretKey
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Dati caricati da JSONBin:', data.record);
+                
+                // Aggiorna i dati locali
+                if (data.record.operators && Array.isArray(data.record.operators)) {
+                    operators = data.record.operators;
+                }
+                if (data.record.shifts && Array.isArray(data.record.shifts)) {
+                    shifts = data.record.shifts;
+                }
+                if (data.record.notifications && Array.isArray(data.record.notifications)) {
+                    notifications = data.record.notifications;
+                }
+                
+                // Salva anche nel localStorage come backup
+                saveOperators();
+                saveShifts();
+                saveNotifications();
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Errore nel caricamento da JSONBin:', error);
+                // Fallback al localStorage
+                loadOperators();
+                loadShifts();
+                loadNotifications();
+                return false;
+            }
+        }
+        
+        // Salva tutti i dati su JSONBin
+        async function saveDataToJSONBin() {
+            try {
+                console.log('💾 Salvataggio dati su JSONBin...');
+                
+                const dataToSave = {
+                    operators: operators,
+                    shifts: shifts,
+                    notifications: notifications,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
+                    method: 'PUT',
+                    headers: JSONBIN_CONFIG.headers,
+                    body: JSON.stringify(dataToSave)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('✅ Dati salvati su JSONBin:', result);
+                
+                // Salva anche nel localStorage come backup
+                saveOperators();
+                saveShifts();
+                saveNotifications();
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Errore nel salvataggio su JSONBin:', error);
+                return false;
+            }
+        }
+        
+        // Sincronizza i dati (carica da JSONBin)
+        async function syncDataFromCloud() {
+            const success = await loadDataFromJSONBin();
+            if (success) {
+                UI.notify('Dati sincronizzati dal cloud!', 'success', '🔄 Sincronizzazione');
+                // Ricarica la pagina corrente se necessario
+                const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                if (currentPage) {
+                    loadPage(currentPage);
+                }
+            } else {
+                UI.notify('Errore nella sincronizzazione. Usando dati locali.', 'warning', '⚠️ Avviso');
+            }
+        }
+        
+        // Esporta i dati locali su JSONBin
+        async function exportDataToCloud() {
+            const success = await saveDataToJSONBin();
+            if (success) {
+                UI.notify('Dati esportati sul cloud!', 'success', '☁️ Esportazione');
+            } else {
+                UI.notify('Errore nell\'esportazione.', 'error', '❌ Errore');
+            }
         }
 
         function loadOperators() {
@@ -4908,7 +5064,77 @@
                 operators = savedOperators;
                 return true;
             }
-            return false;
+            
+            // Se non ci sono operatori salvati, prova a caricare da JSONBin
+            console.log('📝 Nessun operatore salvato localmente, provo a caricare da JSONBin...');
+            loadDataFromJSONBin().then(success => {
+                if (!success) {
+                    // Se anche JSONBin fallisce, crea dati di esempio
+                    console.log('📝 JSONBin fallito, creo operatori di esempio...');
+                    createSampleOperators();
+                }
+            });
+            return true;
+        }
+
+        // Funzione per creare operatori di esempio
+        function createSampleOperators() {
+            operators = [
+                {
+                    id: 1,
+                    name: 'Marco Rossi',
+                    discordTag: 'marco.rossi#1234',
+                    qualification: 'Commissario',
+                    role: 'dirigenziale',
+                    roleName: 'Nucleo Dirigenziale',
+                    status: 'Disponibile',
+                    addedDate: new Date().toLocaleDateString('it-IT')
+                },
+                {
+                    id: 2,
+                    name: 'Giulia Bianchi',
+                    discordTag: 'giulia.bianchi#5678',
+                    qualification: 'Ispettore Capo',
+                    role: 'amministrativo',
+                    roleName: 'Nucleo Amministrativo',
+                    status: 'Disponibile',
+                    addedDate: new Date().toLocaleDateString('it-IT')
+                },
+                {
+                    id: 3,
+                    name: 'Luca Verdi',
+                    discordTag: 'luca.verdi#9012',
+                    qualification: 'Agente Scelto',
+                    role: 'operativo',
+                    roleName: 'Nucleo Operativo',
+                    status: 'Disponibile',
+                    addedDate: new Date().toLocaleDateString('it-IT')
+                },
+                {
+                    id: 4,
+                    name: 'Sofia Neri',
+                    discordTag: 'sofia.neri#3456',
+                    qualification: 'Agente',
+                    role: 'operativo',
+                    roleName: 'Nucleo Operativo',
+                    status: 'In Servizio',
+                    addedDate: new Date().toLocaleDateString('it-IT')
+                },
+                {
+                    id: 5,
+                    name: 'Alessandro Blu',
+                    discordTag: 'alessandro.blu#7890',
+                    qualification: 'Vice Commissario',
+                    role: 'dirigenziale',
+                    roleName: 'Nucleo Dirigenziale',
+                    status: 'Disponibile',
+                    addedDate: new Date().toLocaleDateString('it-IT')
+                }
+            ];
+            
+            // Salva i dati di esempio
+            saveOperators();
+            console.log('✅ Creati', operators.length, 'operatori di esempio');
         }
 
         function clearOperatorsStorage() {
@@ -4917,7 +5143,11 @@
 
         // Funzioni per notifiche
         function saveNotifications() {
-            return saveToStorage(STORAGE_KEYS.NOTIFICATIONS, notifications);
+            // Salva nel localStorage come backup
+            saveToStorage(STORAGE_KEYS.NOTIFICATIONS, notifications);
+            // Salva anche su JSONBin (async, non blocca l'UI)
+            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
+            return true;
         }
 
         function loadNotifications() {
@@ -4926,12 +5156,54 @@
                 notifications = savedNotifications;
                 return true;
             }
-            return false;
+            
+            // Se non ci sono notifiche salvate, crea notifiche di esempio
+            console.log('📝 Nessuna notifica salvata, creo notifiche di esempio...');
+            createSampleNotifications();
+            return true;
+        }
+
+        // Funzione per creare notifiche di esempio
+        function createSampleNotifications() {
+            notifications = [
+                {
+                    id: 1,
+                    title: 'Sistema Avviato',
+                    message: 'Dashboard U.O.P.I. inizializzata con successo',
+                    type: 'success',
+                    timestamp: new Date().toISOString(),
+                    read: false
+                },
+                {
+                    id: 2,
+                    title: 'Nuovi Operatori',
+                    message: 'Sono stati caricati 5 operatori di esempio nel sistema',
+                    type: 'info',
+                    timestamp: new Date().toISOString(),
+                    read: false
+                },
+                {
+                    id: 3,
+                    title: 'Turni Configurati',
+                    message: 'Sono stati creati 3 turni di esempio per il test del sistema',
+                    type: 'info',
+                    timestamp: new Date().toISOString(),
+                    read: false
+                }
+            ];
+            
+            // Salva le notifiche di esempio
+            saveNotifications();
+            console.log('✅ Create', notifications.length, 'notifiche di esempio');
         }
 
         // Funzioni per turni
         function saveShifts() {
-            return saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+            // Salva nel localStorage come backup
+            saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+            // Salva anche su JSONBin (async, non blocca l'UI)
+            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
+            return true;
         }
 
         function loadShifts() {
@@ -4940,7 +5212,48 @@
                 shifts = savedShifts;
                 return true;
             }
-            return false;
+            
+            // Se non ci sono turni salvati, crea dati di esempio
+            console.log('📝 Nessun turno salvato, creo turni di esempio...');
+            createSampleShifts();
+            return true;
+        }
+
+        // Funzione per creare turni di esempio
+        function createSampleShifts() {
+            shifts = [
+                {
+                    id: 1,
+                    title: 'Turno Mattutino',
+                    date: new Date().toLocaleDateString('it-IT'),
+                    startTime: '08:00',
+                    endTime: '14:00',
+                    operators: ['Marco Rossi', 'Giulia Bianchi'],
+                    status: 'attivo'
+                },
+                {
+                    id: 2,
+                    title: 'Turno Pomeridiano',
+                    date: new Date().toLocaleDateString('it-IT'),
+                    startTime: '14:00',
+                    endTime: '20:00',
+                    operators: ['Luca Verdi', 'Sofia Neri'],
+                    status: 'attivo'
+                },
+                {
+                    id: 3,
+                    title: 'Turno Notturno',
+                    date: new Date().toLocaleDateString('it-IT'),
+                    startTime: '20:00',
+                    endTime: '08:00',
+                    operators: ['Alessandro Blu'],
+                    status: 'completato'
+                }
+            ];
+            
+            // Salva i turni di esempio
+            saveShifts();
+            console.log('✅ Creati', shifts.length, 'turni di esempio');
         }
 
         // Funzione di backup completo
@@ -5215,7 +5528,7 @@
                 const adminUser = {
                     id: '1387684968536477756', // ID admin autorizzato
                     username: 'TestAdmin',
-                    discriminator: '0001',
+                    discriminator: '1234',
                     avatar: null,
                     email: null
                 };
@@ -5235,7 +5548,7 @@
                 const operatorUser = {
                     id: '734406288213016607', // ID operatore autorizzato
                     username: 'TestOperator',
-                    discriminator: '0001',
+                    discriminator: '5678',
                     avatar: null,
                     email: null
                 };
@@ -5244,6 +5557,62 @@
                 showDashboard(operatorUser);
                 console.log('✅ Test login Operatore completato');
             }, 1000);
+        }
+
+        // Funzione di debug per testare il controllo accessi
+        function debugAccessControl() {
+            console.log('🐛 DEBUG ACCESS CONTROL');
+            console.log('========================');
+            
+            // Test admin
+            console.log('🔴 Test Admin:');
+            const adminId = '1387684968536477756';
+            const adminLevel = DISCORD_AUTH.getAccessLevel(adminId);
+            console.log('  - ID:', adminId);
+            console.log('  - Livello:', adminLevel);
+            console.log('  - È admin?', DISCORD_AUTH.isAdmin(adminId));
+            console.log('  - È operatore?', DISCORD_AUTH.isOperator(adminId));
+            
+            // Test operatore
+            console.log('🟢 Test Operatore:');
+            const operatorId = '734406288213016607';
+            const operatorLevel = DISCORD_AUTH.getAccessLevel(operatorId);
+            console.log('  - ID:', operatorId);
+            console.log('  - Livello:', operatorLevel);
+            console.log('  - È admin?', DISCORD_AUTH.isAdmin(operatorId));
+            console.log('  - È operatore?', DISCORD_AUTH.isOperator(operatorId));
+            
+            // Stato globale
+            console.log('🌍 Stato Globale:');
+            console.log('  - userAccessLevel:', userAccessLevel);
+            console.log('  - getCurrentAccessLevel():', getCurrentAccessLevel());
+            console.log('  - localStorage:', localStorage.getItem('userAccessLevel'));
+            
+            // Test ID non autorizzato
+            console.log('🔴 Test ID Non Autorizzato:');
+            const unauthorizedId = '999999999999999999';
+            const unauthorizedLevel = DISCORD_AUTH.getAccessLevel(unauthorizedId);
+            console.log('  - ID:', unauthorizedId);
+            console.log('  - Livello:', unauthorizedLevel);
+            
+            UI.notify('Debug completato! Controlla la console per i dettagli.', 'info', '🐛 Debug Access Control');
+        }
+
+        // Funzione per resettare i dati di esempio
+        function resetSampleData() {
+            console.log('🔄 Reset dati di esempio...');
+            
+            // Pulisci tutti i dati salvati
+            localStorage.removeItem('uopi_operators');
+            localStorage.removeItem('uopi_notifications');
+            localStorage.removeItem('uopi_shifts');
+            
+            // Ricrea i dati di esempio
+            createSampleOperators();
+            createSampleNotifications();
+            createSampleShifts();
+            
+            UI.notify('Dati di esempio ricreati con successo!', 'success', '🔄 Reset Completato');
         }
 
         // Funzione per gestire il callback di ritorno da Discord
@@ -5266,7 +5635,7 @@
                         const testUser = {
                             id: '734406288213016607', // ID operatore di test
                             username: 'TestOperator',
-                            discriminator: '0001',
+                            discriminator: '9999',
                             avatar: null,
                             email: null
                         };
@@ -5317,7 +5686,7 @@
                         const testUser = {
                             id: '734406288213016607', // ID operatore di test
                             username: 'TestOperator',
-                            discriminator: '0001',
+                            discriminator: '8888',
                             avatar: null,
                             email: null
                         };
@@ -5911,6 +6280,8 @@
 
         // Funzione per mostrare la pagina Gerarchia agli operatori normali
         function getPersonnelPageForOperators() {
+            console.log('🔒 getPersonnelPageForOperators chiamata - Vista limitata per operatori');
+            
             const totalOperators = operators.length;
             const availableOperators = operators.filter(op => op.status === 'Disponibile').length;
             const dirigenzialeCount = operators.filter(op => op.role === 'dirigenziale').length;
@@ -5979,18 +6350,30 @@
 
         function getPersonnelPage() {
             // Controlla il livello di accesso dell'utente
-            const userAccessLevel = getCurrentAccessLevel();
-            console.log('🏅 Accesso Gerarchia - Livello utente:', userAccessLevel);
+            const currentAccessLevel = getCurrentAccessLevel();
+            const globalAccessLevel = userAccessLevel;
+            console.log('🏅 Accesso Gerarchia - Debug completo:');
+            console.log('  - getCurrentAccessLevel():', currentAccessLevel);
+            console.log('  - userAccessLevel globale:', globalAccessLevel);
+            console.log('  - localStorage:', localStorage.getItem('userAccessLevel'));
             
             // Se l'utente non è admin, mostra solo informazioni generali
-            if (userAccessLevel !== 'admin') {
+            if (currentAccessLevel !== 'admin') {
+                console.log('✅ Utente non è admin, mostro vista limitata');
                 return getPersonnelPageForOperators();
             }
+            
+            console.log('✅ Utente è admin, mostro vista completa');
             
             // Raggruppa operatori per nucleo (solo per admin)
             const dirigenzialeOps = operators.filter(op => op.role === 'dirigenziale');
             const amministrativoOps = operators.filter(op => op.role === 'amministrativo');
             const operativoOps = operators.filter(op => op.role === 'operativo');
+            
+            console.log('📊 Statistiche operatori per admin:');
+            console.log('  - Dirigenziali:', dirigenzialeOps.length);
+            console.log('  - Amministrativi:', amministrativoOps.length);
+            console.log('  - Operativi:', operativoOps.length);
 
             // Funzione per creare le righe degli operatori
             const createOperatorRows = (operatorsList) => {
@@ -8552,8 +8935,14 @@
             const accessLevel = DISCORD_AUTH.getAccessLevel(userData.id);
             userAccessLevel = accessLevel;
             
+            console.log('🔐 Debug accesso:');
+            console.log('  - ID utente:', userData.id);
+            console.log('  - Access level calcolato:', accessLevel);
+            console.log('  - userAccessLevel impostato:', userAccessLevel);
+            
             // Salva il livello di accesso
             localStorage.setItem('userAccessLevel', userAccessLevel);
+            console.log('  - localStorage salvato:', localStorage.getItem('userAccessLevel'));
             localStorage.setItem('authenticatedUserId', userData.id);
             localStorage.setItem('userData', JSON.stringify(userData));
             
@@ -8577,12 +8966,14 @@
             
             // Cerca gli elementi corretti nell'HTML statico
             const avatarElement = document.querySelector('.avatar');
-            const userNameElement = document.querySelector('.user-profile div div:first-child');
-            const userRoleElement = document.querySelector('.user-profile div div:last-child');
+            const userNameElement = document.querySelector('.user-profile div div:nth-child(1)');
+            const userTagElement = document.querySelector('.user-profile div div:nth-child(2)');
+            const userRoleElement = document.querySelector('.user-profile div div:nth-child(3)');
             
             console.log('🎯 Elementi trovati:', {
                 avatar: avatarElement,
                 userName: userNameElement,
+                userTag: userTagElement,
                 userRole: userRoleElement
             });
             
@@ -8594,6 +8985,12 @@
             if (userNameElement) {
                 userNameElement.textContent = userData.username || 'Utente';
                 console.log('✅ Nome utente aggiornato con:', userData.username || 'Utente');
+            }
+            
+            if (userTagElement) {
+                const discriminator = userData.discriminator || '0001';
+                userTagElement.textContent = `#${discriminator}`;
+                console.log('✅ Tag Discord aggiornato con:', `#${discriminator}`);
             }
             
             if (userRoleElement) {
@@ -8680,8 +9077,9 @@
             
             // Reset del profilo utente
             const avatarElement = document.querySelector('.avatar');
-            const userNameElement = document.querySelector('.user-profile div div:first-child');
-            const userRoleElement = document.querySelector('.user-profile div div:last-child');
+            const userNameElement = document.querySelector('.user-profile div div:nth-child(1)');
+            const userTagElement = document.querySelector('.user-profile div div:nth-child(2)');
+            const userRoleElement = document.querySelector('.user-profile div div:nth-child(3)');
             
             if (avatarElement) {
                 avatarElement.textContent = 'd';
@@ -8689,6 +9087,10 @@
             
             if (userNameElement) {
                 userNameElement.textContent = 'dxrk.ryze';
+            }
+            
+            if (userTagElement) {
+                userTagElement.textContent = '#0001';
             }
             
             if (userRoleElement) {
@@ -8738,8 +9140,9 @@
                     console.log('🔄 Auto-login: Aggiorno profilo utente con:', userData);
                     
                     const avatarElement = document.querySelector('.avatar');
-                    const userNameElement = document.querySelector('.user-profile div div:first-child');
-                    const userRoleElement = document.querySelector('.user-profile div div:last-child');
+                    const userNameElement = document.querySelector('.user-profile div div:nth-child(1)');
+                    const userTagElement = document.querySelector('.user-profile div div:nth-child(2)');
+                    const userRoleElement = document.querySelector('.user-profile div div:nth-child(3)');
                     
                     if (avatarElement) {
                         avatarElement.textContent = (userData.username || 'U')[0].toUpperCase();
@@ -8747,6 +9150,11 @@
                     
                     if (userNameElement) {
                         userNameElement.textContent = userData.username || 'Utente';
+                    }
+                    
+                    if (userTagElement) {
+                        const discriminator = userData.discriminator || '0001';
+                        userTagElement.textContent = `#${discriminator}`;
                     }
                     
                     if (userRoleElement) {
@@ -8969,6 +9377,9 @@
                         content.innerHTML = getOverviewPage();
                         break;
                     case 'personnel':
+                        console.log('🏅 Caricamento pagina Gerarchia - Debug:');
+                        console.log('  - userAccessLevel:', userAccessLevel);
+                        console.log('  - getCurrentAccessLevel():', getCurrentAccessLevel());
                         content.innerHTML = getPersonnelPage();
                         break;
                     case 'shifts':
@@ -9005,28 +9416,46 @@
 
         // ========== INIZIALIZZAZIONE SISTEMA ==========
         // Carica dati salvati all'avvio
-        function initializeSystem() {
+        async function initializeSystem() {
             console.log('🔄 Inizializzazione sistema...');
             
-            // Carica operatori salvati
-            if (loadOperators()) {
-                console.log('✅ Caricati ' + operators.length + ' operatori dal localStorage');
-            } else {
-                console.log('ℹ️ Nessun operatore salvato trovato');
-            }
+            // Prova prima a caricare da JSONBin
+            console.log('🌐 Tentativo di caricamento da JSONBin...');
+            const cloudSuccess = await loadDataFromJSONBin();
             
-            // Carica notifiche salvate
-            if (loadNotifications()) {
-                console.log('✅ Caricate ' + notifications.length + ' notifiche dal localStorage');
-            } else {
-                console.log('ℹ️ Nessuna notifica salvata trovata');
-            }
-            
-            // Mostra notifica di benvenuto se ci sono operatori
-            if (operators.length > 0) {
+            if (cloudSuccess) {
+                console.log('✅ Dati caricati da JSONBin:', {
+                    operators: operators.length,
+                    shifts: shifts.length,
+                    notifications: notifications.length
+                });
+                
+                // Mostra notifica di sincronizzazione
                 setTimeout(() => {
-                    UI.notify('Benvenuto! Sistema caricato con ' + operators.length + ' operatori', 'success', '🚀 Sistema Pronto');
+                    UI.notify(`Dati sincronizzati dal cloud! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Sincronizzazione Cloud');
                 }, 1000);
+            } else {
+                console.log('⚠️ JSONBin non disponibile, carico dal localStorage...');
+                
+                // Fallback al localStorage
+                if (loadOperators()) {
+                    console.log('✅ Caricati ' + operators.length + ' operatori dal localStorage');
+                }
+                
+                if (loadShifts()) {
+                    console.log('✅ Caricati ' + shifts.length + ' turni dal localStorage');
+                }
+                
+                if (loadNotifications()) {
+                    console.log('✅ Caricate ' + notifications.length + ' notifiche dal localStorage');
+                }
+                
+                // Mostra notifica di benvenuto
+                if (operators.length > 0) {
+                    setTimeout(() => {
+                        UI.notify('Benvenuto! Sistema caricato con ' + operators.length + ' operatori', 'success', '🚀 Sistema Pronto');
+                    }, 1000);
+                }
             }
         }
 
@@ -9074,7 +9503,7 @@
                     const testUser = {
                         id: '734406288213016607', // ID operatore autorizzato
                         username: 'EmergencyOperator',
-                        discriminator: '0001',
+                        discriminator: '7777',
                         avatar: null,
                         email: null
                     };
