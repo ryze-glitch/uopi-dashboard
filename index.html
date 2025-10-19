@@ -5909,8 +5909,85 @@
             `;
         }
 
+        // Funzione per mostrare la pagina Gerarchia agli operatori normali
+        function getPersonnelPageForOperators() {
+            const totalOperators = operators.length;
+            const availableOperators = operators.filter(op => op.status === 'Disponibile').length;
+            const dirigenzialeCount = operators.filter(op => op.role === 'dirigenziale').length;
+            const amministrativoCount = operators.filter(op => op.role === 'amministrativo').length;
+            const operativoCount = operators.filter(op => op.role === 'operativo').length;
+            
+            return `
+                <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+                    <h1>🏅 Gerarchia Operativa</h1>
+                    <p>Informazioni generali sulla struttura organizzativa</p>
+                </div>
+
+                <!-- Statistiche Generali -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h2 style="color: var(--text-primary); margin: 0 0 0.25rem 0; font-size: 1.5rem;">Struttura Organizzativa</h2>
+                            <p style="color: var(--text-muted); margin: 0; font-size: 0.875rem;">Panoramica generale del personale U.O.P.I.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1.5rem; text-align: center;">
+                            <div style="font-size: 2rem; color: #3b82f6; margin-bottom: 0.5rem;">${totalOperators}</div>
+                            <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">Operatori Totali</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Personale U.O.P.I.</div>
+                        </div>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.75rem; padding: 1.5rem; text-align: center;">
+                            <div style="font-size: 2rem; color: #10b981; margin-bottom: 0.5rem;">${availableOperators}</div>
+                            <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">Disponibili</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Operatori attivi</div>
+                        </div>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.75rem; padding: 1.5rem; text-align: center;">
+                            <div style="font-size: 2rem; color: #ef4444; margin-bottom: 0.5rem;">${dirigenzialeCount}</div>
+                            <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">Dirigenza</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Nucleo dirigenziale</div>
+                        </div>
+                        
+                        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1.5rem; text-align: center;">
+                            <div style="font-size: 2rem; color: #3b82f6; margin-bottom: 0.5rem;">${operativoCount}</div>
+                            <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.25rem;">Operativo</div>
+                            <div style="color: var(--text-muted); font-size: 0.875rem;">Nucleo operativo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informazioni Accesso Limitato -->
+                <div class="card" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: rgba(245, 158, 11, 0.2); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #f59e0b;">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div>
+                            <h3 style="color: #f59e0b; margin: 0 0 0.25rem 0; font-size: 1.125rem;">Accesso Limitato</h3>
+                            <p style="color: var(--text-muted); margin: 0; font-size: 0.875rem;">Come operatore, hai accesso solo alle informazioni generali. Per visualizzare i dettagli completi del personale, contatta la dirigenza.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function getPersonnelPage() {
-            // Raggruppa operatori per nucleo
+            // Controlla il livello di accesso dell'utente
+            const userAccessLevel = getCurrentAccessLevel();
+            console.log('🏅 Accesso Gerarchia - Livello utente:', userAccessLevel);
+            
+            // Se l'utente non è admin, mostra solo informazioni generali
+            if (userAccessLevel !== 'admin') {
+                return getPersonnelPageForOperators();
+            }
+            
+            // Raggruppa operatori per nucleo (solo per admin)
             const dirigenzialeOps = operators.filter(op => op.role === 'dirigenziale');
             const amministrativoOps = operators.filter(op => op.role === 'amministrativo');
             const operativoOps = operators.filter(op => op.role === 'operativo');
@@ -8496,22 +8573,32 @@
             }
             
             // Aggiorna il profilo utente con i dati Discord
-            const userAvatar = document.querySelector('.user-avatar');
-            const userName = document.querySelector('.user-name');
-            const userRole = document.querySelector('.user-role');
+            console.log('🔄 Aggiorno profilo utente con:', userData);
             
-            if (userAvatar) {
-                userAvatar.src = userData.avatar ? 
-                    `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 
-                    `https://i.imgur.com/B6E4u1X.png`;
+            // Cerca gli elementi corretti nell'HTML statico
+            const avatarElement = document.querySelector('.avatar');
+            const userNameElement = document.querySelector('.user-profile div div:first-child');
+            const userRoleElement = document.querySelector('.user-profile div div:last-child');
+            
+            console.log('🎯 Elementi trovati:', {
+                avatar: avatarElement,
+                userName: userNameElement,
+                userRole: userRoleElement
+            });
+            
+            if (avatarElement) {
+                avatarElement.textContent = (userData.username || 'U')[0].toUpperCase();
+                console.log('✅ Avatar aggiornato con:', (userData.username || 'U')[0].toUpperCase());
             }
             
-            if (userName) {
-                userName.textContent = userData.username || 'Utente';
+            if (userNameElement) {
+                userNameElement.textContent = userData.username || 'Utente';
+                console.log('✅ Nome utente aggiornato con:', userData.username || 'Utente');
             }
             
-            if (userRole) {
-                userRole.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
+            if (userRoleElement) {
+                userRoleElement.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
+                console.log('✅ Ruolo aggiornato con:', accessLevel === 'admin' ? 'Dirigenza' : 'Operatore');
             }
             
             // Carica la pagina iniziale
@@ -8592,20 +8679,20 @@
             }
             
             // Reset del profilo utente
-            const userAvatar = document.querySelector('.user-avatar');
-            const userName = document.querySelector('.user-name');
-            const userRole = document.querySelector('.user-role');
+            const avatarElement = document.querySelector('.avatar');
+            const userNameElement = document.querySelector('.user-profile div div:first-child');
+            const userRoleElement = document.querySelector('.user-profile div div:last-child');
             
-            if (userAvatar) {
-                userAvatar.src = 'https://i.imgur.com/B6E4u1X.png';
+            if (avatarElement) {
+                avatarElement.textContent = 'd';
             }
             
-            if (userName) {
-                userName.textContent = 'Utente';
+            if (userNameElement) {
+                userNameElement.textContent = 'dxrk.ryze';
             }
             
-            if (userRole) {
-                userRole.textContent = 'Dirigenza';
+            if (userRoleElement) {
+                userRoleElement.textContent = 'Dirigenza';
             }
             
             // Pulisci il contenuto
@@ -8648,22 +8735,22 @@
                     }
                     
                     // Aggiorna il profilo utente
-                    const userAvatar = document.querySelector('.user-avatar');
-                    const userName = document.querySelector('.user-name');
-                    const userRole = document.querySelector('.user-role');
+                    console.log('🔄 Auto-login: Aggiorno profilo utente con:', userData);
                     
-                    if (userAvatar) {
-                        userAvatar.src = userData.avatar ? 
-                            `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` : 
-                            `https://cdn.discordapp.com/embed/avatars/${userData.discriminator % 5}.png`;
+                    const avatarElement = document.querySelector('.avatar');
+                    const userNameElement = document.querySelector('.user-profile div div:first-child');
+                    const userRoleElement = document.querySelector('.user-profile div div:last-child');
+                    
+                    if (avatarElement) {
+                        avatarElement.textContent = (userData.username || 'U')[0].toUpperCase();
                     }
                     
-                    if (userName) {
-                        userName.textContent = userData.username || 'Utente';
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.username || 'Utente';
                     }
                     
-                    if (userRole) {
-                        userRole.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
+                    if (userRoleElement) {
+                        userRoleElement.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
                     }
                     
                     // Carica la pagina iniziale
