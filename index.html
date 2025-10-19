@@ -5198,6 +5198,57 @@
             }, 500);
         }
 
+        // Funzione per gestire il callback di ritorno da Discord
+        function handleDiscordCallback() {
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                const accessToken = params.get('access_token');
+                
+                if (accessToken) {
+                    console.log('🔐 Token Discord ricevuto:', accessToken);
+                    UI.loading('Autenticazione...', true);
+                    
+                    // Ottieni i dati dell'utente da Discord
+                    fetch('https://discord.com/api/users/@me', {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(userData => {
+                        console.log('👤 Dati utente ricevuti:', userData);
+                        
+                        // Simula un utente completo
+                        const fullUserData = {
+                            id: userData.id,
+                            username: userData.username,
+                            discriminator: userData.discriminator,
+                            avatar: userData.avatar,
+                            email: userData.email || null
+                        };
+                        
+                        // Mostra la dashboard
+                        showDashboard(fullUserData);
+                        
+                        // Rimuovi il token dall'URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    })
+                    .catch(error => {
+                        console.error('❌ Errore nel recupero dati utente:', error);
+                        UI.notify('Errore nell\'autenticazione', 'error', '❌ Errore');
+                    });
+                } else {
+                    // Token non trovato, mostra messaggio di errore
+                    console.log('❌ Token Discord non trovato nell\'URL');
+                    UI.notify('Errore nell\'autenticazione Discord', 'error', '❌ Errore');
+                }
+            } else {
+                // Nessun hash nell'URL, utente non autorizzato o errore
+                console.log('❌ Nessun token nell\'URL, utente potrebbe non essere autorizzato');
+            }
+        }
+
         // ========== DASHBOARD ==========
         function showDashboard(user) {
             console.log('🎯 showDashboard chiamata con utente:', user);
@@ -8877,6 +8928,9 @@
         if (mainContent) {
             mainContent.classList.add('hidden');
         }
+
+        // Controlla se c'è un callback di Discord
+        handleDiscordCallback();
 
         console.log('✅ Sistema caricato - VERSIONE PULITA');
     </script>
