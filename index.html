@@ -1053,14 +1053,25 @@
                             <i class="fas fa-users" style="color: #f59e0b; font-size: 1.25rem;"></i>
                             <h3 style="color: #e2e8f0; margin: 0; font-size: 1rem; font-weight: 600;">Ruolo Aggiuntivo</h3>
                         </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Seleziona ruolo aggiuntivo</label>
-                            <select id="operatorStatus" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
-                                <option value="Disponibile">Disponibile</option>
-                                <option value="In Servizio">In Servizio</option>
-                                <option value="Fuori Servizio">Fuori Servizio</option>
-                                <option value="Assente">Assente</option>
-                            </select>
+                        <div style="display: grid; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Nucleo di Appartenenza</label>
+                                <select id="operatorNucleo" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                                    <option value="">Seleziona nucleo...</option>
+                                    <option value="dirigenziale">🏅 Nucleo Dirigenziale</option>
+                                    <option value="amministrativo">📋 Nucleo Amministrativo</option>
+                                    <option value="operativo">👮 Nucleo Operativo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Status Operativo</label>
+                                <select id="operatorStatus" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                                    <option value="Disponibile">Disponibile</option>
+                                    <option value="In Servizio">In Servizio</option>
+                                    <option value="Fuori Servizio">Fuori Servizio</option>
+                                    <option value="Assente">Assente</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1075,9 +1086,10 @@
             const lastName = document.getElementById('operatorLastName').value.trim();
             const discord = document.getElementById('operatorDiscord').value.trim();
             const role = document.getElementById('operatorRole').value;
+            const nucleo = document.getElementById('operatorNucleo').value;
             const status = document.getElementById('operatorStatus').value;
 
-            if (!firstName || !lastName || !discord || !role) {
+            if (!firstName || !lastName || !discord || !role || !nucleo) {
                 UI.notify('Tutti i campi sono obbligatori', 'error', '❌ Errore');
                 return;
             }
@@ -1100,6 +1112,7 @@
                 name: fullName,
                 discordTag: discord,
                 role: role,
+                nucleo: nucleo,
                 status: status,
                 notes: '',
                 joinDate: new Date().toLocaleDateString('it-IT'),
@@ -1110,7 +1123,7 @@
             saveOperators();
 
             UI.closeModal();
-            UI.notify(`Operatore ${fullName} aggiunto con successo!`, 'success', '✅ Operatore Aggiunto');
+            UI.notify(`Operatore ${fullName} aggiunto con successo al ${nucleo === 'dirigenziale' ? 'Nucleo Dirigenziale' : nucleo === 'amministrativo' ? 'Nucleo Amministrativo' : 'Nucleo Operativo'}!`, 'success', '✅ Operatore Aggiunto');
             
             // Ricarica la pagina se siamo nella sezione gerarchia
             if (document.querySelector('.nav-btn.active')?.textContent.includes('Gerarchia')) {
@@ -1332,6 +1345,14 @@
                         </select>
                     </div>
                     <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Nucleo</label>
+                        <select id="editOperatorNucleo" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
+                            <option value="dirigenziale" ${operator.nucleo === 'dirigenziale' ? 'selected' : ''}>🏅 Nucleo Dirigenziale</option>
+                            <option value="amministrativo" ${operator.nucleo === 'amministrativo' ? 'selected' : ''}>📋 Nucleo Amministrativo</option>
+                            <option value="operativo" ${operator.nucleo === 'operativo' ? 'selected' : ''}>👮 Nucleo Operativo</option>
+                        </select>
+                    </div>
+                    <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0;">Status</label>
                         <select id="editOperatorStatus" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0.5rem; color: #fff; font-size: 0.875rem;">
                             <option value="Disponibile" ${operator.status === 'Disponibile' ? 'selected' : ''}>Disponibile</option>
@@ -1358,11 +1379,12 @@
             const name = document.getElementById('editOperatorName').value.trim();
             const discord = document.getElementById('editOperatorDiscord').value.trim();
             const role = document.getElementById('editOperatorRole').value;
+            const nucleo = document.getElementById('editOperatorNucleo').value;
             const status = document.getElementById('editOperatorStatus').value;
             const notes = document.getElementById('editOperatorNotes').value.trim();
 
-            if (!name || !discord) {
-                UI.notify('Nome e Discord Tag sono obbligatori', 'error', '❌ Errore');
+            if (!name || !discord || !nucleo) {
+                UI.notify('Nome, Discord Tag e Nucleo sono obbligatori', 'error', '❌ Errore');
                 return;
             }
 
@@ -1382,6 +1404,7 @@
             operator.name = name;
             operator.discordTag = discord;
             operator.role = role;
+            operator.nucleo = nucleo;
             operator.status = status;
             operator.notes = notes;
             operator.lastActivity = new Date().toLocaleDateString('it-IT');
@@ -1630,11 +1653,11 @@
             const inServiceOperators = operators.filter(op => op.status === 'In Servizio').length;
             const offlineOperators = operators.filter(op => op.status === 'Fuori Servizio' || op.status === 'Assente').length;
 
-            // Raggruppa operatori per nuclei (vecchio metodo)
+            // Raggruppa operatori per nuclei (utilizzando il campo nucleo)
             const nucleiOperators = {
-                'dirigenziale': operators.filter(op => op.role === 'comandante' || op.role === 'vice-comandante'),
-                'amministrativo': operators.filter(op => op.role === 'capo-squadra'),
-                'operativo': operators.filter(op => op.role === 'operatore' || op.role === 'recluta')
+                'dirigenziale': operators.filter(op => op.nucleo === 'dirigenziale'),
+                'amministrativo': operators.filter(op => op.nucleo === 'amministrativo'),
+                'operativo': operators.filter(op => op.nucleo === 'operativo')
             };
 
             const nucleiInfo = {
