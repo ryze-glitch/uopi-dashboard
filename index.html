@@ -502,11 +502,8 @@
                 <img src="https://i.imgur.com/B6E4u1X.png" alt="Logo" style="width: 120px; height: 120px; margin: 0 auto 2rem; border-radius: 50%; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);">
                 <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">U.O.P.I.</h1>
                 <p style="color: #94a3b8; margin-bottom: 2rem;">Unità Operativa di Primo Intervento</p>
-                <button onclick="loginWithDiscord()" style="width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #5865f2, #4752c4); border: none; border-radius: 1rem; color: white; font-weight: 700; font-size: 1.125rem; cursor: pointer; box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4); transition: all 0.3s ease; margin-bottom: 1rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(88, 101, 242, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(88, 101, 242, 0.4)'">
+                <button onclick="loginWithDiscord()" style="width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #5865f2, #4752c4); border: none; border-radius: 1rem; color: white; font-weight: 700; font-size: 1.125rem; cursor: pointer; box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(88, 101, 242, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(88, 101, 242, 0.4)'">
                     <i class="fab fa-discord"></i> Accedi con Discord
-                </button>
-                <button onclick="loginAsAdmin()" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.75rem; color: #94a3b8; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#94a3b8'">
-                    <i class="fas fa-user-shield"></i> Accesso Admin
                 </button>
             </div>
         </div>
@@ -857,22 +854,139 @@
             }, 500);
         }
 
-        function loginAsAdmin() {
-            console.log('🔑 Login automatico come admin...');
-            UI.loading('Accesso come amministratore...', true);
+        // ========== DISCORD TOKEN MANAGEMENT ==========
+        function checkDiscordToken() {
+            console.log('🔍 Controllo token Discord...');
             
-            setTimeout(() => {
+            // Controlla se c'è un token nell'URL hash
+            const hash = window.location.hash;
+            if (hash) {
+                const params = new URLSearchParams(hash.substring(1));
+                const accessToken = params.get('access_token');
+                
+                if (accessToken) {
+                    console.log('✅ Token Discord trovato nell\'URL');
+                    processDiscordToken(accessToken);
+                    return true;
+                }
+            }
+            
+            // Controlla se c'è un token salvato nel localStorage
+            const savedToken = localStorage.getItem('discord_token');
+            if (savedToken) {
+                console.log('✅ Token Discord trovato nel localStorage');
+                processDiscordToken(savedToken);
+                return true;
+            }
+            
+            console.log('ℹ️ Nessun token Discord trovato');
+            return false;
+        }
+
+        function processDiscordToken(token) {
+            console.log('🔄 Elaborazione token Discord...');
+            UI.loading('Autenticazione in corso...', true);
+            
+            // Salva il token
+            localStorage.setItem('discord_token', token);
+            
+            // Ottieni informazioni utente
+            fetchUserInfo(token);
+        }
+
+        function fetchUserInfo(token) {
+            console.log('👤 Recupero informazioni utente...');
+            
+            fetch('https://discord.com/api/users/@me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Token non valido');
+                }
+                return response.json();
+            })
+            .then(user => {
+                console.log('✅ Informazioni utente recuperate:', user);
+                
+                // Salva informazioni utente
+                localStorage.setItem('discord_user', JSON.stringify(user));
+                
+                // Mostra dashboard
                 showDashboard({
-                    username: 'dxrk.ryze',
-                    discriminator: '0000',
-                    id: ADMIN_ID,
-                    avatar: null
+                    username: user.username,
+                    discriminator: user.discriminator,
+                    id: user.id,
+                    avatar: user.avatar
                 });
                 
                 UI.loading('', false);
-                UI.notify('Accesso come amministratore completato', 'success', '👑 Admin Login');
-            }, 1000);
+                UI.notify('Login Discord completato con successo!', 'success', '🎉 Benvenuto');
+                
+                // Pulisci l'URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            })
+            .catch(error => {
+                console.error('❌ Errore nel recupero informazioni utente:', error);
+                
+                // Rimuovi token non valido
+                localStorage.removeItem('discord_token');
+                localStorage.removeItem('discord_user');
+                
+                UI.loading('', false);
+                UI.notify('Errore nell\'autenticazione Discord. Riprova.', 'error', '❌ Errore Login');
+            });
         }
+
+        function checkExistingLogin() {
+            console.log('🔍 Controllo login esistente...');
+            
+            const savedUser = localStorage.getItem('discord_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    console.log('✅ Login esistente trovato:', user.username);
+                    
+                    // Verifica se il token è ancora valido
+                    const savedToken = localStorage.getItem('discord_token');
+                    if (savedToken) {
+                        // Testa il token
+                        fetch('https://discord.com/api/users/@me', {
+                            headers: {
+                                'Authorization': `Bearer ${savedToken}`
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('✅ Token ancora valido, login automatico');
+                                showDashboard({
+                                    username: user.username,
+                                    discriminator: user.discriminator,
+                                    id: user.id,
+                                    avatar: user.avatar
+                                });
+                                UI.notify('Login automatico completato!', 'success', '🚀 Benvenuto di nuovo');
+                            } else {
+                                console.log('⚠️ Token scaduto, rimozione dati');
+                                localStorage.removeItem('discord_token');
+                                localStorage.removeItem('discord_user');
+                            }
+                        })
+                        .catch(error => {
+                            console.log('⚠️ Errore verifica token, rimozione dati');
+                            localStorage.removeItem('discord_token');
+                            localStorage.removeItem('discord_user');
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Errore nel parsing dati utente:', error);
+                    localStorage.removeItem('discord_user');
+                }
+            }
+        }
+
 
         function showDashboard(user) {
             document.getElementById('app').innerHTML = `
@@ -967,7 +1081,12 @@
             UI.loading('Disconnessione in corso...', true);
             
             setTimeout(() => {
-                localStorage.clear();
+                // Pulisci tutti i dati, inclusi i token Discord
+                localStorage.removeItem('discord_token');
+                localStorage.removeItem('discord_user');
+                localStorage.removeItem('uopi_operators');
+                localStorage.removeItem('uopi_notifications');
+                localStorage.removeItem('uopi_shifts');
                 
                 UI.loading('', false);
                 UI.notify('Disconnesso con successo', 'success', '👋 Arrivederci');
@@ -979,11 +1098,8 @@
                                 <img src="https://i.imgur.com/B6E4u1X.png" alt="Logo" style="width: 120px; height: 120px; margin: 0 auto 2rem; border-radius: 50%; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);">
                                 <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">U.O.P.I.</h1>
                                 <p style="color: #94a3b8; margin-bottom: 2rem;">Unità Operativa di Primo Intervento</p>
-                                <button onclick="loginWithDiscord()" style="width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #5865f2, #4752c4); border: none; border-radius: 1rem; color: white; font-weight: 700; font-size: 1.125rem; cursor: pointer; box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4); transition: all 0.3s ease; margin-bottom: 1rem;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(88, 101, 242, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(88, 101, 242, 0.4)'">
+                                <button onclick="loginWithDiscord()" style="width: 100%; padding: 1.25rem; background: linear-gradient(135deg, #5865f2, #4752c4); border: none; border-radius: 1rem; color: white; font-weight: 700; font-size: 1.125rem; cursor: pointer; box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(88, 101, 242, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(88, 101, 242, 0.4)'">
                                     <i class="fab fa-discord"></i> Accedi con Discord
-                                </button>
-                                <button onclick="loginAsAdmin()" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.75rem; color: #94a3b8; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.color='#94a3b8'">
-                                    <i class="fas fa-user-shield"></i> Accesso Admin
                                 </button>
                             </div>
                         </div>
@@ -1165,6 +1281,7 @@
         function initializeSystem() {
             console.log('🔄 Inizializzazione sistema...');
             
+            // Carica dati del sistema
             if (loadOperators()) {
                 console.log('✅ Caricati ' + operators.length + ' operatori dal localStorage');
             } else {
@@ -1183,6 +1300,13 @@
                 console.log('ℹ️ Nessun turno salvato trovato');
             }
             
+            // Controlla login Discord automatico
+            if (!checkDiscordToken()) {
+                // Se non c'è token nell'URL, controlla login esistente
+                checkExistingLogin();
+            }
+            
+            // Mostra notifica di benvenuto se ci sono operatori
             if (operators.length > 0) {
                 setTimeout(() => {
                     UI.notify('Benvenuto! Sistema caricato con ' + operators.length + ' operatori', 'success', '🚀 Sistema Pronto');
