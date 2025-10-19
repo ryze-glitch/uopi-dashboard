@@ -4646,6 +4646,11 @@
                                 <i class="fas fa-cloud-upload-alt"></i> Esporta
                             </button>
                         </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="debugAccessControlDetailed()" class="login-btn test-btn" style="background: linear-gradient(135deg, #dc2626, #b91c1c); flex: 1;">
+                                <i class="fas fa-search"></i> Debug Accesso
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -5560,6 +5565,38 @@
         }
 
         // Funzione di debug per testare il controllo accessi
+        function debugAccessControlDetailed() {
+            console.log('🔍 DEBUG ACCESS CONTROL DETTAGLIATO');
+            console.log('=====================================');
+            
+            // Test ID operatore
+            const operatorId = '734406288213016607';
+            console.log('🧪 Test ID Operatore:', operatorId);
+            console.log('  - Tipo:', typeof operatorId);
+            console.log('  - È admin?', DISCORD_AUTH.isAdmin(operatorId));
+            console.log('  - È operatore?', DISCORD_AUTH.isOperator(operatorId));
+            console.log('  - Access level:', DISCORD_AUTH.getAccessLevel(operatorId));
+            
+            // Test ID admin
+            const adminId = '1387684968536477756';
+            console.log('🧪 Test ID Admin:', adminId);
+            console.log('  - Tipo:', typeof adminId);
+            console.log('  - È admin?', DISCORD_AUTH.isAdmin(adminId));
+            console.log('  - È operatore?', DISCORD_AUTH.isOperator(adminId));
+            console.log('  - Access level:', DISCORD_AUTH.getAccessLevel(adminId));
+            
+            // Mostra le liste
+            console.log('📋 ADMIN_IDS:', DISCORD_AUTH.ADMIN_IDS);
+            console.log('📋 OPERATOR_IDS (primi 5):', DISCORD_AUTH.OPERATOR_IDS.slice(0, 5));
+            
+            // Test includes
+            console.log('🔍 Test includes:');
+            console.log('  - ADMIN_IDS.includes("734406288213016607"):', DISCORD_AUTH.ADMIN_IDS.includes('734406288213016607'));
+            console.log('  - OPERATOR_IDS.includes("734406288213016607"):', DISCORD_AUTH.OPERATOR_IDS.includes('734406288213016607'));
+            
+            UI.notify('Debug accesso completato! Controlla la console.', 'info', '🔍 Debug');
+        }
+
         function debugAccessControl() {
             console.log('🐛 DEBUG ACCESS CONTROL');
             console.log('========================');
@@ -6349,21 +6386,8 @@
         }
 
         function getPersonnelPage() {
-            // Controlla il livello di accesso dell'utente
-            const currentAccessLevel = getCurrentAccessLevel();
-            const globalAccessLevel = userAccessLevel;
-            console.log('🏅 Accesso Gerarchia - Debug completo:');
-            console.log('  - getCurrentAccessLevel():', currentAccessLevel);
-            console.log('  - userAccessLevel globale:', globalAccessLevel);
-            console.log('  - localStorage:', localStorage.getItem('userAccessLevel'));
-            
-            // Se l'utente non è admin, mostra solo informazioni generali
-            if (currentAccessLevel !== 'admin') {
-                console.log('✅ Utente non è admin, mostro vista limitata');
-                return getPersonnelPageForOperators();
-            }
-            
-            console.log('✅ Utente è admin, mostro vista completa');
+            // Tutti gli utenti autorizzati possono vedere la vista completa della Gerarchia
+            console.log('🏅 Accesso Gerarchia - Vista completa per tutti gli utenti autorizzati');
             
             // Raggruppa operatori per nucleo (solo per admin)
             const dirigenzialeOps = operators.filter(op => op.role === 'dirigenziale');
@@ -8932,6 +8956,14 @@
             }
             
             // Autentica l'utente e ottieni il livello di accesso
+            console.log('🔐 Debug accesso completo:');
+            console.log('  - ID utente:', userData.id);
+            console.log('  - Tipo ID:', typeof userData.id);
+            console.log('  - ADMIN_IDS:', DISCORD_AUTH.ADMIN_IDS);
+            console.log('  - OPERATOR_IDS:', DISCORD_AUTH.OPERATOR_IDS);
+            console.log('  - È admin?', DISCORD_AUTH.isAdmin(userData.id));
+            console.log('  - È operatore?', DISCORD_AUTH.isOperator(userData.id));
+            
             const accessLevel = DISCORD_AUTH.getAccessLevel(userData.id);
             userAccessLevel = accessLevel;
             
@@ -8994,8 +9026,13 @@
             }
             
             if (userRoleElement) {
-                userRoleElement.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
-                console.log('✅ Ruolo aggiornato con:', accessLevel === 'admin' ? 'Dirigenza' : 'Operatore');
+                const roleText = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
+                userRoleElement.textContent = roleText;
+                console.log('✅ Ruolo aggiornato con:', roleText);
+                console.log('🔍 Debug ruolo:');
+                console.log('  - accessLevel:', accessLevel);
+                console.log('  - accessLevel === "admin":', accessLevel === 'admin');
+                console.log('  - roleText finale:', roleText);
             }
             
             // Carica la pagina iniziale
