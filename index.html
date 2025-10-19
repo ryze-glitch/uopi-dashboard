@@ -851,6 +851,159 @@
             }
         }
 
+        /* ========== OVERLAY SVILUPPO SEMPLICE ========== */
+        .development-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInSimple 0.3s ease-out;
+            border-radius: 1rem;
+        }
+
+        .development-banner {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            animation: slideInSimple 0.4s ease-out;
+            max-width: 400px;
+        }
+
+        .development-banner h2 {
+            color: #f59e0b;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .development-banner p {
+            color: #94a3b8;
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .development-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeInSimple {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInSimple {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive per overlay semplice */
+        @media (max-width: 768px) {
+            .development-banner {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .development-banner h2 {
+                font-size: 1.25rem;
+            }
+            
+            .development-banner p {
+                font-size: 0.875rem;
+            }
+            
+            .development-icon {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* ========== MESSAGGIO SVILUPPO SEMPLICE ========== */
+        .development-message {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeInMessage 0.6s ease-out;
+        }
+
+        .development-message .development-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .development-message h3 {
+            color: #f59e0b;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .development-message p {
+            color: #94a3b8;
+            font-size: 1.125rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive per messaggio */
+        @media (max-width: 768px) {
+            .development-message {
+                padding: 2rem 1.5rem;
+                margin: 1.5rem 0;
+            }
+            
+            .development-message h3 {
+                font-size: 1.5rem;
+            }
+            
+            .development-message p {
+                font-size: 1rem;
+            }
+            
+            .development-message .development-icon {
+                font-size: 2.5rem;
+            }
+        }
+
         /* Dropdown Styling Fix - Migliorato */
         select {
             background: #1e293b !important;
@@ -1919,7 +2072,16 @@
 
         // ========== DASHBOARD ==========
         function showDashboard(user) {
-            document.getElementById('app').innerHTML = `
+            console.log('🎯 showDashboard chiamata con utente:', user);
+            
+            const appElement = document.getElementById('app');
+            if (!appElement) {
+                console.error('❌ Elemento app non trovato!');
+                return;
+            }
+            
+            console.log('✅ Elemento app trovato, aggiorno contenuto...');
+            appElement.innerHTML = `
                 <!-- HEADER -->
                 <header class="header">
                     <div class="logo-section">
@@ -1967,7 +2129,9 @@
                 </main>
             `;
             
+            console.log('🔄 Carico pagina overview...');
             loadPage('overview');
+            console.log('✅ showDashboard completata con successo!');
         }
 
         // ========== SISTEMA LOGOUT ==========
@@ -2648,6 +2812,343 @@
         }
 
         function getShiftCard(shift) {
+            // Design Ultra-Moderno per le Card delle Attivazioni/Disattivazioni
+            const isDeactivation = shift.moduleType === 'patrol-deactivation';
+            const primaryColor = isDeactivation ? '#ef4444' : '#10b981';
+            const secondaryColor = isDeactivation ? '#dc2626' : '#059669';
+            const accentColor = isDeactivation ? '#fca5a5' : '#6ee7b7';
+            
+            return `
+                <div class="ultra-modern-card" style="
+                    position: relative;
+                    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 2rem;
+                    backdrop-filter: blur(32px);
+                    overflow: hidden;
+                    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 
+                                0 0 0 1px rgba(255, 255, 255, 0.15),
+                                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                    max-width: 450px;
+                    margin: 1rem;
+                " onmouseover="this.style.transform='translateY(-12px) scale(1.03)'; this.style.boxShadow='0 40px 100px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.3)'" 
+                   onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 25px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15)'">
+                    
+                    <!-- Accent Gradient Line -->
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 6px;
+                        background: linear-gradient(90deg, ${primaryColor}, ${secondaryColor}, ${accentColor}, ${primaryColor});
+                        background-size: 200% 100%;
+                        animation: gradientShift 3s ease-in-out infinite;
+                        border-radius: 2rem 2rem 0 0;
+                    "></div>
+                    
+                    <!-- Header Ultra-Moderno -->
+                    <div style="
+                        position: relative;
+                        padding: 2rem 2rem 1.5rem;
+                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                                <div style="
+                                    width: 4rem;
+                                    height: 4rem;
+                                    border-radius: 1.25rem;
+                                    background: linear-gradient(135deg, ${primaryColor}, ${secondaryColor});
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 12px 40px rgba(${isDeactivation ? '239, 68, 68' : '16, 185, 129'}, 0.4);
+                                    position: relative;
+                                    overflow: hidden;
+                                ">
+                                    <div style="
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        right: 0;
+                                        bottom: 0;
+                                        background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+                                        animation: shimmer 4s infinite;
+                                    "></div>
+                                    <i class="fas ${isDeactivation ? 'fa-stop-circle' : 'fa-play-circle'}" style="color: white; font-size: 1.75rem; z-index: 1;"></i>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.5rem; font-weight: 900; color: #e2e8f0; margin: 0; letter-spacing: 0.05em; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                                        ${isDeactivation ? 'Disattivazione Pattuglia' : 'Attivazione Pattuglia'}
+                                    </h3>
+                                    <p style="font-size: 1rem; color: #94a3b8; margin: 0.5rem 0 0; font-weight: 600; letter-spacing: 0.025em;">
+                                        ${isDeactivation ? 'Turno Completato' : (shift.patrolTypeName || 'Pattugliamento')}
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="
+                                padding: 0.75rem 1.25rem;
+                                background: linear-gradient(135deg, rgba(${isDeactivation ? '239, 68, 68' : '16, 185, 129'}, 0.25), rgba(${isDeactivation ? '239, 68, 68' : '16, 185, 129'}, 0.15));
+                                border: 2px solid ${primaryColor};
+                                border-radius: 1.25rem;
+                                color: ${primaryColor};
+                                font-size: 0.875rem;
+                                font-weight: 800;
+                                text-transform: uppercase;
+                                letter-spacing: 0.1em;
+                                box-shadow: 0 8px 24px rgba(${isDeactivation ? '239, 68, 68' : '16, 185, 129'}, 0.3);
+                                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                            ">
+                                ${shift.status}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenuto Ultra-Moderno -->
+                    <div style="padding: 2rem;">
+                        <!-- Informazioni Principali -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem;">
+                            <div style="
+                                background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
+                                border: 2px solid rgba(59, 130, 246, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(59, 130, 246, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(59, 130, 246, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-clock" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+                                        ${isDeactivation ? 'Disattivazione' : 'Attivazione'}
+                                    </span>
+                                </div>
+                                <div style="font-size: 1.375rem; font-weight: 900; color: #e2e8f0; letter-spacing: 0.05em; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                                    ${isDeactivation ? shift.deactivationTime : shift.patrolTime}
+                                </div>
+                            </div>
+                            
+                            ${!isDeactivation ? `
+                            <div style="
+                                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+                                border: 2px solid rgba(16, 185, 129, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(16, 185, 129, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #10b981, #059669); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user-tie" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Gestito da</span>
+                                </div>
+                                <div style="font-size: 1rem; font-weight: 800; color: #e2e8f0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                    ${shift.managerName}
+                                </div>
+                            </div>
+                            ` : `
+                            <div style="
+                                background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
+                                border: 2px solid rgba(239, 68, 68, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(239, 68, 68, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(239, 68, 68, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-stopwatch" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Durata</span>
+                                </div>
+                                <div style="font-size: 1.375rem; font-weight: 900; color: #e2e8f0; letter-spacing: 0.05em; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                                    ${shift.duration || 'N/A'}
+                                </div>
+                            </div>
+                            `}
+                        </div>
+
+                        <!-- Informazioni Secondarie -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem;">
+                            ${!isDeactivation ? `
+                            <div style="
+                                background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
+                                border: 2px solid rgba(245, 158, 11, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(245, 158, 11, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(245, 158, 11, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-car-side" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Veicolo</span>
+                                </div>
+                                <div style="font-size: 1rem; font-weight: 800; color: #e2e8f0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                    ${shift.patrolVehicleName}
+                                </div>
+                            </div>
+                            ` : `
+                            <div style="
+                                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+                                border: 2px solid rgba(16, 185, 129, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(16, 185, 129, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #10b981, #059669); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-play" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Inizio</span>
+                                </div>
+                                <div style="font-size: 1rem; font-weight: 800; color: #e2e8f0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                    ${shift.activationTime || 'N/A'}
+                                </div>
+                            </div>
+                            `}
+                            
+                            <div style="
+                                background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.08));
+                                border: 2px solid rgba(139, 92, 246, 0.3);
+                                border-radius: 1.25rem;
+                                padding: 1.25rem;
+                                position: relative;
+                                overflow: hidden;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(139, 92, 246, 0.5)'" 
+                               onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(139, 92, 246, 0.3)'">
+                                <div style="position: absolute; top: 0; right: 0; width: 3rem; height: 3rem; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 0 1.25rem 0 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-calendar-plus" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.875rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Data</span>
+                                </div>
+                                <div style="font-size: 1rem; font-weight: 800; color: #e2e8f0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                    ${shift.createdDate}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Operatori Ultra-Moderni -->
+                        <div style="
+                            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+                            border: 2px solid rgba(255, 255, 255, 0.15);
+                            border-radius: 1.25rem;
+                            padding: 1.5rem;
+                            margin-bottom: 2rem;
+                            position: relative;
+                            overflow: hidden;
+                        ">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                                <div style="
+                                    width: 2.5rem;
+                                    height: 2.5rem;
+                                    border-radius: 0.75rem;
+                                    background: linear-gradient(135deg, #ef4444, #dc2626);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+                                ">
+                                    <i class="fas fa-users" style="color: white; font-size: 1rem;"></i>
+                                </div>
+                                <span style="font-size: 1rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">
+                                    ${isDeactivation ? 'Operatori in Rientro' : 'Operatori in Uscita'}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <div style="
+                                    flex: 1;
+                                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+                                    border: 2px solid rgba(59, 130, 246, 0.4);
+                                    border-radius: 1rem;
+                                    padding: 1rem;
+                                    text-align: center;
+                                    position: relative;
+                                    overflow: hidden;
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(59, 130, 246, 0.6)'" 
+                                   onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(59, 130, 246, 0.4)'">
+                                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #3b82f6, #2563eb);"></div>
+                                    <div style="font-size: 1rem; font-weight: 800; color: #3b82f6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                        ${shift.operator1Name}
+                                    </div>
+                                </div>
+                                <div style="
+                                    flex: 1;
+                                    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+                                    border: 2px solid rgba(16, 185, 129, 0.4);
+                                    border-radius: 1rem;
+                                    padding: 1rem;
+                                    text-align: center;
+                                    position: relative;
+                                    overflow: hidden;
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='rgba(16, 185, 129, 0.6)'" 
+                                   onmouseout="this.style.transform='scale(1)'; this.style.borderColor='rgba(16, 185, 129, 0.4)'">
+                                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                                    <div style="font-size: 1rem; font-weight: 800; color: #10b981; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                                        ${shift.operator2Name}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pulsante Modifica Ultra-Moderno -->
+                        <button class="btn btn-primary" style="
+                            width: 100%;
+                            font-size: 1rem;
+                            padding: 1.25rem 2rem;
+                            border-radius: 1.25rem;
+                            font-weight: 800;
+                            letter-spacing: 0.05em;
+                            position: relative;
+                            overflow: hidden;
+                            background: linear-gradient(135deg, #3b82f6, #2563eb);
+                            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+                            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        " onclick="editShift('${shift.id}')">
+                            <i class="fas fa-edit" style="margin-right: 0.75rem;"></i> Modifica Turno
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Animazioni per il nuovo design
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes gradientShift {
+                0%, 100% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+            }
+            
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(animationStyle);
+
+        function getShiftCardOld(shift) {
             const isDeactivation = shift.moduleType === 'patrol-deactivation';
             const statusColor = shift.status === 'Attivo' ? '#10b981' : (isDeactivation ? '#ef4444' : '#3b82f6');
             const statusBg = shift.status === 'Attivo' ? 'rgba(16, 185, 129, 0.15)' : (isDeactivation ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)');
@@ -2762,6 +3263,78 @@
                     <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #10b981, transparent); animation: shimmer 3s ease-in-out infinite;"></div>
                 </div>
             `;
+        }
+
+        function getOperationsPage() {
+            return `
+                <div class="page-header">
+                    <div>
+                        <h1>🚁 Operazioni</h1>
+                        <p>Gestione e monitoraggio delle operazioni U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuova Operazione
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i>
+                            Filtri
+                        </button>
+                    </div>
+                </div>
+
+                <div class="development-message">
+                    <div class="development-icon">🚧</div>
+                    <h3>Sezione in Fase di Sviluppo</h3>
+                    <p>Questa funzionalità sarà disponibile presto!</p>
+                </div>
+            `;
+        }
+
+        function showDevelopmentOverlay() {
+            // Trova il contenuto principale
+            const mainContent = document.getElementById('mainContent');
+            if (!mainContent) return;
+
+            // Rimuovi overlay esistente se presente
+            const existingOverlay = mainContent.querySelector('.development-overlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+
+            // Imposta il contenuto principale come relativo per l'overlay
+            mainContent.style.position = 'relative';
+
+            // Crea nuovo overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'development-overlay';
+            overlay.innerHTML = `
+                <div class="development-banner">
+                    <div class="development-icon">🚧</div>
+                    <h2>Sezione in Fase di Sviluppo</h2>
+                    <p>Questa funzionalità sarà disponibile presto!</p>
+                </div>
+            `;
+
+            // Aggiungi al contenuto principale invece che al body
+            mainContent.appendChild(overlay);
+
+            // Rimuovi overlay dopo 3 secondi o al click
+            const removeOverlay = () => {
+                overlay.style.animation = 'fadeInOverlay 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                }, 300);
+            };
+
+            // Auto-remove dopo 3 secondi
+            setTimeout(removeOverlay, 3000);
+
+            // Click per chiudere
+            overlay.addEventListener('click', removeOverlay);
         }
 
         function getCreditsPage() {
@@ -4206,21 +4779,49 @@
 
         // ========== INIT ==========
         window.addEventListener('load', () => {
+            console.log('🚀 Pagina caricata, inizializzazione auto-login...');
+            
             // Simula login automatico per test
             setTimeout(() => {
-                const loginPage = document.getElementById('loginPage');
-                loginPage.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                loginPage.style.opacity = '0';
-                loginPage.style.transform = 'scale(0.9)';
+                console.log('⏰ Timer auto-login scaduto, procedo con il login...');
                 
-                setTimeout(() => {
-                    loginPage.style.display = 'none';
-                showDashboard({ 
-                    username: 'dxrk.ryze', 
-                    discriminator: '0000',
-                    id: ADMIN_ID 
-                });
-                }, 400);
+                try {
+                    const loginPage = document.getElementById('loginPage');
+                    if (!loginPage) {
+                        console.error('❌ Elemento loginPage non trovato!');
+                        return;
+                    }
+                    
+                    console.log('✅ LoginPage trovato, applico transizioni...');
+                    loginPage.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    loginPage.style.opacity = '0';
+                    loginPage.style.transform = 'scale(0.9)';
+                    
+                    setTimeout(() => {
+                        console.log('🔄 Nascondo loginPage e mostro dashboard...');
+                        loginPage.style.display = 'none';
+                        
+                        const userData = { 
+                            username: 'dxrk.ryze', 
+                            discriminator: '0000',
+                            id: ADMIN_ID 
+                        };
+                        
+                        console.log('👤 Dati utente per auto-login:', userData);
+                        
+                        if (typeof showDashboard === 'function') {
+                            console.log('✅ Funzione showDashboard trovata, la chiamo...');
+                            showDashboard(userData);
+                            console.log('✅ Dashboard mostrata con successo!');
+                        } else {
+                            console.error('❌ Funzione showDashboard non trovata!');
+                        }
+                        
+                    }, 400);
+                    
+                } catch (error) {
+                    console.error('❌ Errore durante auto-login:', error);
+                }
             }, 500);
         });
 
@@ -4239,8 +4840,8 @@
         });
 
         // Aggiungi keyframes spin e altre animazioni
-        const style = document.createElement('style');
-        style.textContent = `
+        const animationStyle = document.createElement('style');
+        animationStyle.textContent = `
             @keyframes spin { 
                 from { transform: rotate(0deg); } 
                 to { transform: rotate(360deg); } 
@@ -4264,7 +4865,7 @@
                 100% { opacity: 1; transform: scale(1); }
             }
         `;
-        document.head.appendChild(style);
+        document.head.appendChild(animationStyle);
 
         // ========== SISTEMA DROPDOWN PERSONALIZZATO ==========
         
