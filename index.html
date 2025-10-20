@@ -3171,337 +3171,7 @@
             margin: 0;
         }
 
-        /* ========== PANORAMICA RIVISTA - CSS ========== */
-        .modern-overview {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .overview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .header-icon {
-            font-size: 2rem;
-            color: #3b82f6;
-        }
-
-        .header-text h1 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0 0 0.25rem 0;
-        }
-
-        .header-text p {
-            color: #94a3b8;
-            margin: 0;
-        }
-
-        .header-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #10b981;
-            font-weight: 500;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-            animation: pulse 2s infinite;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .stat-card.primary {
-            border-left: 4px solid #3b82f6;
-        }
-
-        .stat-card.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .stat-card.warning {
-            border-left: 4px solid #f59e0b;
-        }
-
-        .stat-card.info {
-            border-left: 4px solid #8b5cf6;
-        }
-
-        .stat-card .stat-icon {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .stat-card.primary .stat-icon {
-            color: #3b82f6;
-        }
-
-        .stat-card.success .stat-icon {
-            color: #10b981;
-        }
-
-        .stat-card.warning .stat-icon {
-            color: #f59e0b;
-        }
-
-        .stat-card.info .stat-icon {
-            color: #8b5cf6;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-        }
-
-        .stat-trend {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-
-        .stat-trend i {
-            font-size: 0.75rem;
-        }
-
-        .operators-section {
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .section-header p {
-            color: #94a3b8;
-            margin: 0;
-        }
-
-        .operators-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .operator-category {
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .category-icon {
-            font-size: 1.5rem;
-            color: #f59e0b;
-        }
-
-        .category-info h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin: 0 0 0.25rem 0;
-        }
-
-        .category-info span {
-            color: #94a3b8;
-            font-size: 0.875rem;
-        }
-
-        .category-progress {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            color: #94a3b8;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .empty-icon {
-            font-size: 4rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-state h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0 0 1rem 0;
-        }
-
-        .empty-state p {
-            color: #94a3b8;
-            margin: 0 0 2rem 0;
-        }
-
-        .quick-access {
-            margin-bottom: 2rem;
-        }
-
-        .access-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .access-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .access-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .access-icon {
-            font-size: 1.5rem;
-            color: #3b82f6;
-        }
-
-        .access-content {
-            flex: 1;
-        }
-
-        .access-content h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #ffffff;
-            margin: 0 0 0.25rem 0;
-        }
-
-        .access-content p {
-            color: #94a3b8;
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        .access-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .status-dot.active {
-            background: #10b981;
-        }
-
-        .status-dot.standby {
-            background: #f59e0b;
-        }
-
-        .access-status span:last-child {
-            color: #94a3b8;
-        }
+        /* ========== COUNTDOWN SYSTEM STYLES - REDESIGNED ========== */
         .countdown-overlay {
             position: absolute;
             top: 0;
@@ -6323,206 +5993,406 @@
             const betaTeam = operators.filter(op => op.team === 'Beta').length;
 
             return `
-                <!-- PANORAMICA RIVISTA E SEMPLIFICATA -->
-                <div class="modern-overview">
-                    <!-- Header Principale -->
-                    <div class="overview-header">
-                        <div class="header-content">
-                            <div class="header-icon">
-                                <i class="fas fa-tachometer-alt"></i>
-                            </div>
-                            <div class="header-text">
-                                <h1>Panoramica Sistema</h1>
-                                <p>Monitoraggio operativo in tempo reale</p>
-                            </div>
+                <!-- PANORAMICA RIVOLUZIONARIA 2.0 -->
+                <div class="revolutionary-overview">
+                    <!-- Hero Section Ultra-Moderna -->
+                    <div class="hero-section-v2">
+                        <div class="hero-background">
+                            <div class="hero-particles"></div>
+                            <div class="hero-grid"></div>
                         </div>
-                        <div class="header-status">
-                            <div class="status-indicator active"></div>
-                            <span>Sistema Online</span>
-                        </div>
-                    </div>
-
-                    <!-- Statistiche Principali -->
-                    <div class="stats-grid">
-                        <div class="stat-card primary">
-                            <div class="stat-icon">
-                                <i class="fas fa-helicopter"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">${activeShifts}</div>
-                                <div class="stat-label">Operazioni Attive</div>
-                                <div class="stat-trend">
-                                    <i class="fas fa-minus"></i>
-                                    <span>Nessuna operazione in corso</span>
+                        <div class="hero-content-v2">
+                            <div class="hero-badge">
+                                <div class="badge-icon">
+                                    <i class="fas fa-rocket"></i>
                                 </div>
+                                <span>SISTEMA ATTIVO</span>
                             </div>
-                        </div>
-
-                        <div class="stat-card success">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">${totalOperators}</div>
-                                <div class="stat-label">Operatori Totali</div>
-                                <div class="stat-trend">
-                                    <i class="fas fa-check"></i>
-                                    <span>${availableOperators} disponibili</span>
+                            <h1 class="hero-title-v2">
+                                <span class="title-main">Panoramica</span>
+                                <span class="title-sub">Sezione Operativa</span>
+                            </h1>
+                            <p class="hero-description-v2">Monitoraggio avanzato in tempo reale delle operazioni della U.O.P.I.</p>
+                            <div class="hero-stats-mini">
+                                <div class="mini-stat">
+                                    <span class="mini-value">${totalOperators}</span>
+                                    <span class="mini-label">Operatori</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card warning">
-                            <div class="stat-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">${activeShifts}</div>
-                                <div class="stat-label">Turni in Corso</div>
-                                <div class="stat-trend">
-                                    <i class="fas fa-minus"></i>
-                                    <span>Nessun turno attivo</span>
+                                <div class="mini-stat">
+                                    <span class="mini-value">${efficiency}%</span>
+                                    <span class="mini-label">Efficienza</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card info">
-                            <div class="stat-icon">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">${efficiency}%</div>
-                                <div class="stat-label">Disponibilità</div>
-                                <div class="stat-trend">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>Efficienza operativa</span>
+                                <div class="mini-stat">
+                                    <span class="mini-value">24/7</span>
+                                    <span class="mini-label">Monitoraggio</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sezione Operatori -->
+                    <!-- Stats Dashboard Avanzata -->
+                    <div class="stats-dashboard-v2">
+                        <div class="dashboard-header">
+                            <h2>Metriche Operative</h2>
+                            <div class="dashboard-controls">
+                                <div class="time-selector">
+                                    <span class="time-active">Oggi</span>
+                                    <span>Settimana</span>
+                                    <span>Mese</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid-v2">
+                            <div class="stat-card-v2 primary-gradient">
+                                <div class="stat-background">
+                                    <div class="stat-pattern"></div>
+                                </div>
+                                <div class="stat-content-v2">
+                                    <div class="stat-header">
+                                        <div class="stat-icon-v2">
+                                            <i class="fas fa-helicopter"></i>
+                                        </div>
+                                        <div class="stat-trend positive">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>+12%</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value-v2">0</div>
+                                    <div class="stat-label-v2">OPERAZIONI ATTIVE</div>
+                                    <div class="stat-progress">
+                                        <div class="progress-bar-v2">
+                                            <div class="progress-fill-v2" style="width: 0%"></div>
+                                        </div>
+                                        <span class="progress-text">0% Complete</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card-v2 success-gradient">
+                                <div class="stat-background">
+                                    <div class="stat-pattern"></div>
+                                </div>
+                                <div class="stat-content-v2">
+                                    <div class="stat-header">
+                                        <div class="stat-icon-v2">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="stat-trend positive">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>+${totalOperators}</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value-v2">${totalOperators}</div>
+                                    <div class="stat-label-v2">OPERATORI TOTALI</div>
+                                    <div class="stat-progress">
+                                        <div class="progress-bar-v2">
+                                            <div class="progress-fill-v2" style="width: ${totalOperators > 0 ? 75 : 0}%"></div>
+                                        </div>
+                                        <span class="progress-text">${totalOperators > 0 ? '75%' : '0%'} Capacity</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card-v2 warning-gradient">
+                                <div class="stat-background">
+                                    <div class="stat-pattern"></div>
+                                </div>
+                                <div class="stat-content-v2">
+                                    <div class="stat-header">
+                                        <div class="stat-icon-v2">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="stat-trend neutral">
+                                            <i class="fas fa-minus"></i>
+                                            <span>0%</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value-v2">${activeShifts}</div>
+                                    <div class="stat-label-v2">TURNI IN CORSO</div>
+                                    <div class="stat-progress">
+                                        <div class="progress-bar-v2">
+                                            <div class="progress-fill-v2" style="width: ${activeShifts > 0 ? 50 : 0}%"></div>
+                                        </div>
+                                        <span class="progress-text">${activeShifts > 0 ? '50%' : '0%'} Active</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stat-card-v2 info-gradient like-crystal">
+                                <div class="stat-background">
+                                    <div class="stat-pattern"></div>
+                                </div>
+                                <div class="stat-content-v2">
+                                    <div class="stat-header">
+                                        <div class="stat-icon-v2">
+                                            <i class="fas fa-percentage"></i>
+                                        </div>
+                                        <div class="stat-trend positive">
+                                            <i class="fas fa-arrow-up"></i>
+                                            <span>+${efficiency}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value-v2">${efficiency}%</div>
+                                    <div class="stat-label-v2">DISPONIBILITÀ</div>
+                                    <div class="stat-progress">
+                                        <div class="progress-bar-v2">
+                                            <div class="progress-fill-v2" style="width: ${efficiency}%"></div>
+                                        </div>
+                                        <span class="progress-text">${efficiency}% Optimal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Hub -->
                     ${totalOperators > 0 ? `
-                        <div class="operators-section">
-                            <div class="section-header">
-                                <h2>Distribuzione Operatori</h2>
-                                <p>Panoramica della struttura organizzativa</p>
+                        <div class="analytics-hub">
+                            <div class="hub-header">
+                                <div class="hub-title">
+                                    <div class="hub-icon">
+                                        <i class="fas fa-chart-network"></i>
+                                    </div>
+                                    <div class="hub-text">
+                                        <h2>Analytics Hub</h2>
+                                        <p>Intelligence operativa avanzata</p>
+                                    </div>
+                                </div>
+                                <div class="hub-status">
+                                    <div class="status-dot active"></div>
+                                    <span>Sistema Online</span>
+                                </div>
                             </div>
-                            
-                            <div class="operators-grid">
-                                <div class="operator-category">
-                                    <div class="category-header">
-                                        <div class="category-icon">
-                                            <i class="fas fa-crown"></i>
-                                        </div>
-                                        <div class="category-info">
-                                            <h3>Dirigenziale</h3>
-                                            <span>${dirigenzialeOps} operatori</span>
+
+                            <div class="analytics-grid-v2">
+                                <!-- Operator Status Matrix -->
+                                <div class="analytics-card-v2 operator-matrix">
+                                    <div class="card-header-v2">
+                                        <h3>Status Matrix</h3>
+                                        <div class="card-controls">
+                                            <button class="control-toggle active">Real-time</button>
                                         </div>
                                     </div>
-                                    <div class="category-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (dirigenzialeOps / totalOperators) * 100 : 0}%"></div>
+                                    <div class="matrix-grid">
+                                        <div class="matrix-item available">
+                                            <div class="matrix-icon">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <div class="matrix-content">
+                                                <div class="matrix-value">${availableOperators}</div>
+                                                <div class="matrix-label">Disponibili</div>
+                                                <div class="matrix-percentage">${totalOperators > 0 ? Math.round((availableOperators / totalOperators) * 100) : 0}%</div>
+                                            </div>
+                                            <div class="matrix-indicator"></div>
                                         </div>
-                                        <span class="progress-text">${totalOperators > 0 ? Math.round((dirigenzialeOps / totalOperators) * 100) : 0}%</span>
+                                        <div class="matrix-item in-service">
+                                            <div class="matrix-icon">
+                                                <i class="fas fa-user-clock"></i>
+                                            </div>
+                                            <div class="matrix-content">
+                                                <div class="matrix-value">${totalOperators - availableOperators}</div>
+                                                <div class="matrix-label">In Servizio</div>
+                                                <div class="matrix-percentage">${totalOperators > 0 ? Math.round(((totalOperators - availableOperators) / totalOperators) * 100) : 0}%</div>
+                                            </div>
+                                            <div class="matrix-indicator"></div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="operator-category">
-                                    <div class="category-header">
-                                        <div class="category-icon">
-                                            <i class="fas fa-clipboard-list"></i>
-                                        </div>
-                                        <div class="category-info">
-                                            <h3>Amministrativo</h3>
-                                            <span>${amministrativoOps} operatori</span>
+                                <!-- Team Performance -->
+                                <div class="analytics-card-v2 team-performance">
+                                    <div class="card-header-v2">
+                                        <h3>Team Performance</h3>
+                                        <div class="card-controls">
+                                            <button class="control-toggle">Analytics</button>
                                         </div>
                                     </div>
-                                    <div class="category-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (amministrativoOps / totalOperators) * 100 : 0}%"></div>
+                                    <div class="team-chart">
+                                        <div class="team-item-v2 alpha">
+                                            <div class="team-header">
+                                                <div class="team-icon-v2">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                </div>
+                                                <div class="team-info">
+                                                    <span class="team-name">Squadra Alpha</span>
+                                                    <span class="team-count">${alphaTeam} membri</span>
+                                                </div>
+                                            </div>
+                                            <div class="team-metrics">
+                                                <div class="metric">
+                                                    <span class="metric-label">Efficienza</span>
+                                                    <span class="metric-value">${alphaTeam > 0 ? '95%' : '0%'}</span>
+                                                </div>
+                                                <div class="metric">
+                                                    <span class="metric-label">Disponibilità</span>
+                                                    <span class="metric-value">${alphaTeam > 0 ? '88%' : '0%'}</span>
+                                                </div>
+                                            </div>
+                                            <div class="team-chart-bar">
+                                                <div class="chart-bar">
+                                                    <div class="bar-fill alpha" style="width: ${totalOperators > 0 ? (alphaTeam / totalOperators) * 100 : 0}%"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span class="progress-text">${totalOperators > 0 ? Math.round((amministrativoOps / totalOperators) * 100) : 0}%</span>
+                                        <div class="team-item-v2 beta">
+                                            <div class="team-header">
+                                                <div class="team-icon-v2">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                </div>
+                                                <div class="team-info">
+                                                    <span class="team-name">Squadra Beta</span>
+                                                    <span class="team-count">${betaTeam} membri</span>
+                                                </div>
+                                            </div>
+                                            <div class="team-metrics">
+                                                <div class="metric">
+                                                    <span class="metric-label">Efficienza</span>
+                                                    <span class="metric-value">${betaTeam > 0 ? '92%' : '0%'}</span>
+                                                </div>
+                                                <div class="metric">
+                                                    <span class="metric-label">Disponibilità</span>
+                                                    <span class="metric-value">${betaTeam > 0 ? '85%' : '0%'}</span>
+                                                </div>
+                                            </div>
+                                            <div class="team-chart-bar">
+                                                <div class="chart-bar">
+                                                    <div class="bar-fill beta" style="width: ${totalOperators > 0 ? (betaTeam / totalOperators) * 100 : 0}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="operator-category">
-                                    <div class="category-header">
-                                        <div class="category-icon">
-                                            <i class="fas fa-user-shield"></i>
-                                        </div>
-                                        <div class="category-info">
-                                            <h3>Operativo</h3>
-                                            <span>${operativoOps} operatori</span>
+                                <!-- Command Structure -->
+                                <div class="analytics-card-v2 command-structure">
+                                    <div class="card-header-v2">
+                                        <h3>Command Structure</h3>
+                                        <div class="card-controls">
+                                            <button class="control-toggle">Hierarchy</button>
                                         </div>
                                     </div>
-                                    <div class="category-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (operativoOps / totalOperators) * 100 : 0}%"></div>
+                                    <div class="command-hierarchy">
+                                        <div class="hierarchy-level-v2 dirigenziale">
+                                            <div class="level-icon">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                            <div class="level-info">
+                                                <span class="level-name">Dirigenziale</span>
+                                                <span class="level-count">${dirigenzialeOps} operatori</span>
+                                            </div>
+                                            <div class="level-status">
+                                                <div class="status-bar">
+                                                    <div class="status-fill dirigenziale" style="width: ${totalOperators > 0 ? (dirigenzialeOps / totalOperators) * 100 : 0}%"></div>
+                                                </div>
+                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((dirigenzialeOps / totalOperators) * 100) : 0}%</span>
+                                            </div>
                                         </div>
-                                        <span class="progress-text">${totalOperators > 0 ? Math.round((operativoOps / totalOperators) * 100) : 0}%</span>
+                                        <div class="hierarchy-level-v2 amministrativo">
+                                            <div class="level-icon">
+                                                <i class="fas fa-clipboard-list"></i>
+                                            </div>
+                                            <div class="level-info">
+                                                <span class="level-name">Amministrativo</span>
+                                                <span class="level-count">${amministrativoOps} operatori</span>
+                                            </div>
+                                            <div class="level-status">
+                                                <div class="status-bar">
+                                                    <div class="status-fill amministrativo" style="width: ${totalOperators > 0 ? (amministrativoOps / totalOperators) * 100 : 0}%"></div>
+                                                </div>
+                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((amministrativoOps / totalOperators) * 100) : 0}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="hierarchy-level-v2 operativo">
+                                            <div class="level-icon">
+                                                <i class="fas fa-user-shield"></i>
+                                            </div>
+                                            <div class="level-info">
+                                                <span class="level-name">Operativo</span>
+                                                <span class="level-count">${operativoOps} operatori</span>
+                                            </div>
+                                            <div class="level-status">
+                                                <div class="status-bar">
+                                                    <div class="status-fill operativo" style="width: ${totalOperators > 0 ? (operativoOps / totalOperators) * 100 : 0}%"></div>
+                                                </div>
+                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((operativoOps / totalOperators) * 100) : 0}%</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ` : `
-                        <div class="empty-state">
-                            <div class="empty-icon">
-                                <i class="fas fa-users"></i>
+                        <!-- Empty State Revolutionario -->
+                        <div class="empty-state-v2">
+                            <div class="empty-background">
+                                <div class="empty-particles"></div>
+                                <div class="empty-grid"></div>
                             </div>
-                            <h2>Nessun Operatore Registrato</h2>
-                            <p>Inizia aggiungendo operatori al sistema per visualizzare le statistiche</p>
-                            <button class="btn btn-primary" onclick="loadPage('personnel')">
-                                <i class="fas fa-plus"></i>
-                                Aggiungi Operatori
-                            </button>
+                            <div class="empty-content-v2">
+                                <div class="empty-icon-v2">
+                                    <div class="icon-background">
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
+                                    <div class="icon-glow"></div>
+                                </div>
+                                <h2 class="empty-title">Sistema Pronto per il Decollo</h2>
+                                <p class="empty-description">Inizializza il sistema aggiungendo operatori per attivare il monitoraggio avanzato e l'intelligence operativa</p>
+                                <button class="launch-btn" onclick="loadPage('personnel')">
+                                    <div class="btn-background"></div>
+                                    <div class="btn-content">
+                                        <i class="fas fa-rocket"></i>
+                                        <span>Inizializza Sistema</span>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     `}
 
-                    <!-- Accesso Rapido -->
-                    <div class="quick-access">
-                        <div class="section-header">
-                            <h2>Accesso Rapido</h2>
-                            <p>Naviga rapidamente alle sezioni principali</p>
+                    <!-- Command Center -->
+                    <div class="command-center">
+                        <div class="center-header">
+                            <h2>Command Center</h2>
+                            <p>Accesso rapido alle funzionalità principali</p>
                         </div>
-                        <div class="access-grid">
-                            <div class="access-item" onclick="loadPage('personnel')">
-                                <div class="access-icon">
+                        <div class="command-grid">
+                            <div class="command-item" onclick="loadPage('personnel')">
+                                <div class="command-icon">
                                     <i class="fas fa-users"></i>
                                 </div>
-                                <div class="access-content">
+                                <div class="command-content">
                                     <h3>Gestione Operatori</h3>
                                     <p>Amministrazione del personale</p>
-                                </div>
-                                <div class="access-status">
-                                    <span class="status-dot active"></span>
-                                    <span>Attivo</span>
+                                    <div class="command-status">
+                                        <span class="status-dot active"></span>
+                                        <span>Attivo</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="access-item" onclick="loadPage('shifts')">
-                                <div class="access-icon">
+                            <div class="command-item" onclick="loadPage('shifts')">
+                                <div class="command-icon">
                                     <i class="fas fa-calendar-alt"></i>
                                 </div>
-                                <div class="access-content">
+                                <div class="command-content">
                                     <h3>Sistema Turni</h3>
                                     <p>Programmazione operativa</p>
-                                </div>
-                                <div class="access-status">
-                                    <span class="status-dot active"></span>
-                                    <span>Attivo</span>
+                                    <div class="command-status">
+                                        <span class="status-dot active"></span>
+                                        <span>Attivo</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="access-item" onclick="loadPage('operations')">
-                                <div class="access-icon">
+                            <div class="command-item" onclick="loadPage('operations')">
+                                <div class="command-icon">
                                     <i class="fas fa-helicopter"></i>
                                 </div>
-                                <div class="access-content">
+                                <div class="command-content">
                                     <h3>Operazioni</h3>
                                     <p>Monitoraggio missioni</p>
-                                </div>
-                                <div class="access-status">
-                                    <span class="status-dot standby"></span>
-                                    <span>Standby</span>
+                                    <div class="command-status">
+                                        <span class="status-dot standby"></span>
+                                        <span>Standby</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -8327,6 +8197,11 @@
             if (moduleType === 'patrol-deactivation') {
                 return showPatrolDeactivationModule(moduleName, bannerColor, borderColor);
             }
+            
+            // Se è attivazione grandi rapine, mostra il modulo completo
+            if (moduleType === 'heist-activation') {
+                return showHeistActivationModule(moduleName, bannerColor, borderColor);
+            }
 
             // Per gli altri moduli, mantieni il form semplice
             const form = `
@@ -8638,6 +8513,102 @@
             });
         }
 
+        function showHeistActivationModule(moduleName, bannerColor, borderColor) {
+            // Ottieni tutti gli operatori disponibili dalla gerarchia
+            const availableOps = operators.filter(op => op.status === 'Disponibile');
+            
+            // Ordina gli operatori per grado (dal più alto al più basso)
+            const roleOrder = {
+                'Comandante Generale': 1,
+                'Comandante': 2,
+                'Vice Comandante': 3,
+                'Sostituto Vice Comandante': 4,
+                'Capitano': 5,
+                'Caposquadra': 6,
+                'Vice Caposquadra': 7,
+                'Coordinatore': 8,
+                'Tecnico Esperto': 9,
+                'Tecnico Specializzato': 10
+            };
+            
+            availableOps.sort((a, b) => {
+                const orderA = roleOrder[a.qualification] || 999;
+                const orderB = roleOrder[b.qualification] || 999;
+                return orderA - orderB;
+            });
+
+            const form = `
+                <div style="background: linear-gradient(135deg, ${bannerColor}20, ${bannerColor}10); border: 2px solid ${borderColor}; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+                    <h3 style="color: ${borderColor}; margin: 0; font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-gem"></i>
+                        ${moduleName}
+                    </h3>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <!-- Coordinatore -->
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Coordinatore:</label>
+                        <select id="heistCoordinator" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                            <option value="">Seleziona coordinatore...</option>
+                            ${availableOps.map(op => `<option value="${op.id}">${op.name} - ${op.qualification}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Contrattatore -->
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Contrattatore:</label>
+                        <select id="heistContractor" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                            <option value="">Seleziona contrattatore...</option>
+                            ${availableOps.map(op => `<option value="${op.id}">${op.name} - ${op.qualification}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Tipo di Intervento -->
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Tipo di Intervento:</label>
+                        <select id="heistType" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                            <option value="">Seleziona tipo di intervento...</option>
+                            <option value="gioielleria">Gioielleria</option>
+                            <option value="banca-credito-capitolina">Banca di Credito Capitolina</option>
+                            <option value="zecca-stato">Zecca di Stato</option>
+                        </select>
+                    </div>
+
+                    <!-- Orario di Attivazione -->
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Orario di Attivazione:</label>
+                        <input type="time" id="heistTime" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                    </div>
+                </div>
+
+                <!-- Operatori Coinvolti -->
+                <div style="margin-top: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Operatori Coinvolti (max 14):</label>
+                    <div id="heistOperatorSelection" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0.75rem;">
+                        ${Array.from({length: 14}, (_, i) => `
+                            <select id="heistOperator${i + 1}" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                                <option value="">Operatore ${i + 1} (opzionale)</option>
+                                ${availableOps.map(op => `<option value="${op.id}">${op.name} - ${op.qualification}</option>`).join('')}
+                            </select>
+                        `).join('')}
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem;">⚠️ Seleziona fino a 14 operatori per l'operazione. I campi vuoti verranno ignorati.</p>
+                </div>
+                
+                <input type="hidden" id="heistModuleType" value="heist-activation">
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="UI.closeModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="saveHeistActivation()" style="background: linear-gradient(135deg, ${borderColor}, #059669);">
+                    <i class="fas fa-save"></i> Salva Attivazione Grandi Rapine
+                </button>
+            `;
+            
+            UI.modal(`${moduleName}`, form, footer);
+        }
+
         function savePatrolActivation() {
             const managerId = document.getElementById('patrolManager')?.value;
             const patrolTime = document.getElementById('patrolTime')?.value;
@@ -8860,6 +8831,114 @@
             setTimeout(() => {
                 UI.loading('', false);
                 UI.notify(`✅ Disattivazione pattuglia salvata con successo!\\n\\nOperatori: ${operator1.name}, ${operator2.name}\\nOrario Disattivazione: ${deactivationTime}\\nDurata Totale: ${durationText}\\n\\nL'attivazione precedente è stata completata automaticamente.`, 'success', '🚓 Disattivazione Completata');
+                UI.closeModal();
+                
+                // Ricarica pagina turni
+                setTimeout(() => loadPage('shifts'), 500);
+            }, 1500);
+        }
+
+        function saveHeistActivation() {
+            const coordinatorId = document.getElementById('heistCoordinator')?.value;
+            const contractorId = document.getElementById('heistContractor')?.value;
+            const heistType = document.getElementById('heistType')?.value;
+            const heistTime = document.getElementById('heistTime')?.value;
+
+            // Validazione campi obbligatori
+            if (!coordinatorId || !contractorId || !heistType || !heistTime) {
+                UI.notify('⚠️ Compila tutti i campi obbligatori!', 'error', '❌ Errore Validazione');
+                return;
+            }
+
+            // Validazione che coordinatore e contrattatore siano diversi
+            if (coordinatorId === contractorId) {
+                UI.notify('⚠️ Il coordinatore e il contrattatore devono essere persone diverse!', 'error', '❌ Errore Validazione');
+                return;
+            }
+
+            // Ottieni i dati degli operatori
+            const coordinator = operators.find(op => op.id == coordinatorId);
+            const contractor = operators.find(op => op.id == contractorId);
+
+            if (!coordinator || !contractor) {
+                UI.notify('⚠️ Operatori non trovati!', 'error', '❌ Errore');
+                return;
+            }
+
+            // Raccogli tutti gli operatori coinvolti (escludendo quelli vuoti)
+            const involvedOperators = [];
+            for (let i = 1; i <= 14; i++) {
+                const operatorId = document.getElementById(`heistOperator${i}`)?.value;
+                if (operatorId) {
+                    const operator = operators.find(op => op.id == operatorId);
+                    if (operator) {
+                        involvedOperators.push({
+                            id: operator.id,
+                            name: operator.name,
+                            qualification: operator.qualification
+                        });
+                    }
+                }
+            }
+
+            // Validazione che coordinatore e contrattatore non siano già selezionati negli operatori coinvolti
+            const isCoordinatorInvolved = involvedOperators.some(op => op.id == coordinatorId);
+            const isContractorInvolved = involvedOperators.some(op => op.id == contractorId);
+
+            if (isCoordinatorInvolved) {
+                UI.notify('⚠️ Il coordinatore non può essere selezionato anche negli operatori coinvolti!', 'error', '❌ Errore Validazione');
+                return;
+            }
+
+            if (isContractorInvolved) {
+                UI.notify('⚠️ Il contrattatore non può essere selezionato anche negli operatori coinvolti!', 'error', '❌ Errore Validazione');
+                return;
+            }
+
+            // Mappa dei tipi di intervento
+            const heistTypes = {
+                'gioielleria': 'Gioielleria',
+                'banca-credito-capitolina': 'Banca di Credito Capitolina',
+                'zecca-stato': 'Zecca di Stato'
+            };
+
+            // Crea il nuovo turno
+            const newShift = {
+                id: Date.now(),
+                moduleType: 'heist-activation',
+                status: 'Attivo',
+                coordinatorId: coordinatorId,
+                coordinatorName: coordinator.name,
+                coordinatorQualification: coordinator.qualification,
+                contractorId: contractorId,
+                contractorName: contractor.name,
+                contractorQualification: contractor.qualification,
+                heistType: heistType,
+                heistTypeName: heistTypes[heistType],
+                heistTime: heistTime,
+                involvedOperators: involvedOperators,
+                totalOperators: involvedOperators.length + 2, // +2 per coordinatore e contrattatore
+                createdAt: new Date().toISOString(),
+                createdDate: new Date().toLocaleDateString('it-IT')
+            };
+
+            // Aggiungi il turno all'array
+            shifts.push(newShift);
+            
+            // Salva nel localStorage
+            saveShifts();
+
+            UI.loading('Salvataggio attivazione grandi rapine...', true);
+            
+            setTimeout(() => {
+                UI.loading('', false);
+                
+                let operatorsText = `Coordinatore: ${coordinator.name}\\nContrattatore: ${contractor.name}`;
+                if (involvedOperators.length > 0) {
+                    operatorsText += `\\nOperatori Coinvolti: ${involvedOperators.map(op => op.name).join(', ')}`;
+                }
+                
+                UI.notify(`✅ Attivazione grandi rapine salvata con successo!\\n\\nTipo: ${heistTypes[heistType]}\\nOrario: ${heistTime}\\n\\n${operatorsText}\\n\\nTotale Operatori: ${newShift.totalOperators}`, 'success', '💰 Attivazione Completata');
                 UI.closeModal();
                 
                 // Ricarica pagina turni
