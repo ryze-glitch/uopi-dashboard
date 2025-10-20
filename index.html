@@ -6546,6 +6546,7 @@
         }
 
         function getStatusPage() {
+            console.log('🔧 getStatusPage() chiamata - Mostro messaggio di sviluppo');
             return `
                 <div class="development-message">
                     <div class="development-icon">🚧</div>
@@ -9039,7 +9040,7 @@
         }
 
         // ========== INIT ==========
-        const ENABLE_AUTO_LOGIN = false; // Disabilita login automatico per test
+        const ENABLE_AUTO_LOGIN = true; // Abilita login automatico per utenti autorizzati
         window.addEventListener('load', () => {
             console.log('🚀 Pagina caricata, inizializzazione sistema sicurezza...');
             
@@ -9048,11 +9049,18 @@
             const savedUserData = localStorage.getItem('userData');
             const savedAccessLevel = localStorage.getItem('userAccessLevel');
             
+            console.log('🔍 Debug localStorage:', {
+                savedUserId,
+                savedUserData: savedUserData ? 'Presente' : 'Assente',
+                savedAccessLevel
+            });
+            
             if (ENABLE_AUTO_LOGIN && savedUserId && savedUserData && savedAccessLevel) {
                 console.log('🔐 Utente già autenticato:', savedUserId, 'Livello:', savedAccessLevel);
                 
                 // Verifica che l'ID sia ancora autorizzato
                 if (DISCORD_AUTH.isAuthorized(savedUserId)) {
+                    console.log('✅ Utente ancora autorizzato, procedo con auto-login');
                     userAccessLevel = savedAccessLevel;
                     const userData = JSON.parse(savedUserData);
                     
@@ -9060,13 +9068,20 @@
                     const loginSidebar = document.getElementById('loginSidebar');
                     const mainContent = document.querySelector('.main-content');
                     
+                    console.log('🔍 Debug elementi DOM:', {
+                        loginSidebar: loginSidebar ? 'Trovato' : 'Non trovato',
+                        mainContent: mainContent ? 'Trovato' : 'Non trovato'
+                    });
+                    
                     if (loginSidebar) {
                         loginSidebar.classList.add('hidden');
+                        console.log('✅ LoginSidebar nascosto');
                     }
                     
                     if (mainContent) {
                         mainContent.classList.remove('hidden');
                         mainContent.classList.add('full-width');
+                        console.log('✅ MainContent mostrato');
                     }
                     
                     // Aggiorna il profilo utente
@@ -9076,6 +9091,13 @@
                     const userNameElement = document.querySelector('.user-profile div div:nth-child(1)');
                     const userTagElement = document.querySelector('.user-profile div div:nth-child(2)');
                     const userRoleElement = document.querySelector('.user-profile div div:nth-child(3)');
+                    
+                    console.log('🔍 Debug elementi profilo:', {
+                        avatar: avatarElement ? 'Trovato' : 'Non trovato',
+                        userName: userNameElement ? 'Trovato' : 'Non trovato',
+                        userTag: userTagElement ? 'Trovato' : 'Non trovato',
+                        userRole: userRoleElement ? 'Trovato' : 'Non trovato'
+                    });
                     
                     if (avatarElement) {
                         avatarElement.textContent = (userData.username || 'U')[0].toUpperCase();
@@ -9091,7 +9113,7 @@
                     }
                     
                     if (userRoleElement) {
-                        userRoleElement.textContent = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
+                        userRoleElement.textContent = savedAccessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
                     }
                     
                     // Carica la pagina iniziale
@@ -9107,45 +9129,7 @@
                 }
             }
             
-            if (ENABLE_AUTO_LOGIN) {
-            // Simula login automatico per test (solo se non c'è utente autenticato)
-            setTimeout(() => {
-                console.log('⏰ Timer auto-login scaduto, procedo con il login di test...');
-                
-                try {
-                    const loginPage = document.getElementById('loginPage');
-                    if (!loginPage) {
-                        console.error('❌ Elemento loginPage non trovato!');
-                        return;
-                    }
-                    
-                    console.log('✅ LoginPage trovato, applico transizioni...');
-                    loginPage.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                    loginPage.style.opacity = '0';
-                    loginPage.style.transform = 'scale(0.9)';
-                    
-                    setTimeout(() => {
-                        console.log('🔄 Nascondo loginPage e mostro dashboard...');
-                        loginPage.style.display = 'none';
-                        
-                        const userData = { 
-                            username: 'dxrk.ryze', 
-                            discriminator: '0000',
-                            id: ADMIN_ID 
-                        };
-                        
-                        console.log('👤 Dati utente per auto-login:', userData);
-                        showDashboard(userData);
-                        
-                    }, 400);
-                    
-                } catch (error) {
-                    console.error('❌ Errore durante auto-login:', error);
-                }
-            }, 500);
-            } else {
-                console.log('🔕 Login automatico disabilitato per test');
-            }
+            console.log('🔕 Nessun utente autenticato trovato, mostro schermata di login');
         });
 
         // Chiudi dropdown quando si clicca fuori
