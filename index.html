@@ -4662,7 +4662,7 @@
                         <button class="nav-btn active" onclick="loadPage('overview')">📊 Panoramica</button>
                         <button class="nav-btn" onclick="loadPage('personnel')">🏅 Gerarchia</button>
                         <button class="nav-btn" onclick="loadPage('shifts')">🕐 Turni</button>
-                        <button class="nav-btn" onclick="loadPage('operations')">🚁 Operazioni</button>
+                        <button class="nav-btn" onclick="loadPage('announcements')">📢 Comunicati</button>
                         <button class="nav-btn" onclick="loadPage('status')">⚡ Status</button>
                         <button class="nav-btn" onclick="loadPage('credits')">🔰 Crediti</button>
                     </nav>
@@ -5864,8 +5864,194 @@
         }
 
         function showCodeInput() {
+            const codeInputContent = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem; color: #3b82f6;">🔐</div>
+                    <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1.5rem;">Inserimento Codice di Accesso</h3>
+                    <p style="color: #94a3b8; margin-bottom: 2rem;">Inserisci il codice di accesso per sbloccare funzionalità speciali</p>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+                        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.75rem;">Formato Codice:</div>
+                        <div style="color: #e2e8f0; font-family: 'Courier New', monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.1em;">
+                            UOPI-XXXX-XXXX-XXXX
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="accessCode" placeholder="UOPI-XXXX-XXXX-XXXX" 
+                               style="width: 100%; padding: 1rem; border: 2px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1.125rem; font-family: 'Courier New', monospace; text-align: center; letter-spacing: 0.1em; transition: all 0.3s ease;" 
+                               onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" 
+                               onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'"
+                               oninput="formatCodeInput(this)"
+                               maxlength="19">
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #10b981; font-weight: 600; margin-bottom: 0.5rem;">💡 Suggerimento:</div>
+                        <div style="color: #e2e8f0; font-size: 0.875rem;">
+                            Il codice viene formattato automaticamente. Inserisci solo numeri e lettere.
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="UI.closeModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="validateAccessCode()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                    <i class="fas fa-check"></i> Verifica Codice
+                </button>
+            `;
+            
+            UI.modal('🔐 Inserimento Codice di Accesso', codeInputContent, footer);
+            
+            // Focus automatico sul campo input
+            setTimeout(() => {
+                const input = document.getElementById('accessCode');
+                if (input) {
+                    input.focus();
+                }
+            }, 300);
+        }
+
+        function formatCodeInput(input) {
+            let value = input.value.replace(/[^A-Z0-9]/g, '').toUpperCase();
+            
+            // Limita a 16 caratteri (4 gruppi da 4)
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+            }
+            
+            // Formatta con trattini
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i === 4 || i === 8 || i === 12) {
+                    formatted += '-';
+                }
+                formatted += value[i];
+            }
+            
+            input.value = formatted;
+        }
+
+        function validateAccessCode() {
+            const codeInput = document.getElementById('accessCode');
+            const enteredCode = codeInput.value.trim().toUpperCase();
+            const validCode = 'UOPI-6794-2122-5676';
+            
+            if (!enteredCode) {
+                UI.notify('⚠️ Inserisci un codice prima di verificare!', 'warning', '⚠️ Codice Mancante');
+                return;
+            }
+            
+            if (enteredCode === validCode) {
+                // Codice valido - mostra schermata di successo
+                showCodeAcceptedScreen();
+            } else {
+                // Codice non valido
+                UI.notify('❌ Codice non valido! Controlla il formato e riprova.', 'error', '❌ Codice Errato');
+                
+                // Evidenzia il campo con errore
+                codeInput.style.borderColor = '#ef4444';
+                codeInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                
+                setTimeout(() => {
+                    codeInput.style.borderColor = 'var(--border)';
+                    codeInput.style.boxShadow = 'none';
+                }, 2000);
+            }
+        }
+
+        function showCodeAcceptedScreen() {
+            const successContent = `
+                <div style="text-align: center; padding: 3rem 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 2rem; color: #10b981; animation: bounce 1s ease-in-out infinite;">✅</div>
+                    <h2 style="color: #fff; margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">CODICE ACCETTATO</h2>
+                    <p style="color: #94a3b8; margin-bottom: 2rem; font-size: 1.125rem;">Il codice di accesso è stato verificato con successo!</p>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 2px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
+                        <div style="color: #10b981; font-weight: 600; margin-bottom: 1rem; font-size: 1.125rem;">🎉 Accesso Speciale Sbloccato!</div>
+                        <div style="color: #e2e8f0; font-size: 1rem;">
+                            La sezione <strong style="color: #10b981;">🥷 Shadow</strong> è stata aggiunta alla tua navbar.
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem;">
+                        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 0.75rem;">📋 Prossimi Passi:</div>
+                        <div style="color: #e2e8f0; font-size: 0.875rem; text-align: left;">
+                            <div style="margin-bottom: 0.5rem;">1. Chiudi questa finestra</div>
+                            <div style="margin-bottom: 0.5rem;">2. Aggiorna la pagina (F5 o Ctrl+R)</div>
+                            <div>3. Troverai la nuova sezione nella navbar</div>
+                        </div>
+                    </div>
+                    
+                    <div style="color: #f59e0b; font-size: 0.875rem; font-weight: 600;">
+                        ⚠️ L'accesso sarà mantenuto per le sessioni future
+                    </div>
+                </div>
+                
+                <style>
+                    @keyframes bounce {
+                        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                        40% { transform: translateY(-10px); }
+                        60% { transform: translateY(-5px); }
+                    }
+                </style>
+            `;
+            
+            const footer = `
+                <button class="btn btn-primary" onclick="closeCodeModalAndSave()" style="background: linear-gradient(135deg, #10b981, #059669); width: 100%;">
+                    <i class="fas fa-check-circle"></i> Perfetto! Chiudi e Aggiorna
+                </button>
+            `;
+            
+            UI.modal('✅ Codice Accettato', successContent, footer);
+        }
+
+        function closeCodeModalAndSave() {
+            // Salva il codice accettato nel localStorage
+            saveToStorage('shadowAccessCode', 'UOPI-6794-2122-5676');
+            saveToStorage('shadowAccessGranted', true);
+            saveToStorage('shadowAccessDate', new Date().toISOString());
+            
             UI.closeModal();
-            UI.notify('Funzionalità inserimento codice in sviluppo', 'info', '🔒 Inserimento Codice');
+            
+            // Mostra notifica finale
+            UI.notify('🎉 Accesso Shadow sbloccato! Aggiorna la pagina per vedere la nuova sezione.', 'success', '🥷 Shadow Unlocked');
+            
+            // Forza il refresh della navbar dopo un breve delay
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 1000);
+        }
+
+        function updateNavbarForShadowAccess() {
+            // Controlla se l'accesso Shadow è stato concesso
+            const shadowAccess = loadFromStorage('shadowAccessGranted', false);
+            
+            if (shadowAccess) {
+                // Trova la navbar e aggiungi il pulsante Shadow
+                const nav = document.querySelector('.nav');
+                if (nav) {
+                    // Controlla se il pulsante Shadow esiste già
+                    const existingShadowBtn = nav.querySelector('[onclick*="shadow"]');
+                    if (!existingShadowBtn) {
+                        // Trova il pulsante Status per inserire Shadow dopo
+                        const statusBtn = nav.querySelector('[onclick*="status"]');
+                        if (statusBtn) {
+                            // Crea il nuovo pulsante Shadow
+                            const shadowBtn = document.createElement('button');
+                            shadowBtn.className = 'nav-btn';
+                            shadowBtn.setAttribute('onclick', "loadPage('shadow')");
+                            shadowBtn.innerHTML = '🥷 Shadow';
+                            
+                            // Inserisci dopo Status e prima di Crediti
+                            statusBtn.parentNode.insertBefore(shadowBtn, statusBtn.nextSibling.nextSibling);
+                            
+                            console.log('✅ Pulsante Shadow aggiunto alla navbar');
+                        }
+                    }
+                }
+            }
         }
 
         function confirmLogout() {
@@ -6964,6 +7150,51 @@
                         </div>
                     </div>
                 `;
+        }
+
+        function getAnnouncementsPage() {
+            return `
+                <div class="page-content">
+                    <div class="page-header">
+                        <h1>📢 Comunicati Ufficiali</h1>
+                        <p>Centro comunicazioni e annunci ufficiali della U.O.P.I.</p>
+                    </div>
+                    
+                    <div class="development-message">
+                        <div class="development-icon">🚧</div>
+                        <h2>Sezione in Sviluppo</h2>
+                        <p>La sezione Comunicati è attualmente in fase di sviluppo.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getShadowPage() {
+            return `
+                <div class="page-content">
+                    <div class="page-header">
+                        <h1>🥷 Shadow</h1>
+                        <p>Sezione riservata per operatori con accesso speciale</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.05)); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2rem;">🥷</div>
+                            <div>
+                                <h3 style="color: #8b5cf6; margin: 0; font-size: 1.25rem; font-weight: 700;">Accesso Shadow Concesso</h3>
+                                <p style="color: #94a3b8; margin: 0; font-size: 0.875rem;">Benvenuto nella sezione riservata</p>
+                            </div>
+                        </div>
+                        <p style="color: #e2e8f0; margin: 0;">Questa sezione è accessibile solo agli operatori che hanno inserito il codice di accesso corretto.</p>
+                    </div>
+                    
+                    <div class="development-message">
+                        <div class="development-icon">🚧</div>
+                        <h2>Sezione in Sviluppo</h2>
+                        <p>La sezione Shadow è attualmente in fase di sviluppo. Contenuti speciali saranno aggiunti presto.</p>
+                    </div>
+                </div>
+            `;
         }
 
         function createModernShiftCard(shift, isDeactivation) {
@@ -9444,6 +9675,9 @@
                 userRoleElement.style.display = '';
             }
             
+            // Controlla accesso Shadow e aggiorna navbar se necessario
+            updateNavbarForShadowAccess();
+            
             // Carica la pagina iniziale
             loadPage('overview');
             
@@ -9819,11 +10053,20 @@
                     case 'shifts':
                         content.innerHTML = getShiftsPage();
                         break;
-                    case 'operations':
-                        content.innerHTML = getOperationsPage();
+                    case 'announcements':
+                        content.innerHTML = getAnnouncementsPage();
                         break;
                     case 'status':
                         content.innerHTML = getStatusPage();
+                        break;
+                    case 'shadow':
+                        // Controlla se l'utente ha accesso Shadow
+                        const shadowAccess = loadFromStorage('shadowAccessGranted', false);
+                        if (shadowAccess) {
+                            content.innerHTML = getShadowPage();
+                        } else {
+                            content.innerHTML = '<div class="card"><p>❌ Accesso negato. Questa sezione richiede un codice di accesso speciale.</p></div>';
+                        }
                         break;
                     case 'credits':
                         content.innerHTML = getCreditsPage();
