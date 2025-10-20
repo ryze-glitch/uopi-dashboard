@@ -4877,9 +4877,23 @@
         
         // Sincronizza i dati (carica da JSONBin)
         async function syncDataFromCloud() {
+            console.log('🔄 Forzo sincronizzazione dal cloud...');
+            
+            // Pulisci il localStorage per forzare il caricamento dal cloud
+            localStorage.removeItem('uopi_operators');
+            localStorage.removeItem('uopi_shifts');
+            localStorage.removeItem('uopi_notifications');
+            console.log('🗑️ localStorage pulito, forzo caricamento dal cloud');
+            
             const success = await loadDataFromJSONBin();
             if (success) {
-                UI.notify('Dati sincronizzati dal cloud!', 'success', '🔄 Sincronizzazione');
+                UI.notify(`Dati sincronizzati dal cloud! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Sincronizzazione Cloud');
+                console.log('✅ Sincronizzazione completata:', {
+                    operators: operators.length,
+                    shifts: shifts.length,
+                    notifications: notifications.length
+                });
+                
                 // Ricarica la pagina corrente se necessario
                 const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
                 if (currentPage) {
