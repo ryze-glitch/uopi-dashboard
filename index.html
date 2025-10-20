@@ -6545,6 +6545,50 @@
             `;
         }
 
+        function getStatusPage() {
+            return `
+                <div class="page-header">
+                    <div>
+                        <h1>⚡ Status</h1>
+                        <p>Monitoraggio dello stato del sistema U.O.P.I.</p>
+                    </div>
+                </div>
+
+                <div class="development-message">
+                    <div class="development-icon">🚧</div>
+                    <h3>Sezione in Fase di Sviluppo</h3>
+                    <p>Questa funzionalità sarà disponibile presto!</p>
+                </div>
+            `;
+        }
+
+        function getOperationsPage() {
+            return `
+                <div class="page-header">
+                    <div>
+                        <h1>🚁 Operazioni</h1>
+                        <p>Gestione e monitoraggio delle operazioni U.O.P.I.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Nuova Operazione
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i>
+                            Filtri
+                        </button>
+                    </div>
+                </div>
+
+                <div class="development-message">
+                    <div class="development-icon">🚧</div>
+                    <h3>Sezione in Fase di Sviluppo</h3>
+                    <p>Questa funzionalità sarà disponibile presto!</p>
+                </div>
+            `;
+        }
+
         function createModernShiftCard(shift, isDeactivation) {
             const statusColor = shift.status === 'Attivo' ? '#10b981' : '#ef4444';
             const statusText = shift.status === 'Attivo' ? 'ATTIVO' : 'COMPLETATO';
