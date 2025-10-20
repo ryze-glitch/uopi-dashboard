@@ -1,0 +1,406 @@
+{
+  "operators": [
+    {
+      "id": 1,
+      "name": "Tonino Frasca",
+      "discordTag": "_frascones_",
+      "qualification": "✨・Comandante Generale",
+      "role": "dirigenziale",
+      "roleName": "🏅・Nucleo Dirigenziale",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 2,
+      "name": "Gabriele Martinelli",
+      "discordTag": "dxrk.ryze",
+      "qualification": "💎・Comandante",
+      "role": "dirigenziale",
+      "roleName": "🏅・Nucleo Dirigenziale",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 3,
+      "name": "Alessandro Bianchi",
+      "discordTag": "alex.bianchi",
+      "qualification": "🔴・Capo Nucleo Operativo",
+      "role": "dirigenziale",
+      "roleName": "Nucleo Dirigenziale",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 4,
+      "name": "Francesco Verdi",
+      "discordTag": "francesco.verdi",
+      "qualification": "🔴・Responsabile Amministrativo",
+      "role": "dirigenziale",
+      "roleName": "Nucleo Dirigenziale",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 5,
+      "name": "Giuseppe Neri",
+      "discordTag": "giuseppe.neri",
+      "qualification": "🔴・Coordinatore Operazioni",
+      "role": "dirigenziale",
+      "roleName": "Nucleo Dirigenziale",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 6,
+      "name": "Roberto Blu",
+      "discordTag": "roberto.blu",
+      "qualification": "🟢・Supervisore Amministrativo",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 7,
+      "name": "Luca Gialli",
+      "discordTag": "luca.gialli",
+      "qualification": "🟢・Responsabile Risorse Umane",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 8,
+      "name": "Paolo Viola",
+      "discordTag": "paolo.viola",
+      "qualification": "🟢・Gestore Logistica",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 9,
+      "name": "Andrea Rosa",
+      "discordTag": "andrea.rosa",
+      "qualification": "🟢・Coordinatore Formazione",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 10,
+      "name": "Stefano Arancione",
+      "discordTag": "stefano.arancione",
+      "qualification": "🟢・Responsabile Comunicazioni",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 11,
+      "name": "Matteo Turchese",
+      "discordTag": "matteo.turchese",
+      "qualification": "🟢・Gestore Documentazione",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 12,
+      "name": "Davide Magenta",
+      "discordTag": "davide.magenta",
+      "qualification": "🟢・Supervisore Controlli",
+      "role": "amministrativo",
+      "roleName": "Nucleo Amministrativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 13,
+      "name": "Antonio Celeste",
+      "discordTag": "antonio.celeste",
+      "qualification": "🔵・Operatore Senior",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 14,
+      "name": "Michele Indaco",
+      "discordTag": "michele.indaco",
+      "qualification": "🔵・Operatore Esperto",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 15,
+      "name": "Simone Ciano",
+      "discordTag": "simone.ciano",
+      "qualification": "🔵・Operatore Specializzato",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 16,
+      "name": "Fabio Lime",
+      "discordTag": "fabio.lime",
+      "qualification": "🔵・Operatore Tattico",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 17,
+      "name": "Riccardo Coral",
+      "discordTag": "riccardo.coral",
+      "qualification": "🔵・Operatore di Pattuglia",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 18,
+      "name": "Emanuele Teal",
+      "discordTag": "emanuele.teal",
+      "qualification": "🔵・Operatore di Controllo",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 19,
+      "name": "Gabriele Aqua",
+      "discordTag": "gabriele.aqua",
+      "qualification": "🔵・Operatore di Supporto",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 20,
+      "name": "Federico Navy",
+      "discordTag": "federico.navy",
+      "qualification": "🔵・Operatore di Sicurezza",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 21,
+      "name": "Leonardo Olive",
+      "discordTag": "leonardo.olive",
+      "qualification": "🔵・Operatore di Monitoraggio",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 22,
+      "name": "Tommaso Forest",
+      "discordTag": "tommaso.forest",
+      "qualification": "🔵・Operatore di Intervento",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 23,
+      "name": "Lorenzo Emerald",
+      "discordTag": "lorenzo.emerald",
+      "qualification": "🔵・Operatore di Coordinamento",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 24,
+      "name": "Nicola Jade",
+      "discordTag": "nicola.jade",
+      "qualification": "🔵・Operatore di Controllo Territorio",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 25,
+      "name": "Alessio Mint",
+      "discordTag": "alessio.mint",
+      "qualification": "🔵・Operatore di Sicurezza Urbana",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 26,
+      "name": "Diego Sage",
+      "discordTag": "diego.sage",
+      "qualification": "🔵・Operatore di Prevenzione",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 27,
+      "name": "Giacomo Hunter",
+      "discordTag": "giacomo.hunter",
+      "qualification": "🔵・Operatore di Investigazione",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 28,
+      "name": "Filippo Slate",
+      "discordTag": "filippo.slate",
+      "qualification": "🔵・Operatore di Controllo Traffico",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 29,
+      "name": "Valerio Steel",
+      "discordTag": "valerio.steel",
+      "qualification": "🔵・Operatore di Sicurezza Stradale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 30,
+      "name": "Cristian Silver",
+      "discordTag": "cristian.silver",
+      "qualification": "🔵・Operatore di Controllo Ordine Pubblico",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 31,
+      "name": "Daniele Platinum",
+      "discordTag": "daniele.platinum",
+      "qualification": "🔵・Operatore di Sicurezza Eventi",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 32,
+      "name": "Massimo Gold",
+      "discordTag": "massimo.gold",
+      "qualification": "🔵・Operatore di Controllo Frontiere",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 33,
+      "name": "Enrico Bronze",
+      "discordTag": "enrico.bronze",
+      "qualification": "🔵・Operatore di Sicurezza Aeroportuale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 34,
+      "name": "Sergio Copper",
+      "discordTag": "sergio.copper",
+      "qualification": "🔵・Operatore di Controllo Ferroviario",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 35,
+      "name": "Vincenzo Iron",
+      "discordTag": "vincenzo.iron",
+      "qualification": "🔵・Operatore di Sicurezza Portuale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 36,
+      "name": "Salvatore Titanium",
+      "discordTag": "salvatore.titanium",
+      "qualification": "🔵・Operatore di Controllo Commerciale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 37,
+      "name": "Giovanni Chrome",
+      "discordTag": "giovanni.chrome",
+      "qualification": "🔵・Operatore di Sicurezza Industriale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 38,
+      "name": "Pietro Nickel",
+      "discordTag": "pietro.nickel",
+      "qualification": "🔵・Operatore di Controllo Ambientale",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    },
+    {
+      "id": 39,
+      "name": "Raffaele Zinc",
+      "discordTag": "raffaele.zinc",
+      "qualification": "🔵・Operatore di Sicurezza Informatica",
+      "role": "operativo",
+      "roleName": "Nucleo Operativo",
+      "status": "Disponibile",
+      "addedDate": "20/10/2025"
+    }
+  ],
+  "shifts": [],
+  "notifications": [
+    {
+      "id": 1760912958762,
+      "message": "Dati sincronizzati dal cloud! 39 operatori, 0 turni",
+      "type": "success",
+      "title": "☁️ Sincronizzazione Cloud",
+      "timestamp": "2025-10-20T13:31:46.809Z",
+      "duration": 5000
+    }
+  ],
+  "lastUpdated": "2025-10-20T13:31:46.809Z"
+}
