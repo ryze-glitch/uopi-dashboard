@@ -4671,9 +4671,19 @@
 
         // ========== SISTEMA COUNTDOWN ==========
         const COUNTDOWN_CONFIG = {
-            unlockDate: new Date('2024-12-20T00:00:00'), // 20 Dicembre 2024
+            // Calcola la data di sblocco: oggi + 30 giorni
+            unlockDate: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)), // 30 giorni da oggi
             isUnlocked: false
         };
+        
+        // Funzione per ottenere la data formattata per il display
+        function getUnlockDateFormatted() {
+            const date = COUNTDOWN_CONFIG.unlockDate;
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day} Novembre ${year}`;
+        }
 
         // Funzione per aggiornare il countdown UI
         function updateCountdownUI() {
@@ -4751,7 +4761,8 @@
                 ],
                 // ID Operatori (Solo consultazione)
                 OPERATOR_IDS: [
-                    '734406288213016607', '732317078559653909', '1221123387254898820',
+                    '734406288213016607', '732317078559653909', '1221123387254898820', 
+                    '1308498635889311869', '888053326640447508', '707550585775194124', 
                     '966703649378140161', '744290799101149326', '564446382258126848', 
                     '711261063844331560', '876123305952817224', '931640368448045107', 
                     '1103342962118754427', '602146684453126165', '1328351545145692195', 
@@ -4760,7 +4771,7 @@
                     '989918527257452564', '825835180312887316', '1178771628260331560', 
                     '245914276198350860', '521411586926313473', '677815494366986270', 
                     '691293154137342003', '457974905904824331', '1344355420072050720', 
-                    '879338438934011906','888053326640447508', '707550585775194124', 
+                    '879338438934011906'
                 ],
                 
                 // Verifica se l'ID è autorizzato
@@ -5706,11 +5717,11 @@
                             console.log('⏰ Timeout autenticazione, procedo con login simulato');
                             UI.loading('', false);
                             
-                            // Simula un utente di test per evitare il blocco
+                            // Simula un utente NON autorizzato per testare il sistema
                             const testUser = {
-                                id: '734406288213016607', // ID operatore di test
-                                username: 'TestOperator',
-                                discriminator: '9999',
+                                id: '999999999999999999', // ID NON autorizzato per test
+                                username: 'TestUser',
+                                discriminator: '0000',
                                 avatar: null,
                                 email: null
                             };
@@ -6782,15 +6793,20 @@
                                 </div>
                             </div>
                             <div class="card" style="padding: 3rem;">
-                                <h3 style="color: #e2e8f0; margin-bottom: 1rem;">Contenuto Sezione</h3>
-                                <p style="color: #94a3b8;">Questa sezione contiene informazioni importanti sul sistema.</p>
+                                <h3 style="color: #e2e8f0; margin-bottom: 1rem;">🔒 Contenuto Bloccato</h3>
+                                <p style="color: #94a3b8;">Questa sezione è attualmente in fase di sviluppo e sarà disponibile tra 30 giorni.</p>
+                                <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                                    <p style="color: #f59e0b; margin: 0; font-size: 0.875rem;">
+                                        ⚠️ <strong>In Sviluppo:</strong> Le funzionalità di questa sezione sono ancora in fase di implementazione.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="countdown-message">
-                            <div class="countdown-icon">🚧</div>
-                            <h3 class="countdown-title">Sezione in Sviluppo</h3>
-                            <p class="countdown-subtitle">Questa sezione si sbloccherà tra:</p>
+                            <div class="countdown-icon">🔒</div>
+                            <h3 class="countdown-title">Sezione Lockata</h3>
+                            <p class="countdown-subtitle">🚧 Questa sezione è ancora in sviluppo e si sbloccherà tra:</p>
                             
                             <div class="countdown-timer">
                                 <div class="countdown-unit">
@@ -6811,7 +6827,12 @@
                                 </div>
                             </div>
                             
-                            <p class="countdown-date">🗓️ Disponibile dal 20 Dicembre 2024</p>
+                            <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
+                            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                                <p style="color: #3b82f6; margin: 0; font-size: 0.875rem;">
+                                    📅 <strong>Timer Reale:</strong> Questo countdown conta esattamente 30 giorni dal momento attuale
+                                </p>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -6879,9 +6900,9 @@
                         </div>
                         
                         <div class="countdown-message">
-                            <div class="countdown-icon">🚧</div>
-                            <h3 class="countdown-title">Sezione in Sviluppo</h3>
-                            <p class="countdown-subtitle">Questa sezione si sbloccherà tra:</p>
+                            <div class="countdown-icon">🔒</div>
+                            <h3 class="countdown-title">Sezione Lockata</h3>
+                            <p class="countdown-subtitle">🚧 Questa sezione è ancora in sviluppo e si sbloccherà tra:</p>
                             
                             <div class="countdown-timer">
                                 <div class="countdown-unit">
@@ -6902,7 +6923,12 @@
                                 </div>
                             </div>
                             
-                            <p class="countdown-date">🗓️ Disponibile dal 20 Dicembre 2024</p>
+                            <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
+                            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                                <p style="color: #3b82f6; margin: 0; font-size: 0.875rem;">
+                                    📅 <strong>Timer Reale:</strong> Questo countdown conta esattamente 30 giorni dal momento attuale
+                                </p>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -8986,6 +9012,11 @@
                 console.log('🔐 Verifico accesso per ID Discord:', userData.id);
                 
                 // Verifica se l'utente è autorizzato
+                console.log('🔍 Controllo autorizzazione per ID:', userData.id);
+                console.log('🔍 ADMIN_IDS:', DISCORD_AUTH.ADMIN_IDS);
+                console.log('🔍 OPERATOR_IDS:', DISCORD_AUTH.OPERATOR_IDS);
+                console.log('🔍 isAuthorized result:', DISCORD_AUTH.isAuthorized(userData.id));
+                
                 if (!DISCORD_AUTH.isAuthorized(userData.id)) {
                     console.log('❌ Accesso negato per ID:', userData.id);
                     
