@@ -4451,58 +4451,106 @@
             }
         }
 
-        /* ========== LOGIN SIDEBAR A LATO ========== */
+        /* ========== MODERN LOGIN SCREEN ========== */
         .login-sidebar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
-            backdrop-filter: blur(24px);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-attachment: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* Animated background particles for login */
+        .login-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
         }
 
         .login-content {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 3rem;
             width: 100%;
-            max-width: 500px;
-            background: rgba(30, 41, 59, 0.8);
+            max-width: 450px;
+            background: rgba(30, 41, 59, 0.9);
             border-radius: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(32px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.8;
         }
 
         .login-logo {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             margin: 0 auto 2rem;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 
+                0 0 30px rgba(59, 130, 246, 0.4),
+                0 0 60px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .login-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 40px rgba(59, 130, 246, 0.6),
+                0 0 80px rgba(59, 130, 246, 0.3);
         }
 
         .login-content h2 {
             font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
             color: #ffffff;
+            background: linear-gradient(135deg, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .login-content p {
             color: #94a3b8;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             font-size: 1.125rem;
+            font-weight: 500;
         }
 
         .login-btn {
             width: 100%;
-            padding: 1.25rem;
+            padding: 1.5rem 2rem;
             background: linear-gradient(135deg, #5865f2, #4752c4);
             border: none;
             border-radius: 1rem;
@@ -4510,13 +4558,46 @@
             font-weight: 700;
             font-size: 1.125rem;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
-            transition: all 0.3s ease;
+            box-shadow: 
+                0 8px 20px rgba(88, 101, 242, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
         }
 
         .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(88, 101, 242, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 35px rgba(88, 101, 242, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .login-btn i {
+            font-size: 1.25rem;
         }
 
         .main-content {
@@ -4612,46 +4693,15 @@
     <div id="app">
         <!-- DASHBOARD CON LOGIN A LATO -->
         <div id="dashboard">
-            <!-- SIDEBAR LOGIN A LATO -->
+            <!-- MODERN LOGIN SCREEN -->
             <div id="loginSidebar" class="login-sidebar">
                 <div class="login-content">
                     <img src="https://i.imgur.com/B6E4u1X.png" alt="Logo" class="login-logo">
                     <h2>U.O.P.I.</h2>
-                    <p>Unita Operativa di Primo Intervento</p>
+                    <p>Unità Operativa di Primo Intervento</p>
                     <button onclick="loginWithDiscord()" class="login-btn">
                         <i class="fab fa-discord"></i> Accedi con Discord
                     </button>
-                    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="testLoginAdmin()" class="login-btn test-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); flex: 1;">
-                                <i class="fas fa-crown"></i> Test Admin
-                            </button>
-                            <button onclick="testLoginOperator()" class="login-btn test-btn" style="background: linear-gradient(135deg, #10b981, #059669); flex: 1;">
-                                <i class="fas fa-user"></i> Test Operatore
-                            </button>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="debugAccessControl()" class="login-btn test-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); flex: 1;">
-                                <i class="fas fa-bug"></i> Debug Access Control
-                            </button>
-                            <button onclick="resetSampleData()" class="login-btn test-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); flex: 1;">
-                                <i class="fas fa-refresh"></i> Reset Data
-                            </button>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="syncDataFromCloud()" class="login-btn test-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2); flex: 1;">
-                                <i class="fas fa-cloud-download-alt"></i> Sincronizza
-                            </button>
-                            <button onclick="exportDataToCloud()" class="login-btn test-btn" style="background: linear-gradient(135deg, #10b981, #059669); flex: 1;">
-                                <i class="fas fa-cloud-upload-alt"></i> Esporta
-                            </button>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="debugAccessControlDetailed()" class="login-btn test-btn" style="background: linear-gradient(135deg, #dc2626, #b91c1c); flex: 1;">
-                                <i class="fas fa-search"></i> Debug Accesso
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -4846,6 +4896,10 @@
         
         // Funzione per ottenere il livello di accesso corrente
         function getCurrentAccessLevel() {
+            console.log('🔍 getCurrentAccessLevel chiamata:');
+            console.log('  - userAccessLevel globale:', userAccessLevel);
+            console.log('  - localStorage userAccessLevel:', localStorage.getItem('userAccessLevel'));
+            console.log('  - localStorage authenticatedUserId:', localStorage.getItem('authenticatedUserId'));
             return userAccessLevel;
         }
         
@@ -6400,7 +6454,7 @@
             console.log('  - Operativi:', operativoOps.length);
 
             // Funzione per creare le righe degli operatori
-            const createOperatorRows = (operatorsList) => {
+            const createOperatorRows = (operatorsList, showActions = true) => {
                 return operatorsList.map(operator => {
                     const statusColor = operator.status === 'Disponibile' ? '#10b981' : '#3b82f6';
                     const statusBg = operator.status === 'Disponibile' ? '#10b98120' : '#3b82f620';
@@ -6439,14 +6493,16 @@
                                 <span style="color: var(--text-muted); font-size: 0.875rem;">${operator.addedDate}</span>
                             </td>
                             <td>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <button class="btn btn-sm btn-secondary" onclick="editOperator(${operator.id})" title="Modifica operatore">
-                                        <i class="fas fa-edit"></i>
-                        </button>
-                                    <button class="btn btn-sm" onclick="removeOperator(${operator.id})" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;" title="Rimuovi operatore">
-                                        <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+                                ${showActions ? `
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <button class="btn btn-sm btn-secondary" onclick="editOperator(${operator.id})" title="Modifica operatore">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm" onclick="removeOperator(${operator.id})" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;" title="Rimuovi operatore">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                ` : '<span style="color: var(--text-muted); font-size: 0.75rem;">Solo visualizzazione</span>'}
                             </td>
                         </tr>
                     `;
@@ -6454,7 +6510,7 @@
             };
 
             // Funzione per creare una sezione gerarchica completa
-            const createHierarchicalSection = (nucleo, operatorsList, icon, description, title) => {
+            const createHierarchicalSection = (nucleo, operatorsList, icon, description, title, showActions = true) => {
                 if (operatorsList.length === 0) return '';
                 
                 const availableCount = operatorsList.filter(op => op.status === 'Disponibile').length;
@@ -6496,7 +6552,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                                        ${createOperatorRows(operatorsList)}
+                                        ${createOperatorRows(operatorsList, showActions)}
                         </tbody>
                     </table>
                             </div>
@@ -6516,32 +6572,38 @@
                 </div>
             ` : '';
 
+            // Controlla se l'utente è admin per mostrare i pulsanti di gestione
+            const currentAccessLevel = getCurrentAccessLevel();
+            const isAdmin = currentAccessLevel === 'admin';
+            
             return `
                 <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
                     <h1>🏅 Gestione Gerarchia di Reparto</h1>
                     <p>Amministrazione completa degli operatori U.O.P.I. organizzati per gerarchia</p>
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="openAddOperator()">
-                            <i class="fas fa-user-plus"></i> Aggiungi Operatore
-                        </button>
-                        <button class="btn btn-secondary" onclick="createBackup()">
-                            <i class="fas fa-download"></i> Backup Dati
-                        </button>
-                        <button class="btn btn-secondary" onclick="restoreFromBackup()">
-                            <i class="fas fa-upload"></i> Ripristina Backup
-                        </button>
-                        ${operators.length > 0 ? `
-                            <button class="btn" onclick="clearAllOperators()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
-                                <i class="fas fa-trash-alt"></i> Rimuovi Tutti
+                    ${isAdmin ? `
+                        <div class="actions">
+                            <button class="btn btn-primary" onclick="openAddOperator()">
+                                <i class="fas fa-user-plus"></i> Aggiungi Operatore
                             </button>
-                        ` : ''}
-                    </div>
+                            <button class="btn btn-secondary" onclick="createBackup()">
+                                <i class="fas fa-download"></i> Backup Dati
+                            </button>
+                            <button class="btn btn-secondary" onclick="restoreFromBackup()">
+                                <i class="fas fa-upload"></i> Ripristina Backup
+                            </button>
+                            ${operators.length > 0 ? `
+                                <button class="btn" onclick="clearAllOperators()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                                    <i class="fas fa-trash-alt"></i> Rimuovi Tutti
+                                </button>
+                            ` : ''}
+                        </div>
+                    ` : ''}
                 </div>
 
                 ${operators.length === 0 ? emptyState : `
-                    ${createHierarchicalSection('dirigenziale', dirigenzialeOps, 'crown', 'Responsabili delle decisioni strategiche e della direzione operativa dell\'unità. Comandano e coordinano tutte le attività.', '🏅 Nucleo Dirigenziale')}
-                    ${createHierarchicalSection('amministrativo', amministrativoOps, 'clipboard-list', 'Gestione documentale, amministrazione e supporto logistico alle operazioni. Coordinano le risorse e la documentazione.', '📋 Nucleo Amministrativo')}
-                    ${createHierarchicalSection('operativo', operativoOps, 'shield-alt', 'Personale operativo specializzato nell\'esecuzione diretta delle missioni. Eseguono le operazioni sul campo.', '👮 Nucleo Operativo')}
+                    ${createHierarchicalSection('dirigenziale', dirigenzialeOps, 'crown', 'Responsabili delle decisioni strategiche e della direzione operativa dell\'unità. Comandano e coordinano tutte le attività.', '🏅 Nucleo Dirigenziale', isAdmin)}
+                    ${createHierarchicalSection('amministrativo', amministrativoOps, 'clipboard-list', 'Gestione documentale, amministrazione e supporto logistico alle operazioni. Coordinano le risorse e la documentazione.', '📋 Nucleo Amministrativo', isAdmin)}
+                    ${createHierarchicalSection('operativo', operativoOps, 'shield-alt', 'Personale operativo specializzato nell\'esecuzione diretta delle missioni. Eseguono le operazioni sul campo.', '👮 Nucleo Operativo', isAdmin)}
                 `}
             `;
         }
@@ -9023,16 +9085,28 @@
                 const discriminator = userData.discriminator || '0001';
                 userTagElement.textContent = `#${discriminator}`;
                 console.log('✅ Tag Discord aggiornato con:', `#${discriminator}`);
+                console.log('🔍 Debug tag Discord:');
+                console.log('  - userData.discriminator:', userData.discriminator);
+                console.log('  - discriminator finale:', discriminator);
+                console.log('  - userTagElement.textContent:', userTagElement.textContent);
             }
             
             if (userRoleElement) {
                 const roleText = accessLevel === 'admin' ? 'Dirigenza' : 'Operatore';
                 userRoleElement.textContent = roleText;
                 console.log('✅ Ruolo aggiornato con:', roleText);
-                console.log('🔍 Debug ruolo:');
+                console.log('🔍 Debug ruolo DETTAGLIATO:');
                 console.log('  - accessLevel:', accessLevel);
+                console.log('  - typeof accessLevel:', typeof accessLevel);
                 console.log('  - accessLevel === "admin":', accessLevel === 'admin');
+                console.log('  - accessLevel === "operator":', accessLevel === 'operator');
                 console.log('  - roleText finale:', roleText);
+                console.log('  - userRoleElement.textContent:', userRoleElement.textContent);
+                
+                // Forza il refresh del DOM
+                userRoleElement.style.display = 'none';
+                userRoleElement.offsetHeight; // Trigger reflow
+                userRoleElement.style.display = '';
             }
             
             // Carica la pagina iniziale
@@ -9144,6 +9218,7 @@
         }
 
         // ========== INIT ==========
+        const ENABLE_AUTO_LOGIN = false; // Disabilita login automatico per test
         window.addEventListener('load', () => {
             console.log('🚀 Pagina caricata, inizializzazione sistema sicurezza...');
             
@@ -9152,7 +9227,7 @@
             const savedUserData = localStorage.getItem('userData');
             const savedAccessLevel = localStorage.getItem('userAccessLevel');
             
-            if (savedUserId && savedUserData && savedAccessLevel) {
+            if (ENABLE_AUTO_LOGIN && savedUserId && savedUserData && savedAccessLevel) {
                 console.log('🔐 Utente già autenticato:', savedUserId, 'Livello:', savedAccessLevel);
                 
                 // Verifica che l'ID sia ancora autorizzato
@@ -9211,6 +9286,7 @@
                 }
             }
             
+            if (ENABLE_AUTO_LOGIN) {
             // Simula login automatico per test (solo se non c'è utente autenticato)
             setTimeout(() => {
                 console.log('⏰ Timer auto-login scaduto, procedo con il login di test...');
@@ -9246,6 +9322,9 @@
                     console.error('❌ Errore durante auto-login:', error);
                 }
             }, 500);
+            } else {
+                console.log('🔕 Login automatico disabilitato per test');
+            }
         });
 
         // Chiudi dropdown quando si clicca fuori
