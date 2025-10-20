@@ -43,10 +43,6 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            transform: scale(0.9);
-            transform-origin: top left;
-            width: 111.11%; /* Compensa la riduzione di scala */
-            height: 111.11%; /* Compensa la riduzione di scala */
         }
 
             /* Animated background particles */
@@ -4675,7 +4671,7 @@
 
         // ========== SISTEMA COUNTDOWN ==========
         const COUNTDOWN_CONFIG = {
-            unlockDate: new Date('2024-11-20T00:00:00'), // 20 Novembre 2024
+            unlockDate: new Date('2024-12-20T00:00:00'), // 20 Dicembre 2024
             isUnlocked: false
         };
 
@@ -4764,7 +4760,7 @@
                     '989918527257452564', '825835180312887316', '1178771628260331560', 
                     '245914276198350860', '521411586926313473', '677815494366986270', 
                     '691293154137342003', '457974905904824331', '1344355420072050720', 
-                    '879338438934011906', '888053326640447508', '707550585775194124', 
+                    '879338438934011906','888053326640447508', '707550585775194124', 
                 ],
                 
                 // Verifica se l'ID è autorizzato
@@ -6815,7 +6811,7 @@
                                 </div>
                             </div>
                             
-                            <p class="countdown-date">🗓️ Disponibile dal 20 Novembre 2024</p>
+                            <p class="countdown-date">🗓️ Disponibile dal 20 Dicembre 2024</p>
                         </div>
                     </div>
                 `;
@@ -6906,7 +6902,7 @@
                                 </div>
                             </div>
                             
-                            <p class="countdown-date">🗓️ Disponibile dal 20 Novembre 2024</p>
+                            <p class="countdown-date">🗓️ Disponibile dal 20 Dicembre 2024</p>
                         </div>
                     </div>
                 `;
@@ -8993,25 +8989,31 @@
                 if (!DISCORD_AUTH.isAuthorized(userData.id)) {
                     console.log('❌ Accesso negato per ID:', userData.id);
                     
-                    // Mostra messaggio di accesso negato
+                    // Mostra messaggio di errore per utenti non registrati
                     const loginPage = document.getElementById('loginPage');
                     if (loginPage) {
                         loginPage.innerHTML = `
                             <div style="background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(24px); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 2rem; padding: 3rem; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 25px 50px rgba(239, 68, 68, 0.3);">
-                                <div style="font-size: 4rem; margin-bottom: 1rem; color: #ef4444;">🚫</div>
-                                <h3 style="color: #ef4444; margin-bottom: 1rem; font-size: 2rem;">Accesso Non Autorizzato</h3>
-                                <p style="color: #94a3b8; margin-bottom: 1rem; font-size: 1.125rem;">Il tuo ID Discord non è autorizzato ad accedere alla dashboard U.O.P.I.</p>
+                                <div style="font-size: 4rem; margin-bottom: 1rem; color: #ef4444;">❌</div>
+                                <h3 style="color: #ef4444; margin-bottom: 1rem; font-size: 2rem;">Utente Non Registrato</h3>
+                                <p style="color: #94a3b8; margin-bottom: 1rem; font-size: 1.125rem;">❌ L'utente non è registrato nel sistema U.O.P.I.</p>
                                 <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 2rem;">ID Discord: ${userData.id}</p>
                                 <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; text-align: left;">
-                                    <h4 style="color: #ef4444; margin: 0 0 1rem 0; font-size: 1.125rem;">Per accedere:</h4>
+                                    <h4 style="color: #ef4444; margin: 0 0 1rem 0; font-size: 1.125rem;">⚠️ Errore - Contattare l'Amministratore:</h4>
                                     <ul style="color: #e2e8f0; margin: 0; padding-left: 1.5rem; font-size: 0.9375rem;">
-                                        <li style="margin-bottom: 0.5rem;">Contatta un amministratore</li>
-                                        <li style="margin-bottom: 0.5rem;">Fornisci il tuo ID Discord</li>
-                                        <li>Richiedi l'autorizzazione appropriata</li>
+                                        <li style="margin-bottom: 0.5rem;">Il tuo account non è autorizzato</li>
+                                        <li style="margin-bottom: 0.5rem;">Contatta l'amministratore del sistema</li>
+                                        <li style="margin-bottom: 0.5rem;">Fornisci il tuo ID Discord: <strong>${userData.id}</strong></li>
+                                        <li>Richiedi l'aggiunta alla lista autorizzati</li>
                                     </ul>
                                 </div>
+                                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem;">
+                                    <p style="color: #3b82f6; margin: 0; font-size: 0.875rem; font-weight: 600;">
+                                        📞 Contatto Amministratore: <strong>dxrk.ryze#0001</strong>
+                                    </p>
+                                </div>
                                 <button onclick="location.reload()" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 0.75rem; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">
-                                    Ricarica Pagina
+                                    🔄 Riprova Login
                                 </button>
                             </div>
                         `;
