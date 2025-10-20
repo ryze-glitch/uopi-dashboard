@@ -6008,12 +6008,7 @@
         }
 
         function closeCodeModalAndSave() {
-            // Salva il codice accettato nel localStorage
-            saveToStorage('shadowAccessCode', 'UOPI-6794-2122-5676');
-            saveToStorage('shadowAccessGranted', true);
-            saveToStorage('shadowAccessDate', new Date().toISOString());
-            
-            // Salva anche su JSONBin per persistenza permanente
+            // Salva SOLO su JSONBin per persistenza permanente (no localStorage)
             saveShadowAccessToCloud();
             
             UI.closeModal();
@@ -6103,12 +6098,6 @@
                     
                     if (cloudData.shadowAccessGranted && shadowAccessUser === currentUserId) {
                         console.log('✅ Accesso Shadow trovato su JSONBin per utente:', currentUserId);
-                        
-                        // Sincronizza con localStorage
-                        saveToStorage('shadowAccessGranted', true);
-                        saveToStorage('shadowAccessCode', cloudData.shadowAccessCode || 'UOPI-6794-2122-5676');
-                        saveToStorage('shadowAccessDate', cloudData.shadowAccessDate || new Date().toISOString());
-                        
                         return true;
                     } else {
                         console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
@@ -6126,14 +6115,9 @@
         }
 
         async function updateNavbarForShadowAccess() {
-            // Controlla prima il localStorage
-            let shadowAccess = loadFromStorage('shadowAccessGranted', false);
-            
-            // Se non trovato in localStorage, controlla il cloud
-            if (!shadowAccess) {
-                console.log('🔍 Accesso Shadow non trovato in localStorage, controllo cloud...');
-                shadowAccess = await loadShadowAccessFromCloud();
-            }
+            // Controlla SOLO il cloud per persistenza permanente
+            console.log('☁️ Controllo accesso Shadow da JSONBin...');
+            const shadowAccess = await loadShadowAccessFromCloud();
             
             if (shadowAccess) {
                 // Trova la navbar e aggiungi il pulsante Shadow
@@ -6158,6 +6142,8 @@
                         }
                     }
                 }
+            } else {
+                console.log('ℹ️ Nessun accesso Shadow trovato nel cloud');
             }
         }
 
@@ -6165,21 +6151,16 @@
             const content = document.getElementById('content');
             if (!content) return;
             
-            // Controlla prima il localStorage
-            let shadowAccess = loadFromStorage('shadowAccessGranted', false);
-            
-            // Se non trovato in localStorage, controlla il cloud
-            if (!shadowAccess) {
-                console.log('🔍 Controllo accesso Shadow da cloud...');
-                shadowAccess = await loadShadowAccessFromCloud();
-            }
+            // Controlla SOLO il cloud per persistenza permanente
+            console.log('☁️ Controllo accesso Shadow da JSONBin...');
+            const shadowAccess = await loadShadowAccessFromCloud();
             
             if (shadowAccess) {
                 content.innerHTML = getShadowPage();
-                console.log('✅ Accesso Shadow confermato, caricamento pagina');
+                console.log('✅ Accesso Shadow confermato da cloud, caricamento pagina');
             } else {
                 content.innerHTML = '<div class="card"><p>❌ Accesso negato. Questa sezione richiede un codice di accesso speciale.</p></div>';
-                console.log('❌ Accesso Shadow negato');
+                console.log('❌ Accesso Shadow negato - non trovato nel cloud');
             }
         }
 
