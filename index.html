@@ -4548,12 +4548,12 @@
 
         // ========== CONFIGURAZIONE JSONBIN ==========
         const JSONBIN_CONFIG = {
-            binId: '68f55fc2ae596e708f1daead',
-            secretKey: '$2a$10$qeINWX5SEES6HeEYUUyPPeBKvSP/.MkmetQMgtDs.iRPwiMAnEh3O',
+            binId: '68f66eb3d0ea881f40aed77f',
+            secretKey: '$2a$10$EE2Q5hrD/.yOag/PsKR2COquXji5TeK2zdw6ViXKLn5Nr2uwhDe/q',
             apiUrl: 'https://api.jsonbin.io/v3/b/',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Master-Key': '$2a$10$qeINWX5SEES6HeEYUUyPPeBKvSP/.MkmetQMgtDs.iRPwiMAnEh3O'
+                'X-Master-Key': '$2a$10$EE2Q5hrD/.yOag/PsKR2COquXji5TeK2zdw6ViXKLn5Nr2uwhDe/q'
             }
         };
 
@@ -4877,30 +4877,34 @@
         
         // Sincronizza i dati (carica da JSONBin)
         async function syncDataFromCloud() {
-            console.log('🔄 Forzo sincronizzazione dal cloud...');
+            console.log('🔄 Forzo sincronizzazione dal NUOVO bin JSONBin...');
             
-            // Pulisci il localStorage per forzare il caricamento dal cloud
+            // Pulisci completamente il localStorage
             localStorage.removeItem('uopi_operators');
             localStorage.removeItem('uopi_shifts');
             localStorage.removeItem('uopi_notifications');
-            console.log('🗑️ localStorage pulito, forzo caricamento dal cloud');
+            localStorage.removeItem('authenticatedUserId');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('userAccessLevel');
+            console.log('🗑️ localStorage completamente pulito');
             
             const success = await loadDataFromJSONBin();
             if (success) {
-                UI.notify(`Dati sincronizzati dal cloud! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Sincronizzazione Cloud');
-                console.log('✅ Sincronizzazione completata:', {
+                UI.notify(`✅ Dati caricati dal NUOVO bin! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Nuovo Bin Attivo');
+                console.log('✅ Sincronizzazione dal nuovo bin completata:', {
                     operators: operators.length,
                     shifts: shifts.length,
                     notifications: notifications.length
                 });
                 
-                // Ricarica la pagina corrente se necessario
+                // Ricarica la pagina corrente
                 const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
                 if (currentPage) {
                     loadPage(currentPage);
                 }
             } else {
-                UI.notify('Errore nella sincronizzazione. Usando dati locali.', 'warning', '⚠️ Avviso');
+                UI.notify('❌ Errore nel caricamento dal nuovo bin', 'error', '❌ Errore');
+                console.error('❌ Fallimento caricamento dal nuovo bin');
             }
         }
         
