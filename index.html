@@ -8585,15 +8585,42 @@
                 <!-- Operatori Coinvolti -->
                 <div style="margin-top: 1.5rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Operatori Coinvolti (max 14):</label>
-                    <div id="heistOperatorSelection" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0.75rem;">
-                        ${Array.from({length: 14}, (_, i) => `
-                            <select id="heistOperator${i + 1}" style="width: 100%; padding: 0.875rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; transition: all 0.3s ease;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
-                                <option value="">Operatore ${i + 1} (opzionale)</option>
+                    
+                    <!-- Blocco Selezione Operatori -->
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem;">
+                        <!-- Area Operatori Selezionati -->
+                        <div id="selectedOperatorsContainer" style="min-height: 60px; border: 2px dashed rgba(59, 130, 246, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 1rem; background: rgba(59, 130, 246, 0.05);">
+                            <div id="selectedOperatorsList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                <div style="color: var(--text-muted); font-size: 0.875rem; font-style: italic; width: 100%; text-align: center; padding: 1rem 0;">
+                                    Nessun operatore selezionato
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controlli Selezione -->
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <select id="operatorSelector" style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.875rem;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                                <option value="">Seleziona operatore da aggiungere...</option>
                                 ${availableOps.map(op => `<option value="${op.id}">${op.name} - ${op.qualification}</option>`).join('')}
                             </select>
-                        `).join('')}
+                            
+                            <button type="button" onclick="addSelectedOperator()" style="padding: 0.75rem 1rem; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; border-radius: 0.5rem; color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                <i class="fas fa-plus"></i> Aggiungi
+                            </button>
+                        </div>
+                        
+                        <!-- Contatore e Info -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; font-size: 0.875rem;">
+                            <span style="color: var(--text-muted);">
+                                <span id="operatorCount">0</span> / 14 operatori selezionati
+                            </span>
+                            <button type="button" onclick="clearAllOperators()" style="padding: 0.5rem 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.375rem; color: #ef4444; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+                                <i class="fas fa-trash"></i> Rimuovi Tutti
+                            </button>
+                        </div>
                     </div>
-                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem;">⚠️ Seleziona fino a 14 operatori per l'operazione. I campi vuoti verranno ignorati.</p>
+                    
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem;">💡 Clicca "Aggiungi" per selezionare operatori. Usa la X per rimuovere singoli operatori.</p>
                 </div>
                 
                 <input type="hidden" id="heistModuleType" value="heist-activation">
@@ -8607,6 +8634,124 @@
             `;
             
             UI.modal(`${moduleName}`, form, footer);
+            
+            // Inizializza le variabili per la gestione degli operatori
+            window.selectedOperators = [];
+            window.updateOperatorCount();
+        }
+
+        // Funzioni per gestire la selezione degli operatori
+        function addSelectedOperator() {
+            const selector = document.getElementById('operatorSelector');
+            const operatorId = selector.value;
+            
+            if (!operatorId) {
+                UI.notify('⚠️ Seleziona un operatore prima di aggiungerlo!', 'warning', '⚠️ Attenzione');
+                return;
+            }
+            
+            // Controlla se è già stato selezionato
+            if (window.selectedOperators.some(op => op.id == operatorId)) {
+                UI.notify('⚠️ Questo operatore è già stato selezionato!', 'warning', '⚠️ Attenzione');
+                return;
+            }
+            
+            // Controlla il limite di 14 operatori
+            if (window.selectedOperators.length >= 14) {
+                UI.notify('⚠️ Hai raggiunto il limite massimo di 14 operatori!', 'warning', '⚠️ Limite Raggiunto');
+                return;
+            }
+            
+            // Trova l'operatore
+            const operator = operators.find(op => op.id == operatorId);
+            if (!operator) {
+                UI.notify('⚠️ Operatore non trovato!', 'error', '❌ Errore');
+                return;
+            }
+            
+            // Aggiungi l'operatore alla lista
+            window.selectedOperators.push({
+                id: operator.id,
+                name: operator.name,
+                qualification: operator.qualification
+            });
+            
+            // Aggiorna l'interfaccia
+            updateSelectedOperatorsDisplay();
+            updateOperatorCount();
+            
+            // Reset del selector
+            selector.value = '';
+            
+            // Rimuovi l'operatore dalle opzioni disponibili
+            updateOperatorSelector();
+        }
+        
+        function removeSelectedOperator(operatorId) {
+            window.selectedOperators = window.selectedOperators.filter(op => op.id != operatorId);
+            updateSelectedOperatorsDisplay();
+            updateOperatorCount();
+            updateOperatorSelector();
+        }
+        
+        function clearAllOperators() {
+            if (window.selectedOperators.length === 0) {
+                UI.notify('ℹ️ Nessun operatore da rimuovere!', 'info', 'ℹ️ Info');
+                return;
+            }
+            
+            window.selectedOperators = [];
+            updateSelectedOperatorsDisplay();
+            updateOperatorCount();
+            updateOperatorSelector();
+        }
+        
+        function updateSelectedOperatorsDisplay() {
+            const container = document.getElementById('selectedOperatorsList');
+            
+            if (window.selectedOperators.length === 0) {
+                container.innerHTML = `
+                    <div style="color: var(--text-muted); font-size: 0.875rem; font-style: italic; width: 100%; text-align: center; padding: 1rem 0;">
+                        Nessun operatore selezionato
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = window.selectedOperators.map(op => `
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem;">
+                    <span style="color: var(--text-primary); font-weight: 500;">${op.name}</span>
+                    <span style="color: var(--text-muted); font-size: 0.75rem;">${op.qualification}</span>
+                    <button type="button" onclick="removeSelectedOperator('${op.id}')" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.25rem; color: #ef4444; padding: 0.25rem 0.5rem; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function updateOperatorCount() {
+            const countElement = document.getElementById('operatorCount');
+            if (countElement) {
+                countElement.textContent = window.selectedOperators.length;
+            }
+        }
+        
+        function updateOperatorSelector() {
+            const selector = document.getElementById('operatorSelector');
+            if (!selector) return;
+            
+            // Ottieni gli ID degli operatori già selezionati
+            const selectedIds = window.selectedOperators.map(op => op.id);
+            
+            // Filtra le opzioni per escludere quelli già selezionati
+            const options = Array.from(selector.options);
+            options.forEach(option => {
+                if (option.value && selectedIds.includes(option.value)) {
+                    option.style.display = 'none';
+                } else {
+                    option.style.display = 'block';
+                }
+            });
         }
 
         function savePatrolActivation() {
@@ -8865,21 +9010,8 @@
                 return;
             }
 
-            // Raccogli tutti gli operatori coinvolti (escludendo quelli vuoti)
-            const involvedOperators = [];
-            for (let i = 1; i <= 14; i++) {
-                const operatorId = document.getElementById(`heistOperator${i}`)?.value;
-                if (operatorId) {
-                    const operator = operators.find(op => op.id == operatorId);
-                    if (operator) {
-                        involvedOperators.push({
-                            id: operator.id,
-                            name: operator.name,
-                            qualification: operator.qualification
-                        });
-                    }
-                }
-            }
+            // Ottieni gli operatori selezionati dal nuovo sistema
+            const involvedOperators = window.selectedOperators || [];
 
             // Validazione che coordinatore e contrattatore non siano già selezionati negli operatori coinvolti
             const isCoordinatorInvolved = involvedOperators.some(op => op.id == coordinatorId);
