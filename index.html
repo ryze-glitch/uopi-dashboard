@@ -3171,7 +3171,337 @@
             margin: 0;
         }
 
-        /* ========== COUNTDOWN SYSTEM STYLES - REDESIGNED ========== */
+        /* ========== PANORAMICA RIVISTA - CSS ========== */
+        .modern-overview {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            font-size: 2rem;
+            color: #3b82f6;
+        }
+
+        .header-text h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .header-text p {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .stat-card.primary {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .stat-card.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .stat-card.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .stat-card.info {
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card.primary .stat-icon {
+            color: #3b82f6;
+        }
+
+        .stat-card.success .stat-icon {
+            color: #10b981;
+        }
+
+        .stat-card.warning .stat-icon {
+            color: #f59e0b;
+        }
+
+        .stat-card.info .stat-icon {
+            color: #8b5cf6;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .stat-trend i {
+            font-size: 0.75rem;
+        }
+
+        .operators-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .section-header p {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .operators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .operator-category {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            color: #f59e0b;
+        }
+
+        .category-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .category-info span {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .category-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0 0 1rem 0;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+            margin: 0 0 2rem 0;
+        }
+
+        .quick-access {
+            margin-bottom: 2rem;
+        }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .access-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .access-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .access-icon {
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .access-content {
+            flex: 1;
+        }
+
+        .access-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .access-content p {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .access-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+        }
+
+        .status-dot.standby {
+            background: #f59e0b;
+        }
+
+        .access-status span:last-child {
+            color: #94a3b8;
+        }
         .countdown-overlay {
             position: absolute;
             top: 0;
@@ -5993,416 +6323,206 @@
             const betaTeam = operators.filter(op => op.team === 'Beta').length;
 
             return `
-                <!-- PANORAMICA RIVOLUZIONARIA 2.0 -->
-                <div class="revolutionary-overview">
-                    <!-- Hero Section Ultra-Moderna -->
-                    <div class="hero-section-v2">
-                        <div class="hero-background">
-                            <div class="hero-particles"></div>
-                            <div class="hero-grid"></div>
-                        </div>
-                        <div class="hero-content-v2">
-                            <div class="hero-badge">
-                                <div class="badge-icon">
-                                    <i class="fas fa-rocket"></i>
-                                </div>
-                                <span>SISTEMA ATTIVO</span>
+                <!-- PANORAMICA RIVISTA E SEMPLIFICATA -->
+                <div class="modern-overview">
+                    <!-- Header Principale -->
+                    <div class="overview-header">
+                        <div class="header-content">
+                            <div class="header-icon">
+                                <i class="fas fa-tachometer-alt"></i>
                             </div>
-                            <h1 class="hero-title-v2">
-                                <span class="title-main">Panoramica</span>
-                                <span class="title-sub">Sezione Operativa</span>
-                            </h1>
-                            <p class="hero-description-v2">Monitoraggio avanzato in tempo reale delle operazioni della U.O.P.I.</p>
-                            <div class="hero-stats-mini">
-                                <div class="mini-stat">
-                                    <span class="mini-value">${totalOperators}</span>
-                                    <span class="mini-label">Operatori</span>
-                                </div>
-                                <div class="mini-stat">
-                                    <span class="mini-value">${efficiency}%</span>
-                                    <span class="mini-label">Efficienza</span>
-                                </div>
-                                <div class="mini-stat">
-                                    <span class="mini-value">24/7</span>
-                                    <span class="mini-label">Monitoraggio</span>
-                                </div>
+                            <div class="header-text">
+                                <h1>Panoramica Sistema</h1>
+                                <p>Monitoraggio operativo in tempo reale</p>
                             </div>
                         </div>
-                        <div class="hero-controls">
-                            <button class="control-btn primary" onclick="UI.modal('Test Modal', '<p>Modal funziona!</p>', '<button class=\\'btn btn-primary\\' onclick=\\'UI.closeModal()\\'>OK</button>')">
-                                <i class="fas fa-flask"></i>
-                                <span>Test System</span>
-                            </button>
-                            <button class="control-btn secondary" onclick="testNotifications()">
-                                <i class="fas fa-bell"></i>
-                                <span>Notifiche</span>
-                            </button>
+                        <div class="header-status">
+                            <div class="status-indicator active"></div>
+                            <span>Sistema Online</span>
                         </div>
                     </div>
 
-                    <!-- Stats Dashboard Avanzata -->
-                    <div class="stats-dashboard-v2">
-                        <div class="dashboard-header">
-                            <h2>Metriche Operative</h2>
-                            <div class="dashboard-controls">
-                                <div class="time-selector">
-                                    <span class="time-active">Oggi</span>
-                                    <span>Settimana</span>
-                                    <span>Mese</span>
+                    <!-- Statistiche Principali -->
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-helicopter"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">${activeShifts}</div>
+                                <div class="stat-label">Operazioni Attive</div>
+                                <div class="stat-trend">
+                                    <i class="fas fa-minus"></i>
+                                    <span>Nessuna operazione in corso</span>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="stats-grid-v2">
-                            <div class="stat-card-v2 primary-gradient">
-                                <div class="stat-background">
-                                    <div class="stat-pattern"></div>
-                                </div>
-                                <div class="stat-content-v2">
-                                    <div class="stat-header">
-                                        <div class="stat-icon-v2">
-                                            <i class="fas fa-helicopter"></i>
-                                        </div>
-                                        <div class="stat-trend positive">
-                                            <i class="fas fa-arrow-up"></i>
-                                            <span>+12%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stat-value-v2">0</div>
-                                    <div class="stat-label-v2">OPERAZIONI ATTIVE</div>
-                                    <div class="stat-progress">
-                                        <div class="progress-bar-v2">
-                                            <div class="progress-fill-v2" style="width: 0%"></div>
-                                        </div>
-                                        <span class="progress-text">0% Complete</span>
-                                    </div>
+
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">${totalOperators}</div>
+                                <div class="stat-label">Operatori Totali</div>
+                                <div class="stat-trend">
+                                    <i class="fas fa-check"></i>
+                                    <span>${availableOperators} disponibili</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="stat-card-v2 success-gradient">
-                                <div class="stat-background">
-                                    <div class="stat-pattern"></div>
-                                </div>
-                                <div class="stat-content-v2">
-                                    <div class="stat-header">
-                                        <div class="stat-icon-v2">
-                                            <i class="fas fa-users"></i>
-                                        </div>
-                                        <div class="stat-trend positive">
-                                            <i class="fas fa-arrow-up"></i>
-                                            <span>+${totalOperators}</span>
-                                        </div>
-                                    </div>
-                                    <div class="stat-value-v2">${totalOperators}</div>
-                                    <div class="stat-label-v2">OPERATORI TOTALI</div>
-                                    <div class="stat-progress">
-                                        <div class="progress-bar-v2">
-                                            <div class="progress-fill-v2" style="width: ${totalOperators > 0 ? 75 : 0}%"></div>
-                                        </div>
-                                        <span class="progress-text">${totalOperators > 0 ? '75%' : '0%'} Capacity</span>
-                                    </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">${activeShifts}</div>
+                                <div class="stat-label">Turni in Corso</div>
+                                <div class="stat-trend">
+                                    <i class="fas fa-minus"></i>
+                                    <span>Nessun turno attivo</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="stat-card-v2 warning-gradient">
-                                <div class="stat-background">
-                                    <div class="stat-pattern"></div>
-                                </div>
-                                <div class="stat-content-v2">
-                                    <div class="stat-header">
-                                        <div class="stat-icon-v2">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                        <div class="stat-trend neutral">
-                                            <i class="fas fa-minus"></i>
-                                            <span>0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stat-value-v2">${activeShifts}</div>
-                                    <div class="stat-label-v2">TURNI IN CORSO</div>
-                                    <div class="stat-progress">
-                                        <div class="progress-bar-v2">
-                                            <div class="progress-fill-v2" style="width: ${activeShifts > 0 ? 50 : 0}%"></div>
-                                        </div>
-                                        <span class="progress-text">${activeShifts > 0 ? '50%' : '0%'} Active</span>
-                                    </div>
-                                </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
                             </div>
-
-                            <div class="stat-card-v2 info-gradient like-crystal">
-                                <div class="stat-background">
-                                    <div class="stat-pattern"></div>
-                                </div>
-                                <div class="stat-content-v2">
-                                    <div class="stat-header">
-                                        <div class="stat-icon-v2">
-                                            <i class="fas fa-percentage"></i>
-                                        </div>
-                                        <div class="stat-trend positive">
-                                            <i class="fas fa-arrow-up"></i>
-                                            <span>+${efficiency}%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stat-value-v2">${efficiency}%</div>
-                                    <div class="stat-label-v2">DISPONIBILITÀ</div>
-                                    <div class="stat-progress">
-                                        <div class="progress-bar-v2">
-                                            <div class="progress-fill-v2" style="width: ${efficiency}%"></div>
-                                        </div>
-                                        <span class="progress-text">${efficiency}% Optimal</span>
-                                    </div>
+                            <div class="stat-content">
+                                <div class="stat-value">${efficiency}%</div>
+                                <div class="stat-label">Disponibilità</div>
+                                <div class="stat-trend">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Efficienza operativa</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Analytics Hub -->
+                    <!-- Sezione Operatori -->
                     ${totalOperators > 0 ? `
-                        <div class="analytics-hub">
-                            <div class="hub-header">
-                                <div class="hub-title">
-                                    <div class="hub-icon">
-                                        <i class="fas fa-chart-network"></i>
-                                    </div>
-                                    <div class="hub-text">
-                                        <h2>Analytics Hub</h2>
-                                        <p>Intelligence operativa avanzata</p>
-                                    </div>
-                                </div>
-                                <div class="hub-status">
-                                    <div class="status-dot active"></div>
-                                    <span>Sistema Online</span>
-                                </div>
+                        <div class="operators-section">
+                            <div class="section-header">
+                                <h2>Distribuzione Operatori</h2>
+                                <p>Panoramica della struttura organizzativa</p>
                             </div>
-
-                            <div class="analytics-grid-v2">
-                                <!-- Operator Status Matrix -->
-                                <div class="analytics-card-v2 operator-matrix">
-                                    <div class="card-header-v2">
-                                        <h3>Status Matrix</h3>
-                                        <div class="card-controls">
-                                            <button class="control-toggle active">Real-time</button>
+                            
+                            <div class="operators-grid">
+                                <div class="operator-category">
+                                    <div class="category-header">
+                                        <div class="category-icon">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h3>Dirigenziale</h3>
+                                            <span>${dirigenzialeOps} operatori</span>
                                         </div>
                                     </div>
-                                    <div class="matrix-grid">
-                                        <div class="matrix-item available">
-                                            <div class="matrix-icon">
-                                                <i class="fas fa-check-circle"></i>
-                                            </div>
-                                            <div class="matrix-content">
-                                                <div class="matrix-value">${availableOperators}</div>
-                                                <div class="matrix-label">Disponibili</div>
-                                                <div class="matrix-percentage">${totalOperators > 0 ? Math.round((availableOperators / totalOperators) * 100) : 0}%</div>
-                                            </div>
-                                            <div class="matrix-indicator"></div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (dirigenzialeOps / totalOperators) * 100 : 0}%"></div>
                                         </div>
-                                        <div class="matrix-item in-service">
-                                            <div class="matrix-icon">
-                                                <i class="fas fa-user-clock"></i>
-                                            </div>
-                                            <div class="matrix-content">
-                                                <div class="matrix-value">${totalOperators - availableOperators}</div>
-                                                <div class="matrix-label">In Servizio</div>
-                                                <div class="matrix-percentage">${totalOperators > 0 ? Math.round(((totalOperators - availableOperators) / totalOperators) * 100) : 0}%</div>
-                                            </div>
-                                            <div class="matrix-indicator"></div>
-                                        </div>
+                                        <span class="progress-text">${totalOperators > 0 ? Math.round((dirigenzialeOps / totalOperators) * 100) : 0}%</span>
                                     </div>
                                 </div>
 
-                                <!-- Team Performance -->
-                                <div class="analytics-card-v2 team-performance">
-                                    <div class="card-header-v2">
-                                        <h3>Team Performance</h3>
-                                        <div class="card-controls">
-                                            <button class="control-toggle">Analytics</button>
+                                <div class="operator-category">
+                                    <div class="category-header">
+                                        <div class="category-icon">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h3>Amministrativo</h3>
+                                            <span>${amministrativoOps} operatori</span>
                                         </div>
                                     </div>
-                                    <div class="team-chart">
-                                        <div class="team-item-v2 alpha">
-                                            <div class="team-header">
-                                                <div class="team-icon-v2">
-                                                    <i class="fas fa-shield-alt"></i>
-                                                </div>
-                                                <div class="team-info">
-                                                    <span class="team-name">Squadra Alpha</span>
-                                                    <span class="team-count">${alphaTeam} membri</span>
-                                                </div>
-                                            </div>
-                                            <div class="team-metrics">
-                                                <div class="metric">
-                                                    <span class="metric-label">Efficienza</span>
-                                                    <span class="metric-value">${alphaTeam > 0 ? '95%' : '0%'}</span>
-                                                </div>
-                                                <div class="metric">
-                                                    <span class="metric-label">Disponibilità</span>
-                                                    <span class="metric-value">${alphaTeam > 0 ? '88%' : '0%'}</span>
-                                                </div>
-                                            </div>
-                                            <div class="team-chart-bar">
-                                                <div class="chart-bar">
-                                                    <div class="bar-fill alpha" style="width: ${totalOperators > 0 ? (alphaTeam / totalOperators) * 100 : 0}%"></div>
-                                                </div>
-                                            </div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (amministrativoOps / totalOperators) * 100 : 0}%"></div>
                                         </div>
-                                        <div class="team-item-v2 beta">
-                                            <div class="team-header">
-                                                <div class="team-icon-v2">
-                                                    <i class="fas fa-shield-alt"></i>
-                                                </div>
-                                                <div class="team-info">
-                                                    <span class="team-name">Squadra Beta</span>
-                                                    <span class="team-count">${betaTeam} membri</span>
-                                                </div>
-                                            </div>
-                                            <div class="team-metrics">
-                                                <div class="metric">
-                                                    <span class="metric-label">Efficienza</span>
-                                                    <span class="metric-value">${betaTeam > 0 ? '92%' : '0%'}</span>
-                                                </div>
-                                                <div class="metric">
-                                                    <span class="metric-label">Disponibilità</span>
-                                                    <span class="metric-value">${betaTeam > 0 ? '85%' : '0%'}</span>
-                                                </div>
-                                            </div>
-                                            <div class="team-chart-bar">
-                                                <div class="chart-bar">
-                                                    <div class="bar-fill beta" style="width: ${totalOperators > 0 ? (betaTeam / totalOperators) * 100 : 0}%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <span class="progress-text">${totalOperators > 0 ? Math.round((amministrativoOps / totalOperators) * 100) : 0}%</span>
                                     </div>
                                 </div>
 
-                                <!-- Command Structure -->
-                                <div class="analytics-card-v2 command-structure">
-                                    <div class="card-header-v2">
-                                        <h3>Command Structure</h3>
-                                        <div class="card-controls">
-                                            <button class="control-toggle">Hierarchy</button>
+                                <div class="operator-category">
+                                    <div class="category-header">
+                                        <div class="category-icon">
+                                            <i class="fas fa-user-shield"></i>
+                                        </div>
+                                        <div class="category-info">
+                                            <h3>Operativo</h3>
+                                            <span>${operativoOps} operatori</span>
                                         </div>
                                     </div>
-                                    <div class="command-hierarchy">
-                                        <div class="hierarchy-level-v2 dirigenziale">
-                                            <div class="level-icon">
-                                                <i class="fas fa-crown"></i>
-                                            </div>
-                                            <div class="level-info">
-                                                <span class="level-name">Dirigenziale</span>
-                                                <span class="level-count">${dirigenzialeOps} operatori</span>
-                                            </div>
-                                            <div class="level-status">
-                                                <div class="status-bar">
-                                                    <div class="status-fill dirigenziale" style="width: ${totalOperators > 0 ? (dirigenzialeOps / totalOperators) * 100 : 0}%"></div>
-                                                </div>
-                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((dirigenzialeOps / totalOperators) * 100) : 0}%</span>
-                                            </div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${totalOperators > 0 ? (operativoOps / totalOperators) * 100 : 0}%"></div>
                                         </div>
-                                        <div class="hierarchy-level-v2 amministrativo">
-                                            <div class="level-icon">
-                                                <i class="fas fa-clipboard-list"></i>
-                                            </div>
-                                            <div class="level-info">
-                                                <span class="level-name">Amministrativo</span>
-                                                <span class="level-count">${amministrativoOps} operatori</span>
-                                            </div>
-                                            <div class="level-status">
-                                                <div class="status-bar">
-                                                    <div class="status-fill amministrativo" style="width: ${totalOperators > 0 ? (amministrativoOps / totalOperators) * 100 : 0}%"></div>
-                                                </div>
-                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((amministrativoOps / totalOperators) * 100) : 0}%</span>
-                                            </div>
-                                        </div>
-                                        <div class="hierarchy-level-v2 operativo">
-                                            <div class="level-icon">
-                                                <i class="fas fa-user-shield"></i>
-                                            </div>
-                                            <div class="level-info">
-                                                <span class="level-name">Operativo</span>
-                                                <span class="level-count">${operativoOps} operatori</span>
-                                            </div>
-                                            <div class="level-status">
-                                                <div class="status-bar">
-                                                    <div class="status-fill operativo" style="width: ${totalOperators > 0 ? (operativoOps / totalOperators) * 100 : 0}%"></div>
-                                                </div>
-                                                <span class="status-percentage">${totalOperators > 0 ? Math.round((operativoOps / totalOperators) * 100) : 0}%</span>
-                                            </div>
-                                        </div>
+                                        <span class="progress-text">${totalOperators > 0 ? Math.round((operativoOps / totalOperators) * 100) : 0}%</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ` : `
-                        <!-- Empty State Revolutionario -->
-                        <div class="empty-state-v2">
-                            <div class="empty-background">
-                                <div class="empty-particles"></div>
-                                <div class="empty-grid"></div>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-users"></i>
                             </div>
-                            <div class="empty-content-v2">
-                                <div class="empty-icon-v2">
-                                    <div class="icon-background">
-                                        <i class="fas fa-rocket"></i>
-                                    </div>
-                                    <div class="icon-glow"></div>
-                                </div>
-                                <h2 class="empty-title">Sistema Pronto per il Decollo</h2>
-                                <p class="empty-description">Inizializza il sistema aggiungendo operatori per attivare il monitoraggio avanzato e l'intelligence operativa</p>
-                                <button class="launch-btn" onclick="loadPage('personnel')">
-                                    <div class="btn-background"></div>
-                                    <div class="btn-content">
-                                        <i class="fas fa-rocket"></i>
-                                        <span>Inizializza Sistema</span>
-                                    </div>
-                                </button>
-                            </div>
+                            <h2>Nessun Operatore Registrato</h2>
+                            <p>Inizia aggiungendo operatori al sistema per visualizzare le statistiche</p>
+                            <button class="btn btn-primary" onclick="loadPage('personnel')">
+                                <i class="fas fa-plus"></i>
+                                Aggiungi Operatori
+                            </button>
                         </div>
                     `}
 
-                    <!-- Command Center -->
-                    <div class="command-center">
-                        <div class="center-header">
-                            <h2>Command Center</h2>
-                            <p>Accesso rapido alle funzionalità principali</p>
+                    <!-- Accesso Rapido -->
+                    <div class="quick-access">
+                        <div class="section-header">
+                            <h2>Accesso Rapido</h2>
+                            <p>Naviga rapidamente alle sezioni principali</p>
                         </div>
-                        <div class="command-grid">
-                            <div class="command-item" onclick="loadPage('personnel')">
-                                <div class="command-icon">
+                        <div class="access-grid">
+                            <div class="access-item" onclick="loadPage('personnel')">
+                                <div class="access-icon">
                                     <i class="fas fa-users"></i>
                                 </div>
-                                <div class="command-content">
+                                <div class="access-content">
                                     <h3>Gestione Operatori</h3>
                                     <p>Amministrazione del personale</p>
-                                    <div class="command-status">
-                                        <span class="status-dot active"></span>
-                                        <span>Attivo</span>
-                                    </div>
+                                </div>
+                                <div class="access-status">
+                                    <span class="status-dot active"></span>
+                                    <span>Attivo</span>
                                 </div>
                             </div>
-                            <div class="command-item" onclick="loadPage('shifts')">
-                                <div class="command-icon">
+                            <div class="access-item" onclick="loadPage('shifts')">
+                                <div class="access-icon">
                                     <i class="fas fa-calendar-alt"></i>
                                 </div>
-                                <div class="command-content">
+                                <div class="access-content">
                                     <h3>Sistema Turni</h3>
                                     <p>Programmazione operativa</p>
-                                    <div class="command-status">
-                                        <span class="status-dot active"></span>
-                                        <span>Attivo</span>
-                                    </div>
+                                </div>
+                                <div class="access-status">
+                                    <span class="status-dot active"></span>
+                                    <span>Attivo</span>
                                 </div>
                             </div>
-                            <div class="command-item" onclick="loadPage('operations')">
-                                <div class="command-icon">
+                            <div class="access-item" onclick="loadPage('operations')">
+                                <div class="access-icon">
                                     <i class="fas fa-helicopter"></i>
                                 </div>
-                                <div class="command-content">
+                                <div class="access-content">
                                     <h3>Operazioni</h3>
                                     <p>Monitoraggio missioni</p>
-                                    <div class="command-status">
-                                        <span class="status-dot standby"></span>
-                                        <span>Standby</span>
-                                    </div>
+                                </div>
+                                <div class="access-status">
+                                    <span class="status-dot standby"></span>
+                                    <span>Standby</span>
                                 </div>
                             </div>
                         </div>
