@@ -10492,11 +10492,6 @@
                     shifts: shifts.length,
                     notifications: notifications.length
                 });
-                
-                // Mostra notifica di sincronizzazione
-                setTimeout(() => {
-                    UI.notify(`Dati sincronizzati dal cloud! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Sincronizzazione Cloud');
-                }, 1000);
             } else {
                 console.log('⚠️ JSONBin non disponibile, carico dal localStorage...');
                 
