@@ -9928,10 +9928,18 @@
                 userRoleElement.style.display = '';
             }
             
-            // Controlla accesso Shadow e aggiorna navbar se necessario
+            // Controlla accesso Shadow e aggiorna navbar se necessario (più volte per sicurezza)
             setTimeout(() => {
                 updateNavbarForShadowAccess();
-            }, 1000);
+            }, 500);
+            
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 1500);
+            
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 3000);
             
             // Carica la pagina iniziale
             loadPage('overview');
@@ -10046,6 +10054,12 @@
         window.addEventListener('load', () => {
             console.log('🚀 Pagina caricata, inizializzazione sistema sicurezza...');
             
+            // Controllo immediato accesso Shadow (prima di tutto)
+            setTimeout(() => {
+                console.log('🥷 Controllo immediato accesso Shadow...');
+                updateNavbarForShadowAccess();
+            }, 500);
+            
             // Verifica se c'è un utente già autenticato
             const savedUserId = localStorage.getItem('authenticatedUserId');
             const savedUserData = localStorage.getItem('userData');
@@ -10121,10 +10135,18 @@
                     // Carica la pagina iniziale
                     loadPage('overview');
                     
-                    // Controlla accesso Shadow dopo il login automatico
+                    // Controlla accesso Shadow dopo il login automatico (più volte per sicurezza)
                     setTimeout(() => {
                         updateNavbarForShadowAccess();
-                    }, 2000);
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        updateNavbarForShadowAccess();
+                    }, 3000);
+                    
+                    setTimeout(() => {
+                        updateNavbarForShadowAccess();
+                    }, 5000);
                     
                     console.log('✅ Login automatico completato!');
                     return;
@@ -10288,6 +10310,11 @@
                 return;
             }
             
+            // Controlla sempre l'accesso Shadow quando si carica una pagina
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 100);
+            
             // Aggiorna navigazione attiva
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -10394,7 +10421,15 @@
             console.log('🥷 Controllo accesso Shadow all\'avvio...');
             setTimeout(() => {
                 updateNavbarForShadowAccess();
-            }, 2000); // Delay per permettere il caricamento completo
+            }, 1000);
+            
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 3000);
+            
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 5000);
             
             // Aggiungi pulsanti di debug per verificare JSONBin
             setTimeout(() => {
