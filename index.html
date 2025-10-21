@@ -7406,54 +7406,76 @@
         }
 
         function getAnnouncementsPage() {
+            console.log('🔧 getAnnouncementsPage() chiamata - Verifico stato countdown');
+            
+            const isUnlocked = checkUnlockStatus();
             const time = getTimeRemaining();
+            
+            if (isUnlocked) {
+                // Pagina sbloccata - mostra il contenuto normale
+                return `
+                    <div class="page-header">
+                        <div>
+                            <h1>📢 Comunicati Ufficiali</h1>
+                            <p>Centro comunicazioni e annunci ufficiali della U.O.P.I.</p>
+                        </div>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                        <h3 style="color: #10b981; margin-bottom: 1rem;">Sezione Sbloccata!</h3>
+                        <p style="color: #94a3b8;">Il contenuto di questa sezione è ora disponibile.</p>
+                    </div>
+                `;
+            }
+            
+            // Pagina bloccata con countdown
+            setTimeout(() => startCountdownTimer(), 100);
             
             return `
                 <div class="page-content">
                     <div class="page-header">
-                        <h1>📢 Comunicati Ufficiali</h1>
-                        <p>Centro comunicazioni e annunci ufficiali della U.O.P.I.</p>
+                        <div>
+                            <h1>📢 Comunicati Ufficiali</h1>
+                            <p>Centro comunicazioni e annunci ufficiali della U.O.P.I.</p>
+                        </div>
                     </div>
-                    
                     <div class="card" style="padding: 3rem;">
-                        <div style="text-align: center; margin-bottom: 2rem;">
-                            <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
-                            <h2 style="color: #f59e0b; margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">Sezione Bloccata</h2>
-                            <p style="color: #94a3b8; margin-bottom: 2rem; font-size: 1.125rem;">Questa sezione è attualmente in fase di sviluppo e sarà disponibile tra 30 giorni.</p>
-                            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem;">
-                                <div style="color: #f59e0b; font-weight: 600; margin-bottom: 0.5rem;">⚠️ <strong>In Sviluppo:</strong> Le funzionalità di questa sezione sono ancora in fase di implementazione.</div>
-                                <div style="color: #e2e8f0; font-size: 0.875rem;">Il sistema di comunicati ufficiali sarà presto disponibile per tutti gli operatori.</div>
-                            </div>
+                        <h3 style="color: #e2e8f0; margin-bottom: 1rem;">🔒 Contenuto Bloccato</h3>
+                        <p style="color: #94a3b8;">Questa sezione è attualmente in fase di sviluppo e sarà disponibile tra 30 giorni.</p>
+                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                            <p style="color: #f59e0b; margin: 0; font-size: 0.875rem;">
+                                ⚠️ <strong>In Sviluppo:</strong> Le funzionalità di questa sezione sono ancora in fase di implementazione.
+                            </p>
                         </div>
                     </div>
-                    
-                    <div class="countdown-overlay">
-                        <div class="countdown-message">
-                            <div class="countdown-icon">🔒</div>
-                            <h3 class="countdown-title">🚧・Questa sezione è in fase di Sviluppo</h3>
-                            <p class="countdown-subtitle">🚧・Questa sezione è in fase di Sviluppo</p>
-                            
-                            <div class="countdown-timer">
-                                <div class="countdown-unit">
-                                    <div class="countdown-number">${time.days}</div>
-                                    <div class="countdown-label">Giorni</div>
-                                </div>
-                                <div class="countdown-unit">
-                                    <div class="countdown-number">${time.hours}</div>
-                                    <div class="countdown-label">Ore</div>
-                                </div>
-                                <div class="countdown-unit">
-                                    <div class="countdown-number">${time.minutes}</div>
-                                    <div class="countdown-label">Minuti</div>
-                                </div>
-                                <div class="countdown-unit">
-                                    <div class="countdown-number">${time.seconds}</div>
-                                    <div class="countdown-label">Secondi</div>
-                                </div>
+                </div>
+                
+                <div class="countdown-overlay">
+                    <div class="countdown-message">
+                        <div class="countdown-icon">🔒</div>
+                        <h3 class="countdown-title">Sezione Bloccata</h3>
+                        <p class="countdown-subtitle">🚧・Questa sezione è in fase di Sviluppo</p>
+                        
+                        <div class="countdown-timer">
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.days}</div>
+                                <div class="countdown-label">Giorni</div>
                             </div>
-                            
-                            <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.hours}</div>
+                                <div class="countdown-label">Ore</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.minutes}</div>
+                                <div class="countdown-label">Minuti</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.seconds}</div>
+                                <div class="countdown-label">Secondi</div>
+                            </div>
                         </div>
+                        
+                        <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
                     </div>
                 </div>
             `;
