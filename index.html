@@ -4707,7 +4707,7 @@
 
         // ========== CONFIGURAZIONE JSONBIN ==========
         const JSONBIN_CONFIG = {
-            binId: '68f79bd643b1c97be9760484',
+            binId: '68f676dad0ea881f40aeeada',
             secretKey: '$2a$10$EE2Q5hrD/.yOag/PsKR2COquXji5TeK2zdw6ViXKLn5Nr2uwhDe/q',
             apiUrl: 'https://api.jsonbin.io/v3/b/',
             headers: {
@@ -10431,128 +10431,6 @@
                 updateNavbarForShadowAccess();
             }, 5000);
             
-            // Aggiungi pulsanti di debug per verificare JSONBin
-            setTimeout(() => {
-                // Pulsante per testare Shadow
-                const shadowBtn = document.createElement('button');
-                shadowBtn.innerHTML = '🥷 Test Shadow';
-                shadowBtn.style.cssText = `
-                    position: fixed;
-                    top: 10px;
-                    right: 10px;
-                    z-index: 9999;
-                    background: #ef4444;
-                    color: white;
-                    border: none;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    cursor: pointer;
-                `;
-                shadowBtn.onclick = async () => {
-                    console.log('🧪 Test JSONBin Shadow...');
-                    await saveShadowAccessToCloud();
-                    setTimeout(() => {
-                        updateNavbarForShadowAccess();
-                    }, 1000);
-                };
-                document.body.appendChild(shadowBtn);
-                
-                // Pulsante per forzare controllo Shadow
-                const forceShadowBtn = document.createElement('button');
-                forceShadowBtn.innerHTML = '🔄 Force Shadow Check';
-                forceShadowBtn.style.cssText = `
-                    position: fixed;
-                    top: 50px;
-                    right: 10px;
-                    z-index: 9999;
-                    background: #3b82f6;
-                    color: white;
-                    border: none;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    cursor: pointer;
-                `;
-                forceShadowBtn.onclick = async () => {
-                    console.log('🔄 Forzo controllo Shadow...');
-                    await updateNavbarForShadowAccess();
-                };
-                document.body.appendChild(forceShadowBtn);
-                
-                // Pulsante per resettare accesso Shadow
-                const resetShadowBtn = document.createElement('button');
-                resetShadowBtn.innerHTML = '🗑️ Reset Shadow';
-                resetShadowBtn.style.cssText = `
-                    position: fixed;
-                    top: 90px;
-                    right: 10px;
-                    z-index: 9999;
-                    background: #f59e0b;
-                    color: white;
-                    border: none;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    cursor: pointer;
-                `;
-                resetShadowBtn.onclick = () => {
-                    console.log('🗑️ Reset accesso Shadow...');
-                    localStorage.removeItem('shadowAccessGranted');
-                    localStorage.removeItem('shadowAccessUser');
-                    localStorage.removeItem('shadowAccessDate');
-                    console.log('✅ Accesso Shadow rimosso da localStorage');
-                    UI.notify('🗑️ Accesso Shadow rimosso!', 'info', 'Reset Shadow');
-                    
-                    // Rimuovi il pulsante Shadow dalla navbar
-                    const existingShadowBtn = document.querySelector('[onclick*="shadow"]');
-                    if (existingShadowBtn) {
-                        existingShadowBtn.remove();
-                        console.log('✅ Pulsante Shadow rimosso dalla navbar');
-                    }
-                };
-                document.body.appendChild(resetShadowBtn);
-                
-                // Pulsante per verificare operatori
-                const operatorsBtn = document.createElement('button');
-                operatorsBtn.innerHTML = '👥 Check Operators';
-                operatorsBtn.style.cssText = `
-                    position: fixed;
-                    top: 50px;
-                    right: 10px;
-                    z-index: 9999;
-                    background: #3b82f6;
-                    color: white;
-                    border: none;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    font-size: 12px;
-                    cursor: pointer;
-                `;
-                operatorsBtn.onclick = async () => {
-                    console.log('🔍 Verifica operatori in JSONBin...');
-                    try {
-                        const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
-                            headers: { 'X-Master-Key': JSONBIN_CONFIG.secretKey }
-                        });
-                        if (response.ok) {
-                            const data = await response.json();
-                            console.log('📊 Dati JSONBin:', data.record);
-                            console.log(`👥 Operatori trovati: ${data.record.operators?.length || 0}`);
-                            UI.notify(`Operatori in JSONBin: ${data.record.operators?.length || 0}`, 'info', 'Debug');
-                        }
-                    } catch (error) {
-                        console.error('❌ Errore:', error);
-                    }
-                };
-                document.body.appendChild(operatorsBtn);
-                
-                // Rimuovi i pulsanti dopo 60 secondi
-                setTimeout(() => {
-                    if (shadowBtn.parentNode) shadowBtn.parentNode.removeChild(shadowBtn);
-                    if (operatorsBtn.parentNode) operatorsBtn.parentNode.removeChild(operatorsBtn);
-                }, 60000);
-            }, 3000);
         }
 
         // Avvia inizializzazione
