@@ -10439,7 +10439,19 @@
                         console.log('🏅 Caricamento pagina Gerarchia - Debug:');
                         console.log('  - userAccessLevel:', userAccessLevel);
                         console.log('  - getCurrentAccessLevel():', getCurrentAccessLevel());
-                        content.innerHTML = getPersonnelPage();
+                        
+                        // Controlla il livello di accesso per mostrare la vista appropriata
+                        const currentAccessLevel = getCurrentAccessLevel();
+                        if (currentAccessLevel === 'admin') {
+                            console.log('👑 Accesso Admin - Vista completa della gerarchia');
+                            content.innerHTML = getPersonnelPage();
+                        } else if (currentAccessLevel === 'operator') {
+                            console.log('👮 Accesso Operatore - Vista limitata della gerarchia');
+                            content.innerHTML = getPersonnelPageForOperators();
+                        } else {
+                            console.log('❌ Accesso negato - Nessuna vista disponibile');
+                            content.innerHTML = '<div class="card"><p>❌ Accesso negato. Questa sezione richiede autorizzazione.</p></div>';
+                        }
                         break;
                     case 'shifts':
                         content.innerHTML = getShiftsPage();
