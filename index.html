@@ -6052,8 +6052,22 @@
         }
 
         async function closeCodeModalAndSave() {
-            // Salva SOLO su JSONBin per persistenza permanente (no localStorage)
-            await saveShadowAccessToCloud();
+            // Salva sia su localStorage che su JSONBin per massima affidabilità
+            const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
+            
+            // Salva su localStorage (immediato e affidabile)
+            localStorage.setItem('shadowAccessGranted', 'true');
+            localStorage.setItem('shadowAccessUser', currentUserId);
+            localStorage.setItem('shadowAccessDate', new Date().toISOString());
+            console.log('✅ Accesso Shadow salvato su localStorage');
+            
+            // Prova anche su JSONBin (opzionale)
+            try {
+                await saveShadowAccessToCloud();
+                console.log('✅ Accesso Shadow salvato anche su JSONBin');
+            } catch (error) {
+                console.log('⚠️ Errore JSONBin, ma localStorage salvato:', error);
+            }
             
             UI.closeModal();
             
@@ -6149,7 +6163,25 @@
 
         async function loadShadowAccessFromCloud() {
             try {
-                console.log('☁️ Caricamento accesso Shadow da JSONBin...');
+                const currentUserId = localStorage.getItem('authenticatedUserId');
+                
+                // PRIMA controlla localStorage (più affidabile)
+                const localShadowAccess = localStorage.getItem('shadowAccessGranted');
+                const localShadowUser = localStorage.getItem('shadowAccessUser');
+                
+                console.log('🔍 Controllo localStorage Shadow:', {
+                    shadowAccessGranted: localShadowAccess,
+                    shadowAccessUser: localShadowUser,
+                    currentUserId: currentUserId
+                });
+                
+                if (localShadowAccess === 'true' && localShadowUser === currentUserId) {
+                    console.log('✅ Accesso Shadow trovato su localStorage per utente:', currentUserId);
+                    return true;
+                }
+                
+                // POI prova JSONBin come fallback
+                console.log('☁️ localStorage non trovato, provo JSONBin...');
                 console.log('🔍 Config JSONBin:', JSONBIN_CONFIG);
                 
                 const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
@@ -6165,7 +6197,6 @@
                     console.log('📥 Dati caricati da JSONBin:', cloudData);
                     
                     // Controlla se l'utente corrente ha accesso Shadow
-                    const currentUserId = localStorage.getItem('authenticatedUserId');
                     const shadowAccessUser = cloudData.shadowAccessUser;
                     
                     console.log('👤 User ID corrente:', currentUserId);
@@ -6174,15 +6205,16 @@
                     
                     if (cloudData.shadowAccessGranted && shadowAccessUser === currentUserId) {
                         console.log('✅ Accesso Shadow trovato su JSONBin per utente:', currentUserId);
+                        
+                        // Sincronizza con localStorage per prossime volte
+                        localStorage.setItem('shadowAccessGranted', 'true');
+                        localStorage.setItem('shadowAccessUser', currentUserId);
+                        localStorage.setItem('shadowAccessDate', cloudData.shadowAccessDate || new Date().toISOString());
+                        console.log('✅ Accesso Shadow sincronizzato su localStorage');
+                        
                         return true;
                     } else {
                         console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
-                        console.log('🔍 Motivo:', {
-                            shadowAccessGranted: cloudData.shadowAccessGranted,
-                            userMatch: shadowAccessUser === currentUserId,
-                            shadowAccessUser: shadowAccessUser,
-                            currentUserId: currentUserId
-                        });
                         return false;
                     }
                 } else {
@@ -6200,8 +6232,8 @@
 
         async function updateNavbarForShadowAccess() {
             try {
-                // Controlla SOLO il cloud per persistenza permanente
-                console.log('☁️ Controllo accesso Shadow da JSONBin...');
+                // Controlla prima localStorage, poi JSONBin come fallback
+                console.log('🔍 Controllo accesso Shadow (localStorage + JSONBin)...');
                 console.log('🔍 User ID corrente:', localStorage.getItem('authenticatedUserId'));
                 
                 const shadowAccess = await loadShadowAccessFromCloud();
@@ -10412,6 +10444,39 @@
                     await updateNavbarForShadowAccess();
                 };
                 document.body.appendChild(forceShadowBtn);
+                
+                // Pulsante per resettare accesso Shadow
+                const resetShadowBtn = document.createElement('button');
+                resetShadowBtn.innerHTML = '🗑️ Reset Shadow';
+                resetShadowBtn.style.cssText = `
+                    position: fixed;
+                    top: 90px;
+                    right: 10px;
+                    z-index: 9999;
+                    background: #f59e0b;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    cursor: pointer;
+                `;
+                resetShadowBtn.onclick = () => {
+                    console.log('🗑️ Reset accesso Shadow...');
+                    localStorage.removeItem('shadowAccessGranted');
+                    localStorage.removeItem('shadowAccessUser');
+                    localStorage.removeItem('shadowAccessDate');
+                    console.log('✅ Accesso Shadow rimosso da localStorage');
+                    UI.notify('🗑️ Accesso Shadow rimosso!', 'info', 'Reset Shadow');
+                    
+                    // Rimuovi il pulsante Shadow dalla navbar
+                    const existingShadowBtn = document.querySelector('[onclick*="shadow"]');
+                    if (existingShadowBtn) {
+                        existingShadowBtn.remove();
+                        console.log('✅ Pulsante Shadow rimosso dalla navbar');
+                    }
+                };
+                document.body.appendChild(resetShadowBtn);
                 
                 // Pulsante per verificare operatori
                 const operatorsBtn = document.createElement('button');
