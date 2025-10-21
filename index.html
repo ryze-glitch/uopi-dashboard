@@ -6271,9 +6271,6 @@
                             statusBtn.parentNode.insertBefore(shadowBtn, statusBtn.nextSibling.nextSibling);
                             
                             console.log('✅ Pulsante Shadow aggiunto alla navbar con successo!');
-                            
-                            // Mostra notifica di conferma
-                            UI.notify('🥷 Sezione Shadow sbloccata!', 'success', 'Shadow Access');
                         } else {
                             console.error('❌ Pulsante Status non trovato nella navbar');
                             console.log('🔍 Navbar HTML:', nav.innerHTML);
@@ -7482,28 +7479,76 @@
         }
 
         function getShadowPage() {
+            console.log('🔧 getShadowPage() chiamata - Verifico stato countdown');
+            
+            const isUnlocked = checkUnlockStatus();
+            const time = getTimeRemaining();
+            
+            if (isUnlocked) {
+                // Pagina sbloccata - mostra il contenuto normale
+                return `
+                    <div class="page-header">
+                        <div>
+                            <h1>🥷 Shadow</h1>
+                            <p>Sezione riservata per operatori con accesso speciale</p>
+                        </div>
+                    </div>
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                        <h3 style="color: #10b981; margin-bottom: 1rem;">Sezione Sbloccata!</h3>
+                        <p style="color: #94a3b8;">Il contenuto di questa sezione è ora disponibile.</p>
+                    </div>
+                `;
+            }
+            
+            // Pagina bloccata con countdown
+            setTimeout(() => startCountdownTimer(), 100);
+            
             return `
                 <div class="page-content">
                     <div class="page-header">
-                        <h1>🥷 Shadow</h1>
-                        <p>Sezione riservata per operatori con accesso speciale</p>
+                        <div>
+                            <h1>🥷 Shadow</h1>
+                            <p>Sezione riservata per operatori con accesso speciale</p>
+                        </div>
                     </div>
-                    
-                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.05)); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 2rem;">🥷</div>
-                            <div>
-                                <h3 style="color: #8b5cf6; margin: 0; font-size: 1.25rem; font-weight: 700;">Accesso Shadow Concesso</h3>
-                                <p style="color: #94a3b8; margin: 0; font-size: 0.875rem;">Benvenuto nella sezione riservata</p>
+                    <div class="card" style="padding: 3rem;">
+                        <h3 style="color: #e2e8f0; margin-bottom: 1rem;">🔒 Contenuto Bloccato</h3>
+                        <p style="color: #94a3b8;">Questa sezione è attualmente in fase di sviluppo e sarà disponibile tra 30 giorni.</p>
+                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;">
+                            <p style="color: #f59e0b; margin: 0; font-size: 0.875rem;">
+                                ⚠️ <strong>In Sviluppo:</strong> Le funzionalità di questa sezione sono ancora in fase di implementazione.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="countdown-overlay">
+                    <div class="countdown-message">
+                        <div class="countdown-icon">🔒</div>
+                        <h3 class="countdown-title">Sezione Bloccata</h3>
+                        <p class="countdown-subtitle">🚧・Questa sezione è in fase di Sviluppo</p>
+                        
+                        <div class="countdown-timer">
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.days}</div>
+                                <div class="countdown-label">Giorni</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.hours}</div>
+                                <div class="countdown-label">Ore</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.minutes}</div>
+                                <div class="countdown-label">Minuti</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number">${time.seconds}</div>
+                                <div class="countdown-label">Secondi</div>
                             </div>
                         </div>
-                        <p style="color: #e2e8f0; margin: 0;">Questa sezione è accessibile solo agli operatori che hanno inserito il codice di accesso corretto.</p>
-                    </div>
-                    
-                    <div class="development-message">
-                        <div class="development-icon">🚧</div>
-                        <h2>Sezione in Sviluppo</h2>
-                        <p>La sezione Shadow è attualmente in fase di sviluppo. Contenuti speciali saranno aggiunti presto.</p>
+                        
+                        <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
                     </div>
                 </div>
             `;
@@ -9141,13 +9186,13 @@
                         </div>
                         
                         <!-- Controlli Selezione -->
-                        <div style="display: flex; gap: 0.75rem; align-items: center;">
-                            <select id="operatorSelector" style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.875rem;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+                        <div style="display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap;">
+                            <select id="operatorSelector" style="flex: 1; min-width: 200px; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.875rem;" onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 3px rgba(59, 130, 246, 0.1)'" onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
                                 <option value="">Seleziona operatore da aggiungere...</option>
                                 ${availableOps.map(op => `<option value="${op.id}">${op.name} - ${op.qualification}</option>`).join('')}
                             </select>
                             
-                            <button type="button" onclick="addSelectedOperator()" style="padding: 0.75rem 1rem; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; border-radius: 0.5rem; color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            <button type="button" onclick="addSelectedOperator()" style="flex-shrink: 0; padding: 0.75rem 1rem; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; border-radius: 0.5rem; color: white; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                                 <i class="fas fa-plus"></i> Aggiungi
                             </button>
                         </div>
