@@ -7406,6 +7406,8 @@
         }
 
         function getAnnouncementsPage() {
+            const time = getTimeRemaining();
+            
             return `
                 <div class="page-content">
                     <div class="page-header">
@@ -7413,10 +7415,45 @@
                         <p>Centro comunicazioni e annunci ufficiali della U.O.P.I.</p>
                     </div>
                     
-                    <div class="development-message">
-                        <div class="development-icon">🚧</div>
-                        <h2>Sezione in Sviluppo</h2>
-                        <p>La sezione Comunicati è attualmente in fase di sviluppo.</p>
+                    <div class="card" style="padding: 3rem;">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                            <h2 style="color: #f59e0b; margin-bottom: 1rem; font-size: 2rem; font-weight: 700;">Sezione Bloccata</h2>
+                            <p style="color: #94a3b8; margin-bottom: 2rem; font-size: 1.125rem;">Questa sezione è attualmente in fase di sviluppo e sarà disponibile tra 30 giorni.</p>
+                            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 2rem;">
+                                <div style="color: #f59e0b; font-weight: 600; margin-bottom: 0.5rem;">⚠️ <strong>In Sviluppo:</strong> Le funzionalità di questa sezione sono ancora in fase di implementazione.</div>
+                                <div style="color: #e2e8f0; font-size: 0.875rem;">Il sistema di comunicati ufficiali sarà presto disponibile per tutti gli operatori.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="countdown-overlay">
+                        <div class="countdown-message">
+                            <div class="countdown-icon">🔒</div>
+                            <h3 class="countdown-title">🚧・Questa sezione è in fase di Sviluppo</h3>
+                            <p class="countdown-subtitle">🚧・Questa sezione è in fase di Sviluppo</p>
+                            
+                            <div class="countdown-timer">
+                                <div class="countdown-unit">
+                                    <div class="countdown-number">${time.days}</div>
+                                    <div class="countdown-label">Giorni</div>
+                                </div>
+                                <div class="countdown-unit">
+                                    <div class="countdown-number">${time.hours}</div>
+                                    <div class="countdown-label">Ore</div>
+                                </div>
+                                <div class="countdown-unit">
+                                    <div class="countdown-number">${time.minutes}</div>
+                                    <div class="countdown-label">Minuti</div>
+                                </div>
+                                <div class="countdown-unit">
+                                    <div class="countdown-number">${time.seconds}</div>
+                                    <div class="countdown-label">Secondi</div>
+                                </div>
+                            </div>
+                            
+                            <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
+                        </div>
                     </div>
                 </div>
             `;
