@@ -6051,19 +6051,24 @@
             UI.modal('✅ Codice Accettato', successContent, footer);
         }
 
-        function closeCodeModalAndSave() {
+        async function closeCodeModalAndSave() {
             // Salva SOLO su JSONBin per persistenza permanente (no localStorage)
-            saveShadowAccessToCloud();
+            await saveShadowAccessToCloud();
             
             UI.closeModal();
             
             // Mostra notifica finale
-            UI.notify('🎉 Accesso Shadow sbloccato! Aggiorna la pagina per vedere la nuova sezione.', 'success', '🥷 Shadow Unlocked');
+            UI.notify('🎉 Accesso Shadow sbloccato! La sezione è ora disponibile.', 'success', '🥷 Shadow Unlocked');
             
-            // Forza il refresh della navbar dopo un breve delay
+            // Forza il refresh della navbar immediatamente
             setTimeout(() => {
                 updateNavbarForShadowAccess();
-            }, 1000);
+            }, 500);
+            
+            // Controllo aggiuntivo dopo 2 secondi
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 2000);
         }
 
         async function saveShadowAccessToCloud() {
@@ -6213,6 +6218,8 @@
                         const existingShadowBtn = nav.querySelector('[onclick*="shadow"]');
                         if (existingShadowBtn) {
                             console.log('ℹ️ Pulsante Shadow già presente nella navbar');
+                            // Assicurati che sia visibile
+                            existingShadowBtn.style.display = '';
                             return;
                         }
                         
@@ -6226,6 +6233,7 @@
                             shadowBtn.className = 'nav-btn';
                             shadowBtn.setAttribute('onclick', "loadPage('shadow')");
                             shadowBtn.innerHTML = '🥷 Shadow';
+                            shadowBtn.style.display = '';
                             
                             // Inserisci dopo Status e prima di Crediti
                             statusBtn.parentNode.insertBefore(shadowBtn, statusBtn.nextSibling.nextSibling);
@@ -6236,9 +6244,11 @@
                             UI.notify('🥷 Sezione Shadow sbloccata!', 'success', 'Shadow Access');
                         } else {
                             console.error('❌ Pulsante Status non trovato nella navbar');
+                            console.log('🔍 Navbar HTML:', nav.innerHTML);
                         }
                     } else {
                         console.error('❌ Navbar non trovata');
+                        console.log('🔍 Document body:', document.body);
                     }
                 } else {
                     console.log('ℹ️ Nessun accesso Shadow trovato nel cloud per questo utente');
@@ -9887,7 +9897,9 @@
             }
             
             // Controlla accesso Shadow e aggiorna navbar se necessario
-            updateNavbarForShadowAccess();
+            setTimeout(() => {
+                updateNavbarForShadowAccess();
+            }, 1000);
             
             // Carica la pagina iniziale
             loadPage('overview');
@@ -10076,6 +10088,11 @@
                     
                     // Carica la pagina iniziale
                     loadPage('overview');
+                    
+                    // Controlla accesso Shadow dopo il login automatico
+                    setTimeout(() => {
+                        updateNavbarForShadowAccess();
+                    }, 2000);
                     
                     console.log('✅ Login automatico completato!');
                     return;
@@ -10373,6 +10390,28 @@
                     }, 1000);
                 };
                 document.body.appendChild(shadowBtn);
+                
+                // Pulsante per forzare controllo Shadow
+                const forceShadowBtn = document.createElement('button');
+                forceShadowBtn.innerHTML = '🔄 Force Shadow Check';
+                forceShadowBtn.style.cssText = `
+                    position: fixed;
+                    top: 50px;
+                    right: 10px;
+                    z-index: 9999;
+                    background: #3b82f6;
+                    color: white;
+                    border: none;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-size: 12px;
+                    cursor: pointer;
+                `;
+                forceShadowBtn.onclick = async () => {
+                    console.log('🔄 Forzo controllo Shadow...');
+                    await updateNavbarForShadowAccess();
+                };
+                document.body.appendChild(forceShadowBtn);
                 
                 // Pulsante per verificare operatori
                 const operatorsBtn = document.createElement('button');
