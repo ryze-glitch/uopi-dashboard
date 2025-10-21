@@ -10508,12 +10508,7 @@
                     console.log('✅ Caricate ' + notifications.length + ' notifiche dal localStorage');
                 }
                 
-                // Mostra notifica di benvenuto
-                if (operators.length > 0) {
-                    setTimeout(() => {
-                        UI.notify('Benvenuto! Sistema caricato con ' + operators.length + ' operatori', 'success', '🚀 Sistema Pronto');
-                    }, 1000);
-                }
+                // Sistema caricato senza notifica
             }
             
             // Controlla sempre l'accesso Shadow all'avvio (anche dopo refresh)
