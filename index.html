@@ -11176,13 +11176,12 @@
             
         }
 
-        // Avvia inizializzazione
-        initializeSystem();
-        
-        // Apri automaticamente la sezione Panoramica dopo il login
-        setTimeout(() => {
+        // Inizializza e apri automaticamente la Panoramica dopo il login
+        setTimeout(async () => {
             // Controlla se l'utente è già loggato
             if (isLoggedIn()) {
+                console.log('🔄 Caricamento dati e apertura Panoramica...');
+                await initializeSystem();
                 console.log('📊 Apertura automatica Panoramica...');
                 loadPage('overview');
             }
