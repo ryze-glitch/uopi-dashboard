@@ -2,7 +2,11 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3b82f6">
     <title>U.O.P.I. - IPRP 8.0</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -43,6 +47,10 @@
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            /* Mobile optimizations */
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         /* Animated background particles */
@@ -80,6 +88,9 @@
             z-index: 100;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Mobile optimizations */
+            min-height: 60px;
+            flex-wrap: wrap;
         }
 
         @keyframes slideDown {
@@ -236,8 +247,11 @@
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: hidden;
-            white-space: nowrap;
+            /* Mobile optimizations */
+            min-height: 44px;
+            min-width: 44px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .nav-btn::before {
@@ -388,7 +402,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 1.25rem;
             padding: 1.5rem;
-            box-shadow: none;
+            box-shadow: 
                 0 25px 50px rgba(0, 0, 0, 0.5),
                 0 0 0 1px rgba(255, 255, 255, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -578,7 +592,7 @@
         /* Animazioni di hover per le notifiche */
         .notification:hover {
             transform: translateX(-5px) scale(1.02);
-            box-shadow: none;
+            box-shadow: 
                 0 30px 60px rgba(0, 0, 0, 0.6),
                 0 0 0 1px rgba(255, 255, 255, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -1459,7 +1473,6 @@
             border: none;
             border-radius: 0;
             margin: 0;
-            box-shadow: none;
         }
 
         .hierarchical-table table {
@@ -4433,7 +4446,7 @@
                 background: rgba(30, 41, 59, 0.9);
             border-radius: 2rem;
                 border: 1px solid rgba(255, 255, 255, 0.15);
-                box-shadow: none;
+                box-shadow: 
                     0 25px 50px rgba(0, 0, 0, 0.4),
                     0 0 0 1px rgba(255, 255, 255, 0.05),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -4458,7 +4471,7 @@
                 height: 100px;
             border-radius: 50%;
             margin: 0 auto 2rem;
-                box-shadow: none;
+                box-shadow: 
                     0 0 30px rgba(59, 130, 246, 0.4),
                     0 0 60px rgba(59, 130, 246, 0.2);
                 transition: all 0.3s ease;
@@ -4467,7 +4480,7 @@
 
             .login-logo:hover {
                 transform: scale(1.05);
-                box-shadow: none;
+                box-shadow: 
                     0 0 40px rgba(59, 130, 246, 0.6),
                     0 0 80px rgba(59, 130, 246, 0.3);
         }
@@ -4500,7 +4513,7 @@
             font-weight: 700;
             font-size: 1.125rem;
             cursor: pointer;
-                box-shadow: none;
+                box-shadow: 
                     0 8px 20px rgba(88, 101, 242, 0.4),
                     0 0 0 1px rgba(255, 255, 255, 0.1);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -4529,7 +4542,7 @@
 
         .login-btn:hover {
                 transform: translateY(-3px);
-                box-shadow: none;
+                box-shadow: 
                     0 15px 35px rgba(88, 101, 242, 0.5),
                     0 0 0 1px rgba(255, 255, 255, 0.2);
             }
@@ -4626,6 +4639,272 @@
 
             th, td {
                 padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* ========== MOBILE OPTIMIZATIONS ========== */
+        @media (max-width: 640px) {
+            .header {
+                padding: 0.75rem 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+            }
+
+            .logo-section {
+                justify-content: center;
+                gap: 0.75rem;
+            }
+
+            .logo {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .brand h1 {
+                font-size: 1.25rem;
+            }
+
+            .brand p {
+                font-size: 0.75rem;
+            }
+
+            .nav {
+                overflow-x: auto;
+                padding: 0.25rem 0;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .nav::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .main {
+                padding: 1rem 0.75rem;
+            }
+
+            .main-content {
+                padding: 1rem 0.75rem;
+            }
+
+            /* Table responsive improvements */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            table {
+                min-width: 600px;
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                white-space: nowrap;
+            }
+
+            /* Card improvements */
+            .card {
+                margin: 0.75rem 0;
+                padding: 1rem;
+            }
+
+            .card h3 {
+                font-size: 1.125rem;
+            }
+
+            /* Button improvements */
+            .control-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+
+            /* Hero section mobile */
+            .hero-section-v2 {
+                padding: 1.5rem 0.75rem;
+                text-align: center;
+            }
+
+            .title-main {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            /* Stats grid mobile */
+            .stats-grid-v2 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .analytics-grid-v2 {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            /* Command grid mobile */
+            .command-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            /* Empty state mobile */
+            .empty-title {
+                font-size: 1.5rem;
+            }
+
+            .empty-icon-v2 {
+                width: 4rem;
+                height: 4rem;
+            }
+
+            .icon-background {
+                font-size: 2rem;
+            }
+
+            /* Touch improvements */
+            .user-profile {
+                padding: 0.5rem;
+                min-height: 44px;
+            }
+
+            .dropdown-menu {
+                max-height: 60vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Login improvements */
+            .login-sidebar {
+                padding: 1rem;
+            }
+
+            .login-btn {
+                min-height: 48px;
+                font-size: 1rem;
+                padding: 0.75rem 1.5rem;
+            }
+
+            /* Modal improvements */
+            .modal-content {
+                margin: 1rem;
+                max-height: 90vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Development banner mobile */
+            .development-banner {
+                margin: 0.75rem;
+                padding: 1rem;
+            }
+
+            .development-message {
+                padding: 1.5rem 1rem;
+                margin: 1rem 0;
+            }
+
+            /* Page header mobile */
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .page-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+                width: 100%;
+            }
+
+            /* Countdown mobile */
+            .countdown-message {
+                padding: 1.5rem 1rem;
+                margin: 1rem;
+            }
+
+            .countdown-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .countdown-unit {
+                padding: 0.5rem;
+                min-width: 60px;
+            }
+
+            .countdown-number {
+                font-size: 1.5rem;
+            }
+
+            .countdown-label {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Ultra small screens */
+        @media (max-width: 360px) {
+            .header {
+                padding: 0.5rem;
+            }
+
+            .logo {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            .brand h1 {
+                font-size: 1rem;
+            }
+
+            .brand p {
+                font-size: 0.625rem;
+            }
+
+            .nav-btn {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .main {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .title-main {
+                font-size: 1.75rem;
+            }
+
+            .hero-description {
+                font-size: 0.875rem;
+            }
+
+            .card {
+                padding: 0.75rem;
+            }
+
+            .control-btn {
+                padding: 0.625rem 0.875rem;
                 font-size: 0.75rem;
             }
         }
@@ -7008,6 +7287,7 @@
                                 ${description}
                             </div>
                             <div class="hierarchical-table">
+                                <div class="table-container">
                     <table>
                         <thead>
                             <tr>
@@ -7023,6 +7303,7 @@
                                         ${createOperatorRows(operatorsList, showActions)}
                         </tbody>
                     </table>
+                                </div>
                             </div>
                         </div>
                 </div>
