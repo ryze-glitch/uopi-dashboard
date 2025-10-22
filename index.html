@@ -5407,6 +5407,11 @@
                         // SOVRASCRIVI i dati locali con quelli del cloud
                         if (cloudData.operators && Array.isArray(cloudData.operators)) {
                             operators = cloudData.operators;
+                            console.log('✅ Operators caricati:', operators.length, 'operatori');
+                            console.log('📊 DEBUG operators array:', operators);
+                        } else {
+                            console.log('⚠️ Nessun operatore trovato nei dati cloud');
+                        }
                             console.log(`✅ Caricati ${operators.length} operatori da Supabase`);
                         } else {
                             operators = []; // Reset se non ci sono operatori nel cloud
@@ -7374,6 +7379,8 @@
         function getPersonnelPage() {
             // Tutti gli utenti autorizzati possono vedere la vista completa della Gerarchia
             console.log('🏅 Accesso Gerarchia - Vista completa per tutti gli utenti autorizzati');
+            console.log('📊 DEBUG: operators array:', operators);
+            console.log('📊 DEBUG: operators.length:', operators.length);
             
             // Raggruppa operatori per nucleo (solo per admin)
             const dirigenzialeOps = operators.filter(op => op.role === 'dirigenziale');
@@ -11085,6 +11092,8 @@
                         console.log('🏅 Caricamento pagina Gerarchia - Debug:');
                         console.log('  - userAccessLevel:', userAccessLevel);
                         console.log('  - getCurrentAccessLevel():', getCurrentAccessLevel());
+                        console.log('  - operators array:', operators);
+                        console.log('  - operators.length:', operators.length);
                         
                         // Controlla il livello di accesso per mostrare la vista appropriata
                         const currentAccessLevel = getCurrentAccessLevel();
