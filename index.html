@@ -5410,12 +5410,8 @@
                             console.log('✅ Operators caricati:', operators.length, 'operatori');
                             console.log('📊 DEBUG operators array:', operators);
                         } else {
-                            console.log('⚠️ Nessun operatore trovato nei dati cloud');
-                        }
-                            console.log(`✅ Caricati ${operators.length} operatori da Supabase`);
-                        } else {
                             operators = []; // Reset se non ci sono operatori nel cloud
-                            console.log('⚠️ Nessun operatore trovato in Supabase, reset dati locali');
+                            console.log('⚠️ Nessun operatore trovato nei dati cloud');
                         }
                         
                         if (cloudData.shifts && Array.isArray(cloudData.shifts)) {
