@@ -11178,6 +11178,15 @@
 
         // Avvia inizializzazione
         initializeSystem();
+        
+        // Apri automaticamente la sezione Panoramica dopo il login
+        setTimeout(() => {
+            // Controlla se l'utente è già loggato
+            if (isLoggedIn()) {
+                console.log('📊 Apertura automatica Panoramica...');
+                loadPage('overview');
+            }
+        }, 3000);
 
         // Nascondi il main-content all'inizio per mostrare solo il login
         const mainContent = document.querySelector('.main-content');
