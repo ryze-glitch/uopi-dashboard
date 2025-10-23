@@ -5064,8 +5064,31 @@
             anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YnF1dXB6b2x0ZnZteWV3ZG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMzYwMDMsImV4cCI6MjA3NjcxMjAwM30.3i6N_Nise8O3y4Ltj8FbB0wJVrVkyF339w95PORURok',
         };
 
-        // Inizializza Supabase
-        const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+            // Inizializza Supabase
+            const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+            
+            // Testa la connessione a Supabase
+            async function testSupabaseConnection() {
+                try {
+                    const { data, error } = await supabase
+                        .from('uopi_data')
+                        .select('id')
+                        .limit(1);
+                    
+                    if (error) {
+                        console.error('❌ Errore connessione Supabase:', error);
+                        UI.notify('⚠️ Connessione Supabase non disponibile', 'warning', '⚠️ Avviso Cloud');
+                        return false;
+                    } else {
+                        console.log('✅ Connessione Supabase attiva');
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('❌ Errore test connessione Supabase:', error);
+                    UI.notify('⚠️ Connessione Supabase non disponibile', 'warning', '⚠️ Avviso Cloud');
+                    return false;
+                }
+            }
 
         // ========== SISTEMA COUNTDOWN ==========
         const COUNTDOWN_CONFIG = {
@@ -5378,6 +5401,10 @@
         function saveOperators() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.OPERATORS, operators);
+            // Salva anche su Supabase (async, non blocca l'UI)
+            saveDataToSupabase().catch(error => {
+                console.error('Errore nel salvataggio su Supabase:', error);
+            });
             // Salva anche su JSONBin (async, non blocca l'UI)
             saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
             return true;
@@ -5438,20 +5465,28 @@
                         // Aggiorna l'interfaccia
                         // loadPage('personnel'); // Rimosso per evitare conflitto con apertura automatica Panoramica
                         
+                        // Aggiorna la gerarchia dopo il caricamento dei dati
+                        setTimeout(() => {
+                            updateOverviewStats();
+                        }, 500);
+                        
                         return true;
                     } else {
-                        console.log('⚠️ Nessun dato trovato in Supabase, reset completo');
-                        operators = [];
-                        shifts = [];
-                        notifications = [];
-                        saveOperators();
-                        saveShifts();
-                        saveNotifications();
-                        return false;
+                        console.log('⚠️ Nessun dato trovato in Supabase, creo dati di esempio...');
+                        // Crea dati di esempio se non ci sono dati nel cloud
+                        createSampleOperators();
+                        createSampleShifts();
+                        createSampleNotifications();
+                        return false; // Indica che non c'erano dati cloud, ma abbiamo creato dati locali
                     }
                 } catch (error) {
                     console.error('❌ Errore nel caricamento dati da Supabase:', error);
-                    UI.showNotification('Errore nel caricamento dati dal cloud', 'error');
+                    console.log('⚠️ Creo dati di esempio come fallback...');
+                    // Crea dati di esempio come fallback in caso di errore
+                    createSampleOperators();
+                    createSampleShifts();
+                    createSampleNotifications();
+                    UI.showNotification('Errore nel caricamento dati dal cloud, utilizzando dati locali', 'warning');
                     return false;
                 }
             }
@@ -5527,19 +5562,24 @@
                     console.log('⚠️ Nessun turno trovato in JSONBin, mantengo dati locali');
                 }
                 
-                if (data.record.notifications && Array.isArray(data.record.notifications)) {
-                    notifications = data.record.notifications;
-                    console.log(`✅ Caricate ${notifications.length} notifiche da JSONBin`);
-                } else {
-                    console.log('⚠️ Nessuna notifica trovata in JSONBin, mantengo dati locali');
-                }
-                
-                // Salva anche nel localStorage come backup
-                saveOperators();
-                saveShifts();
-                saveNotifications();
-                
-                return true;
+                  if (data.record.notifications && Array.isArray(data.record.notifications)) {
+                      notifications = data.record.notifications;
+                      console.log(`✅ Caricate ${notifications.length} notifiche da JSONBin`);
+                  } else {
+                      console.log('⚠️ Nessuna notifica trovata in JSONBin, mantengo dati locali');
+                  }
+                  
+                  // Salva anche nel localStorage come backup
+                  saveOperators();
+                  saveShifts();
+                  saveNotifications();
+                  
+                  // Aggiorna la gerarchia dopo il caricamento dei dati
+                  setTimeout(() => {
+                      updateOverviewStats();
+                  }, 500);
+                  
+                  return true;
             } catch (error) {
                 console.error('❌ Errore nel caricamento da JSONBin:', error);
                 // Fallback al localStorage
@@ -5667,6 +5707,12 @@
             const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
             if (savedOperators && Array.isArray(savedOperators)) {
                 operators = savedOperators;
+                
+                // Aggiorna la gerarchia dopo il caricamento dei dati
+                setTimeout(() => {
+                    updateOverviewStats();
+                }, 100);
+                
                 return true;
             }
             
@@ -5764,6 +5810,12 @@
             const savedNotifications = loadFromStorage(STORAGE_KEYS.NOTIFICATIONS, []);
             if (savedNotifications && Array.isArray(savedNotifications)) {
                 notifications = savedNotifications;
+                
+                // Aggiorna la gerarchia dopo il caricamento dei dati
+                setTimeout(() => {
+                    updateOverviewStats();
+                }, 100);
+                
                 return true;
             }
             
@@ -5820,6 +5872,12 @@
             const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
             if (savedShifts && Array.isArray(savedShifts)) {
                 shifts = savedShifts;
+                
+                // Aggiorna la gerarchia dopo il caricamento dei dati
+                setTimeout(() => {
+                    updateOverviewStats();
+                }, 100);
+                
                 return true;
             }
             
@@ -6839,6 +6897,11 @@
             if (currentPage && currentPage.textContent.includes('Panoramica')) {
                 loadPage('overview');
             }
+            
+            // Aggiorna anche la pagina gerarchia se è attualmente visualizzata
+            if (currentPage && currentPage.textContent.includes('Gerarchia')) {
+                loadPage('personnel');
+            }
         }
 
         function testNotifications() {
@@ -7306,6 +7369,12 @@
         function getPersonnelPageForOperators() {
             console.log('🔒 getPersonnelPageForOperators chiamata - Vista limitata per operatori');
             
+            // Controllo di sicurezza per l'array operators
+            if (!operators || !Array.isArray(operators)) {
+                console.warn('⚠️ Array operators non valido, inizializzo...');
+                operators = [];
+            }
+            
             const totalOperators = operators.length;
             const availableOperators = operators.filter(op => op.status === 'Disponibile').length;
             const dirigenzialeCount = operators.filter(op => op.role === 'dirigenziale').length;
@@ -7375,6 +7444,13 @@
         function getPersonnelPage() {
             // Tutti gli utenti autorizzati possono vedere la vista completa della Gerarchia
             console.log('🏅 Accesso Gerarchia - Vista completa per tutti gli utenti autorizzati');
+            
+            // Controllo di sicurezza per l'array operators
+            if (!operators || !Array.isArray(operators)) {
+                console.warn('⚠️ Array operators non valido, inizializzo...');
+                operators = [];
+            }
+            
             console.log('📊 DEBUG: operators array:', operators);
             console.log('📊 DEBUG: operators.length:', operators.length);
             
@@ -9024,6 +9100,12 @@
             // Salva automaticamente nel localStorage
             saveOperators();
             
+            // Salva anche su Supabase
+            saveDataToSupabase().catch(error => {
+                console.error('Errore nel salvataggio su Supabase:', error);
+                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
+            });
+            
             UI.loading('Salvataggio operatore...', true);
             setTimeout(() => {
                 UI.loading('', false);
@@ -9083,13 +9165,19 @@
             
             setTimeout(() => {
                 // Rimuovi operatore dall'array
-                operators = operators.filter(op => op.id !== operatorId);
-                
-                // Salva automaticamente nel localStorage
-                saveOperators();
-                
-                UI.loading('', false);
-                UI.notify(`✅ Operatore ${operator.name} rimosso!`, 'success', '🗑️ Rimozione Completata');
+            operators = operators.filter(op => op.id !== operatorId);
+            
+            // Salva automaticamente nel localStorage
+            saveOperators();
+            
+            // Salva anche su Supabase
+            saveDataToSupabase().catch(error => {
+                console.error('Errore nel salvataggio su Supabase:', error);
+                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
+            });
+            
+            UI.loading('', false);
+            UI.notify(`✅ Operatore ${operator.name} rimosso!`, 'success', '🗑️ Rimozione Completata');
                 UI.closeModal();
                 
                 // Ricarica pagina con animazione
@@ -9242,6 +9330,12 @@
             // Salva automaticamente nel localStorage
             saveOperators();
             
+            // Salva anche su Supabase
+            saveDataToSupabase().catch(error => {
+                console.error('Errore nel salvataggio su Supabase:', error);
+                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
+            });
+            
             UI.loading('Salvataggio modifiche...', true);
             setTimeout(() => {
                 UI.loading('', false);
@@ -9296,13 +9390,19 @@
             
             setTimeout(() => {
                 // Svuota array operatori
-                operators = [];
-                
-                // Salva automaticamente nel localStorage
-                saveOperators();
-                
-                UI.loading('', false);
-                UI.notify(`✅ Rimossi ${count} operatori!`, 'success');
+            operators = [];
+            
+            // Salva automaticamente nel localStorage
+            saveOperators();
+            
+            // Salva anche su Supabase
+            saveDataToSupabase().catch(error => {
+                console.error('Errore nel salvataggio su Supabase:', error);
+                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
+            });
+            
+            UI.loading('', false);
+            UI.notify(`✅ Rimossi ${count} operatori!`, 'success');
                 UI.closeModal();
                 
                 // Ricarica pagina con animazione
@@ -11145,6 +11245,9 @@
         async function initializeSystem() {
             console.log('🔄 Inizializzazione sistema...');
             
+            // Testa la connessione a Supabase
+            const supabaseConnected = await testSupabaseConnection();
+            
             // Carica SOLO da Supabase (cloud-first)
             console.log('🌐 Caricamento dati da Supabase...');
             const cloudSuccess = await loadDataFromSupabase();
@@ -11156,13 +11259,16 @@
                     notifications: notifications.length
                 });
             } else {
-                console.log('⚠️ Supabase non disponibile, reset completo...');
-                operators = [];
-                shifts = [];
-                notifications = [];
-                saveOperators();
-                saveShifts();
-                saveNotifications();
+                console.log('⚠️ Supabase non disponibile, creo dati di esempio...');
+                // Crea dati di esempio se Supabase non è disponibile
+                createSampleOperators();
+                createSampleShifts();
+                createSampleNotifications();
+                console.log('✅ Dati di esempio creati:', {
+                    operators: operators.length,
+                    shifts: shifts.length,
+                    notifications: notifications.length
+                });
             }
             
             // Controlla sempre l'accesso Shadow all'avvio (anche dopo refresh)
@@ -11181,16 +11287,21 @@
             
         }
 
-        // Inizializza e apri automaticamente la Panoramica dopo il login
-        setTimeout(async () => {
-            // Controlla se l'utente è già loggato
-            if (isLoggedIn()) {
-                console.log('🔄 Caricamento dati e apertura Panoramica...');
-                await initializeSystem();
-                console.log('📊 Apertura automatica Panoramica...');
-                loadPage('overview');
-            }
-        }, 3000);
+          // Inizializza e apri automaticamente la Panoramica dopo il login
+          setTimeout(async () => {
+              // Controlla se l'utente è già loggato
+              if (isLoggedIn()) {
+                  console.log('🔄 Caricamento dati e apertura Panoramica...');
+                  await initializeSystem();
+                  console.log('📊 Apertura automatica Panoramica...');
+                  loadPage('overview');
+                  
+                  // Aggiorna la gerarchia dopo il caricamento dei dati
+                  setTimeout(() => {
+                      updateOverviewStats();
+                  }, 1000);
+              }
+          }, 3000);
 
         // Nascondi il main-content all'inizio per mostrare solo il login
         const mainContent = document.querySelector('.main-content');
