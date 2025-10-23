@@ -5062,6 +5062,7 @@
         const SUPABASE_CONFIG = {
             url: 'https://tybquupzoltfvmyewdmp.supabase.co',
             anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YnF1dXB6b2x0ZnZteWV3ZG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMzYwMDMsImV4cCI6MjA3NjcxMjAwM30.3i6N_Nise8O3y4Ltj8FbB0wJVrVkyF339w95PORURok',
+            serviceKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YnF1dXB6b2x0ZnZteWV3ZG1wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTEzNjAwMywiZXhwIjoyMDc2NzEyMDAzfQ.nKuHT-jJKFCuhPI2m1zwzzNEBUl_NgmV9DfzRTZnqFg'
         };
 
             // Inizializza Supabase
@@ -5070,6 +5071,7 @@
             // Testa la connessione a Supabase
             async function testSupabaseConnection() {
                 try {
+                    console.log('🔄 Test connessione Supabase...');
                     const { data, error } = await supabase
                         .from('uopi_data')
                         .select('id')
@@ -5081,6 +5083,7 @@
                         return false;
                     } else {
                         console.log('✅ Connessione Supabase attiva');
+                        UI.notify('☁️ Connessione Supabase ripristinata', 'success', '✅ Cloud Attivo');
                         return true;
                     }
                 } catch (error) {
@@ -5412,7 +5415,7 @@
 
             // ========== FUNZIONI SUPABASE ==========
             
-            // Carica tutti i dati da Supabase (SOLO CLOUD)
+            // Carica tutti i dati da Supabase
             async function loadDataFromSupabase() {
                 try {
                     console.log('🔄 Caricamento dati da Supabase...');
@@ -5462,9 +5465,6 @@
                         saveShifts();
                         saveNotifications();
                         
-                        // Aggiorna l'interfaccia
-                        // loadPage('personnel'); // Rimosso per evitare conflitto con apertura automatica Panoramica
-                        
                         // Aggiorna la gerarchia dopo il caricamento dei dati
                         setTimeout(() => {
                             updateOverviewStats();
@@ -5486,7 +5486,7 @@
                     createSampleOperators();
                     createSampleShifts();
                     createSampleNotifications();
-                    UI.showNotification('Errore nel caricamento dati dal cloud, utilizzando dati locali', 'warning');
+                    UI.notify('Errore nel caricamento dati dal cloud, utilizzando dati locali', 'warning');
                     return false;
                 }
             }
@@ -5524,6 +5524,7 @@
                     return true;
                 } catch (error) {
                     console.error('❌ Errore nel salvataggio su Supabase:', error);
+                    UI.notify('Errore nel salvataggio dati sul cloud', 'error');
                     return false;
                 }
             }
