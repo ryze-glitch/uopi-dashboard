@@ -5477,6 +5477,17 @@
                         createSampleOperators();
                         createSampleShifts();
                         createSampleNotifications();
+                        
+                        // Salva immediatamente i dati di esempio su Supabase
+                        setTimeout(() => {
+                            saveDataToSupabase().then(success => {
+                                if (success) {
+                                    console.log('✅ Dati di esempio salvati su Supabase');
+                                    UI.notify('✅ Dati di esempio creati e sincronizzati', 'success', '🔄 Sincronizzazione');
+                                }
+                            });
+                        }, 1000);
+                        
                         return false; // Indica che non c'erano dati cloud, ma abbiamo creato dati locali
                     }
                 } catch (error) {
@@ -11192,6 +11203,13 @@
                         console.log('  - operators array:', operators);
                         console.log('  - operators.length:', operators.length);
                         
+                        // Controllo di sicurezza: se non ci sono operatori, creali
+                        if (!operators || operators.length === 0) {
+                            console.log('⚠️ Nessun operatore trovato, creo dati di esempio...');
+                            createSampleOperators();
+                            UI.notify('📝 Creati operatori di esempio', 'info', '🔄 Dati Iniziali');
+                        }
+                        
                         // Controlla il livello di accesso per mostrare la vista appropriata
                         const currentAccessLevel = getCurrentAccessLevel();
                         if (currentAccessLevel === 'admin') {
@@ -11271,6 +11289,19 @@
                     notifications: notifications.length
                 });
             }
+            
+            // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
+            if (!operators || operators.length === 0) {
+                console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, creo dati di esempio...');
+                createSampleOperators();
+                UI.notify('📝 Creati operatori di esempio per sicurezza', 'info', '🔄 Controllo Finale');
+            }
+            
+            console.log('📊 Stato finale sistema:', {
+                operators: operators.length,
+                shifts: shifts.length,
+                notifications: notifications.length
+            });
             
             // Controlla sempre l'accesso Shadow all'avvio (anche dopo refresh)
             console.log('🥷 Controllo accesso Shadow all\'avvio...');
