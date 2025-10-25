@@ -6424,12 +6424,17 @@
             
             // Salva anche su GitHub Gist per sincronizzazione automatica
             setTimeout(async () => {
-                const success = await saveShiftsToGist();
-                if (success) {
-                    console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
-                    UI.notify('✅ Turni sincronizzati per tutti!', 'success', '☁️ Cloud Sync');
-                } else {
-                    console.log('⚠️ Errore sincronizzazione GitHub');
+                try {
+                    const success = await saveShiftsToGist();
+                    if (success) {
+                        console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
+                        UI.notify('✅ Turni sincronizzati per tutti!', 'success', '☁️ Cloud Sync');
+                    } else {
+                        console.log('⚠️ Errore sincronizzazione GitHub');
+                        UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Locale');
+                    }
+                } catch (error) {
+                    console.error('❌ Errore salvataggio GitHub:', error);
                     UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Locale');
                 }
             }, 500);
@@ -6903,6 +6908,87 @@
             }
         }
         
+        // Funzione di debug per i turni
+        function debugShifts() {
+            console.log('🔍 DEBUG TURNI');
+            console.log('========================');
+            console.log('📊 Turni in memoria:', shifts.length);
+            console.log('📊 Array shifts:', shifts);
+            
+            // Controlla localStorage
+            const localShifts = localStorage.getItem('shifts');
+            console.log('💾 localStorage shifts:', localShifts);
+            
+            if (localShifts) {
+                try {
+                    const parsed = JSON.parse(localShifts);
+                    console.log('💾 Parsed localStorage:', parsed.length, 'turni');
+                } catch (e) {
+                    console.error('❌ Errore parsing localStorage:', e);
+                }
+            }
+            
+            // Controlla GitHub
+            console.log('🌐 Controllo GitHub...');
+            fetch(GIST_CONFIG.rawUrl + '?t=' + Date.now())
+                .then(response => {
+                    console.log('📡 GitHub response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📥 GitHub data:', data);
+                    if (data && data.shifts) {
+                        console.log('📥 GitHub shifts:', data.shifts.length);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Errore GitHub:', error);
+                });
+            
+            // Mostra notifica
+            UI.notify(`Debug completato! Turni: ${shifts.length}`, 'info', '🔍 Debug');
+        }
+        
+        // Funzione per creare un turno di test
+        function createTestShift() {
+            if (operators.length === 0) {
+                UI.notify('⚠️ Nessun operatore disponibile!', 'warning');
+                return;
+            }
+            
+            const testShift = {
+                id: Date.now(),
+                moduleType: 'patrol-activation',
+                status: 'Attivo',
+                managerId: operators[0].id,
+                managerName: operators[0].name,
+                managerQualification: operators[0].qualification,
+                patrolTime: '14:30',
+                patrolType: 'patrol',
+                patrolTypeName: 'Pattugliamento Cittadino / Intervento Rapine',
+                patrolVehicle: 'jeep',
+                patrolVehicleName: 'Jeep Cherokee',
+                operator1Id: operators[1] ? operators[1].id : operators[0].id,
+                operator1Name: operators[1] ? operators[1].name : operators[0].name,
+                operator1Qualification: operators[1] ? operators[1].qualification : operators[0].qualification,
+                operator2Id: operators[2] ? operators[2].id : null,
+                operator2Name: operators[2] ? operators[2].name : null,
+                operator2Qualification: operators[2] ? operators[2].qualification : null,
+                createdBy: localStorage.getItem('authenticatedUserId') || 'test',
+                createdByName: localStorage.getItem('authenticatedUserName') || 'Test User',
+                createdAt: new Date().toISOString(),
+                createdDate: new Date().toLocaleDateString('it-IT')
+            };
+            
+            shifts.push(testShift);
+            saveShifts();
+            
+            UI.notify('✅ Turno di test creato!', 'success', '🧪 Test');
+            
+            // Ricarica la pagina
+            setTimeout(() => loadPage('shifts'), 500);
+        }
+        
         // Funzione per sincronizzare i turni
         async function syncShifts() {
             console.log('🔄 Sincronizzazione turni...');
@@ -7033,31 +7119,38 @@
         async function loadShifts() {
             console.log('🔄 Caricamento turni...');
             
-            // PRIORITÀ: Carica sempre dal localStorage per preservare i dati
+            // Carica sempre dal localStorage PRIMA
             const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
             if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
                 shifts = savedShifts;
-                console.log(`✅ Caricati ${shifts.length} turni dal localStorage (PRESERVATI)`);
-                
-                // Dopo aver caricato i dati locali, controlla se ci sono aggiornamenti su GitHub
-                setTimeout(async () => {
-                    console.log('🔄 Controllo aggiornamenti su GitHub...');
-                    await checkForGitHubUpdates();
-                }, 2000);
-                
+                console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
                 return true;
             }
             
-            // Solo se non ci sono dati locali, prova GitHub come fallback
+            // Se non ci sono dati locali, prova GitHub
             console.log('📡 Nessun dato locale, provo GitHub...');
-            const gistSuccess = await loadShiftsFromGist();
-            
-            if (!gistSuccess || shifts.length === 0) {
-                // Inizializza array vuoto solo se non ci sono dati da nessuna parte
-                shifts = [];
-                console.log('📋 Nessun turno trovato');
+            try {
+                const gistUrl = GIST_CONFIG.rawUrl;
+                const response = await fetch(gistUrl + '?t=' + Date.now());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.shifts && Array.isArray(data.shifts)) {
+                        shifts = data.shifts;
+                        console.log(`✅ Caricati ${shifts.length} turni da GitHub`);
+                        
+                        // Salva in localStorage per la prossima volta
+                        saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.log('⚠️ Errore caricamento GitHub:', error);
             }
             
+            // Se tutto fallisce, inizializza vuoto
+            shifts = [];
+            console.log('📋 Nessun turno trovato');
             return true;
         }
         
@@ -8866,6 +8959,12 @@
                             </button>
                             <button class="btn btn-secondary" onclick="syncShifts()" style="background: linear-gradient(135deg, #10b981, #059669);">
                                 <i class="fas fa-sync"></i> Sincronizza Ora
+                            </button>
+                            <button class="btn btn-info" onclick="debugShifts()" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                                <i class="fas fa-bug"></i> Debug
+                            </button>
+                            <button class="btn btn-warning" onclick="createTestShift()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                <i class="fas fa-plus"></i> Test Turno
                             </button>
                             <button class="btn btn-danger" onclick="clearAllShifts()" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
                                 <i class="fas fa-trash-alt"></i> Cancella Tutti
