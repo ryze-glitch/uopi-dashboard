@@ -85,7 +85,7 @@
   "system": {
     "lastUpdated": "2025-10-20T10:00:00Z",
     "version": "1.0",
-    "autoRefreshInterval": 30,
+    "autoRefreshInterval": 15,
     "description": "Sistema moduli di attivazione dinamico per IPRP FiveM roleplay",
     "totalActivations": 0,
     "activeModules": 0,
