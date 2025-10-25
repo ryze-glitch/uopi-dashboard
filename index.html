@@ -5486,10 +5486,21 @@
                                 console.log(`✅ Caricati moduli di attivazione da: ${path}`);
                                 
                                 // Sincronizza con il sistema di countdown esistente
-                                syncModulesWithCountdown();
+                                try {
+                                    syncModulesWithCountdown();
+                                } catch (syncError) {
+                                    console.error('❌ Errore nella sincronizzazione countdown:', syncError);
+                                }
                                 
                                 // Avvia auto-refresh GitHub ogni 15 secondi per sincronizzazione real-time
-                                startAutoRefresh(15);
+                                // Solo se i moduli sono stati caricati con successo
+                                setTimeout(() => {
+                                    try {
+                                        startAutoRefresh(15);
+                                    } catch (refreshError) {
+                                        console.error('❌ Errore nell\'avvio auto-refresh:', refreshError);
+                                    }
+                                }, 2000); // Aspetta 2 secondi prima di avviare l'auto-refresh
                                 
                                 return true;
                             }
@@ -5535,48 +5546,68 @@
         
         // Funzione per sincronizzare i moduli con il sistema di countdown esistente
         function syncModulesWithCountdown() {
-            if (!activationModules.modules) return;
-            
-            const now = new Date();
-            const countdownUnlockDate = new Date(COUNTDOWN_CONFIG.unlockDate);
-            const isSystemUnlocked = now >= countdownUnlockDate;
-            
-            console.log('🔄 Sincronizzazione moduli con countdown...');
-            console.log(`📅 Data sblocco sistema: ${countdownUnlockDate.toISOString()}`);
-            console.log(`🔓 Sistema sbloccato: ${isSystemUnlocked}`);
-            
-            // Aggiorna lo stato di sblocco per ogni modulo
-            Object.keys(activationModules.modules).forEach(moduleId => {
-                const module = activationModules.modules[moduleId];
-                const moduleUnlockDate = new Date(module.unlockDate);
-                
-                // Se il sistema è sbloccato, sblocca anche i moduli
-                if (isSystemUnlocked) {
-                    module.isUnlocked = true;
-                    module.status = module.status === 'locked' ? 'unlocked' : module.status;
-                } else {
-                    // Mantieni lo stato di blocco se il sistema non è ancora sbloccato
-                    module.isUnlocked = now >= moduleUnlockDate;
-                    if (!module.isUnlocked) {
-                        module.status = 'locked';
-                    }
+            try {
+                if (!activationModules || !activationModules.modules) {
+                    console.log('⚠️ Moduli non disponibili per sincronizzazione');
+                    return;
                 }
                 
-                console.log(`📋 Modulo ${moduleId}: ${module.isUnlocked ? '🔓 Sbloccato' : '🔒 Bloccato'}`);
-            });
-            
-            // Aggiorna le statistiche
-            activationModules.statistics.unlockedModules = Object.values(activationModules.modules).filter(m => m.isUnlocked).length;
-            activationModules.statistics.lockedModules = Object.values(activationModules.modules).filter(m => !m.isUnlocked).length;
-            
-            // Aggiorna la configurazione del countdown nel file moduli
-            activationModules.system.countdownConfig = {
-                unlockDate: COUNTDOWN_CONFIG.unlockDate.toISOString(),
-                isUnlocked: isSystemUnlocked,
-                daysRemaining: Math.max(0, Math.ceil((countdownUnlockDate - now) / (1000 * 60 * 60 * 24)))
-            };
-            
-            console.log(`📊 Moduli sbloccati: ${activationModules.statistics.unlockedModules}/${Object.keys(activationModules.modules).length}`);
+                const now = new Date();
+                const countdownUnlockDate = new Date(COUNTDOWN_CONFIG.unlockDate);
+                const isSystemUnlocked = now >= countdownUnlockDate;
+                
+                console.log('🔄 Sincronizzazione moduli con countdown...');
+                console.log(`📅 Data sblocco sistema: ${countdownUnlockDate.toISOString()}`);
+                console.log(`🔓 Sistema sbloccato: ${isSystemUnlocked}`);
+                
+                // Aggiorna lo stato di sblocco per ogni modulo
+                Object.keys(activationModules.modules).forEach(moduleId => {
+                    try {
+                        const module = activationModules.modules[moduleId];
+                        if (!module || !module.unlockDate) {
+                            console.log(`⚠️ Modulo ${moduleId} non valido, salto`);
+                            return;
+                        }
+                        
+                        const moduleUnlockDate = new Date(module.unlockDate);
+                        
+                        // Se il sistema è sbloccato, sblocca anche i moduli
+                        if (isSystemUnlocked) {
+                            module.isUnlocked = true;
+                            module.status = module.status === 'locked' ? 'unlocked' : module.status;
+                        } else {
+                            // Mantieni lo stato di blocco se il sistema non è ancora sbloccato
+                            module.isUnlocked = now >= moduleUnlockDate;
+                            if (!module.isUnlocked) {
+                                module.status = 'locked';
+                            }
+                        }
+                        
+                        console.log(`📋 Modulo ${moduleId}: ${module.isUnlocked ? '🔓 Sbloccato' : '🔒 Bloccato'}`);
+                    } catch (moduleError) {
+                        console.error(`❌ Errore nel modulo ${moduleId}:`, moduleError);
+                    }
+                });
+                
+                // Aggiorna le statistiche
+                if (activationModules.statistics) {
+                    activationModules.statistics.unlockedModules = Object.values(activationModules.modules).filter(m => m && m.isUnlocked).length;
+                    activationModules.statistics.lockedModules = Object.values(activationModules.modules).filter(m => m && !m.isUnlocked).length;
+                }
+                
+                // Aggiorna la configurazione del countdown nel file moduli
+                if (activationModules.system) {
+                    activationModules.system.countdownConfig = {
+                        unlockDate: COUNTDOWN_CONFIG.unlockDate.toISOString(),
+                        isUnlocked: isSystemUnlocked,
+                        daysRemaining: Math.max(0, Math.ceil((countdownUnlockDate - now) / (1000 * 60 * 60 * 24)))
+                    };
+                }
+                
+                console.log(`📊 Moduli sbloccati: ${activationModules.statistics?.unlockedModules || 0}/${Object.keys(activationModules.modules).length}`);
+            } catch (error) {
+                console.error('❌ Errore nella sincronizzazione moduli:', error);
+            }
         }
         
         // Funzione per attivare un modulo (solo se sbloccato)
@@ -5758,7 +5789,7 @@
                             
                             if (data.modules) {
                                 // Controlla se ci sono stati cambiamenti
-                                const currentLastUpdated = activationModules.system?.lastUpdated;
+                                const currentLastUpdated = activationModules?.system?.lastUpdated;
                                 const newLastUpdated = data.system?.lastUpdated;
                                 
                                 if (currentLastUpdated !== newLastUpdated) {
@@ -5768,13 +5799,25 @@
                                     modulesLoaded = true;
                                     
                                     // Sincronizza con il sistema di countdown esistente
-                                    syncModulesWithCountdown();
+                                    try {
+                                        syncModulesWithCountdown();
+                                    } catch (syncError) {
+                                        console.error('❌ Errore nella sincronizzazione countdown:', syncError);
+                                    }
                                     
                                     // Salva nel localStorage
-                                    localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                                    try {
+                                        localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                                    } catch (storageError) {
+                                        console.error('❌ Errore nel salvataggio localStorage:', storageError);
+                                    }
                                     
                                     // Notifica gli utenti dei cambiamenti
-                                    notifyModuleChanges(data);
+                                    try {
+                                        notifyModuleChanges(data);
+                                    } catch (notifyError) {
+                                        console.error('❌ Errore nelle notifiche:', notifyError);
+                                    }
                                     
                                     console.log(`✅ Moduli aggiornati da: ${path}`);
                                     return true;
@@ -5800,34 +5843,49 @@
         
         // Funzione per notificare i cambiamenti nei moduli
         function notifyModuleChanges(newData) {
-            if (!activationModules.modules || !newData.modules) return;
-            
-            // Controlla se ci sono stati cambiamenti negli stati dei moduli
-            Object.keys(newData.modules).forEach(moduleId => {
-                const oldModule = activationModules.modules[moduleId];
-                const newModule = newData.modules[moduleId];
+            try {
+                if (!activationModules || !activationModules.modules || !newData || !newData.modules) {
+                    console.log('⚠️ Dati moduli non disponibili per notifiche');
+                    return;
+                }
                 
-                if (oldModule && newModule) {
-                    // Controlla se lo stato è cambiato
-                    if (oldModule.status !== newModule.status) {
-                        if (newModule.status === 'active') {
-                            UI.notify(`🔄 ${newModule.name} attivato da ${newModule.currentOperator}`, 'info', '📢 Aggiornamento Modulo');
-                            
-                            // Se è il modulo turni, aggiorna la pagina turni
-                            if (moduleId === 'shifts') {
-                                updateShiftsPageWithActivation(newModule);
-                            }
-                        } else if (newModule.status === 'inactive') {
-                            UI.notify(`⏹️ ${newModule.name} disattivato da ${newModule.lastDeactivatedBy}`, 'info', '📢 Aggiornamento Modulo');
-                            
-                            // Se è il modulo turni, aggiorna la pagina turni
-                            if (moduleId === 'shifts') {
-                                updateShiftsPageWithDeactivation();
+                console.log('🔄 Controllo cambiamenti nei moduli...');
+                
+                // Controlla se ci sono stati cambiamenti negli stati dei moduli
+                Object.keys(newData.modules).forEach(moduleId => {
+                    try {
+                        const oldModule = activationModules.modules[moduleId];
+                        const newModule = newData.modules[moduleId];
+                        
+                        if (oldModule && newModule) {
+                            // Controlla se lo stato è cambiato
+                            if (oldModule.status !== newModule.status) {
+                                console.log(`🔄 Cambiamento rilevato per modulo ${moduleId}: ${oldModule.status} → ${newModule.status}`);
+                                
+                                if (newModule.status === 'active') {
+                                    UI.notify(`🔄 ${newModule.name} attivato da ${newModule.currentOperator}`, 'info', '📢 Aggiornamento Modulo');
+                                    
+                                    // Se è il modulo turni, aggiorna la pagina turni
+                                    if (moduleId === 'shifts') {
+                                        updateShiftsPageWithActivation(newModule);
+                                    }
+                                } else if (newModule.status === 'inactive') {
+                                    UI.notify(`⏹️ ${newModule.name} disattivato da ${newModule.lastDeactivatedBy}`, 'info', '📢 Aggiornamento Modulo');
+                                    
+                                    // Se è il modulo turni, aggiorna la pagina turni
+                                    if (moduleId === 'shifts') {
+                                        updateShiftsPageWithDeactivation();
+                                    }
+                                }
                             }
                         }
+                    } catch (moduleError) {
+                        console.error(`❌ Errore nel controllo modulo ${moduleId}:`, moduleError);
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('❌ Errore nella funzione notifyModuleChanges:', error);
+            }
         }
         
         // Funzione per aggiornare la pagina turni quando viene attivato
@@ -5855,6 +5913,25 @@
                 setTimeout(() => {
                     loadPage('shifts');
                 }, 1000);
+            }
+        }
+        
+        // Funzione di debug per controllare lo stato dei moduli
+        function debugActivationModules() {
+            console.log('🔍 DEBUG MODULI DI ATTIVAZIONE:');
+            console.log('📊 activationModules:', activationModules);
+            console.log('📊 modulesLoaded:', modulesLoaded);
+            console.log('📊 isLoadingModules:', isLoadingModules);
+            console.log('📊 autoRefreshInterval:', autoRefreshInterval);
+            
+            if (activationModules && activationModules.modules) {
+                console.log('📋 Moduli disponibili:');
+                Object.keys(activationModules.modules).forEach(moduleId => {
+                    const module = activationModules.modules[moduleId];
+                    console.log(`  - ${moduleId}: ${module.status} (${module.isUnlocked ? 'sbloccato' : 'bloccato'})`);
+                });
+            } else {
+                console.log('❌ Nessun modulo caricato');
             }
         }
         
