@@ -5040,6 +5040,21 @@
     <script>
             // ========== SECURITY: Disable image dragging and right-click ==========
             document.addEventListener('DOMContentLoaded', function() {
+                // Carica token salvato se presente, altrimenti usa quello condiviso
+                const savedToken = localStorage.getItem('githubGistToken');
+                if (savedToken) {
+                    GIST_CONFIG.token = savedToken;
+                    console.log('✅ Token GitHub personalizzato caricato');
+                } else if (GIST_CONFIG.token) {
+                    // Decodifica il token base64 se non c'è token personalizzato
+                    try {
+                        GIST_CONFIG.token = atob(GIST_CONFIG.token);
+                        console.log('✅ Token GitHub condiviso attivato');
+                    } catch (e) {
+                        console.log('⚠️ Token già decodificato');
+                    }
+                }
+                
                 // Disable right-click context menu
                 document.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
@@ -5459,9 +5474,12 @@
             gistId: '07d8df63489c44b95f78d9eaed15f4f1', // ID reale del Gist
             filename: 'iprp_turni.json',
             rawUrl: 'https://gist.githubusercontent.com/ryze-glitch/07d8df63489c44b95f78d9eaed15f4f1/raw/iprp_turni.json',
-            // Token di sola lettura per sicurezza
-            token: null, // Non necessario per lettura di gist pubblici
-            updateInterval: 30000 // 30 secondi
+            apiUrl: 'https://api.github.com/gists/07d8df63489c44b95f78d9eaed15f4f1',
+            // Token GitHub condiviso per tutti gli operatori IPRP
+            // ATTENZIONE: Questo token ha solo permessi 'gist' - non può accedere ad altro
+            // In produzione, usa un servizio proxy per nascondere il token
+            token: 'Z2hwX3h2Z1FWRVk5aGNsQXRmZ1l2YVRNQTZiQkFFRW5PSjJsamQ5cA==', // Token codificato in base64 per sicurezza minima
+            updateInterval: 10000 // 10 secondi per aggiornamenti più rapidi
         };
         
         // Funzione per salvare i moduli su un servizio esterno
@@ -6437,29 +6455,51 @@
                 // Salva in localStorage come backup
                 localStorage.setItem('gistShifts', JSON.stringify(shiftsData));
                 
-                // NOTA: Per aggiornare il Gist in produzione:
-                // 1. Usa un webhook serverless (Vercel, Netlify Functions)
-                // 2. O chiedi agli utenti di aggiornare manualmente il Gist
-                // 3. O usa un servizio proxy che gestisce il token in modo sicuro
-                
-                console.log('✅ Turni salvati localmente');
-                console.log('📋 Per aggiornare il Gist:', GIST_CONFIG.rawUrl);
-                
-                // Crea JSON da copiare
-                const jsonString = JSON.stringify(shiftsData, null, 2);
-                
-                // Mostra pulsante per copiare i dati
-                if (shifts.length > 0 && Math.random() < 0.1) { // Mostra solo 10% delle volte per non essere invasivo
-                    setTimeout(() => {
-                        if (confirm('📤 Vuoi aggiornare il Gist con i nuovi turni?')) {
-                            navigator.clipboard.writeText(jsonString);
-                            UI.notify('✅ JSON copiato! Incolla nel Gist', 'info', '📋 Copiato');
-                            window.open(`https://gist.github.com/ryze-glitch/${GIST_CONFIG.gistId}`, '_blank');
-                        }
-                    }, 2000);
+                // Verifica Token GitHub
+                if (!GIST_CONFIG.token) {
+                    console.error('❌ Token GitHub non disponibile');
+                    UI.notify('⚠️ Sincronizzazione non disponibile', 'warning');
+                    return false;
                 }
                 
-                return true;
+                // Aggiorna il Gist via API
+                try {
+                    const response = await fetch(GIST_CONFIG.apiUrl, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${GIST_CONFIG.token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify({
+                            files: {
+                                [GIST_CONFIG.filename]: {
+                                    content: JSON.stringify(shiftsData, null, 2)
+                                }
+                            }
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Gist aggiornato con successo!');
+                        UI.notify('✅ Turni sincronizzati su GitHub!', 'success', '☁️ Sincronizzato');
+                        return true;
+                    } else if (response.status === 401) {
+                        console.error('❌ Token non valido o scaduto');
+                        UI.notify('❌ Token GitHub non valido!', 'error', '🔑 Errore Auth');
+                        localStorage.removeItem('gistTokenWarningShown');
+                        return false;
+                    } else {
+                        console.error('❌ Errore API GitHub:', response.status);
+                        UI.notify('⚠️ Errore sincronizzazione', 'warning');
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('❌ Errore connessione GitHub:', error);
+                    UI.notify('⚠️ Salvato solo localmente', 'warning', '📡 Offline');
+                    return false;
+                }
+                
             } catch (error) {
                 console.error('❌ Errore salvataggio:', error);
                 UI.notify('⚠️ Errore sincronizzazione', 'warning');
@@ -6499,7 +6539,7 @@
                             localStorage.setItem('shifts', JSON.stringify(shifts));
                             localStorage.setItem('gistShifts', JSON.stringify(data));
                             
-                            return true;
+            return true;
                         }
                     }
                 } catch (error) {
@@ -6580,6 +6620,89 @@
                 syncInterval = null;
                 console.log('⏹️ Auto-sync fermato');
             }
+        }
+        
+        // Funzione per configurare il token GitHub
+        function configureGitHubToken() {
+            const currentToken = localStorage.getItem('githubGistToken') || '';
+            
+            const form = `
+                <div style="padding: 1rem;">
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <p style="color: #fbbf24; margin: 0 0 1rem 0;">
+                            <strong>⚠️ ATTENZIONE:</strong> Il token verrà salvato nel tuo browser locale
+                        </p>
+                        <p style="color: #94a3b8; margin: 0; font-size: 0.875rem;">
+                            Per creare un token: GitHub → Settings → Developer settings → Personal access tokens → Generate new token (classic)
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #e2e8f0; margin-bottom: 0.5rem;">
+                            Token GitHub (con permessi 'gist')
+                        </label>
+                        <input type="password" id="githubToken" value="${currentToken}" 
+                            placeholder="ghp_xxxxxxxxxxxxxxxxxx" 
+                            style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); 
+                            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; 
+                            color: white; font-family: monospace;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem;">
+                        <input type="checkbox" id="showToken" onchange="
+                            document.getElementById('githubToken').type = this.checked ? 'text' : 'password'
+                        ">
+                        <label for="showToken" style="color: #94a3b8; font-size: 0.875rem;">
+                            Mostra token
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="UI.closeModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="saveGitHubToken()">
+                    <i class="fas fa-save"></i> Salva Token
+                </button>
+                <a href="https://github.com/settings/tokens/new" target="_blank" 
+                    class="btn btn-info" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                    <i class="fas fa-external-link-alt"></i> Crea Token
+                </a>
+            `;
+            
+            UI.modal('🔑 Configura Token GitHub', form, footer);
+        }
+        
+        // Funzione per salvare il token
+        function saveGitHubToken() {
+            const token = document.getElementById('githubToken').value.trim();
+            
+            if (!token) {
+                UI.notify('⚠️ Inserisci un token valido', 'warning');
+                return;
+            }
+            
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+                UI.notify('⚠️ Il token deve iniziare con ghp_ o github_pat_', 'warning');
+                return;
+            }
+            
+            // Salva il token nel localStorage
+            localStorage.setItem('githubGistToken', token);
+            
+            // Aggiorna la configurazione
+            GIST_CONFIG.token = token;
+            
+            UI.notify('✅ Token salvato con successo!', 'success', '🔑 Configurato');
+            UI.closeModal();
+            
+            // Ricarica la pagina per aggiornare i pulsanti
+            loadPage('shifts');
+            
+            // Avvia la sincronizzazione
+            setTimeout(() => {
+                syncShifts();
+            }, 1000);
         }
 
         async function loadShifts() {
