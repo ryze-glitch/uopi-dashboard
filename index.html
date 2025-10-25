@@ -5369,121 +5369,11 @@
         function saveOperators() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.OPERATORS, operators);
-            // Salva anche su JSONBin (async, non blocca l'UI)
-            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
             return true;
         }
 
 
         
-        // Carica tutti i dati da JSONBin
-        async function loadDataFromJSONBin() {
-            try {
-                console.log('🔄 Caricamento dati da JSONBin...');
-                
-                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_CONFIG.secretKey
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Errore HTTP: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('✅ Dati caricati da JSONBin:', data.record);
-                
-                // Aggiorna i dati locali
-                if (data.record.operators && Array.isArray(data.record.operators)) {
-                    operators = data.record.operators;
-                    console.log(`✅ Caricati ${operators.length} operatori da JSONBin`);
-                } else {
-                    console.log('⚠️ Nessun operatore trovato in JSONBin, mantengo dati locali');
-                }
-                
-                if (data.record.shifts && Array.isArray(data.record.shifts)) {
-                    shifts = data.record.shifts;
-                    console.log(`✅ Caricati ${shifts.length} turni da JSONBin`);
-                } else {
-                    console.log('⚠️ Nessun turno trovato in JSONBin, mantengo dati locali');
-                }
-                
-                  if (data.record.notifications && Array.isArray(data.record.notifications)) {
-                      notifications = data.record.notifications;
-                      console.log(`✅ Caricate ${notifications.length} notifiche da JSONBin`);
-                  } else {
-                      console.log('⚠️ Nessuna notifica trovata in JSONBin, mantengo dati locali');
-                  }
-                  
-                  // Salva anche nel localStorage come backup
-                  saveOperators();
-                  saveShifts();
-                  saveNotifications();
-                  
-                  // Aggiorna la gerarchia dopo il caricamento dei dati
-                  setTimeout(() => {
-                      updateOverviewStats();
-                  }, 500);
-                  
-                  return true;
-            } catch (error) {
-                console.error('❌ Errore nel caricamento da JSONBin:', error);
-                // Fallback al localStorage
-                loadOperators();
-                loadShifts();
-                loadNotifications();
-                return false;
-            }
-        }
-        
-        // Salva tutti i dati su JSONBin
-        async function saveDataToJSONBin() {
-            try {
-                console.log('💾 Salvataggio dati su JSONBin...');
-                
-                const dataToSave = {
-                    operators: operators,
-                    shifts: shifts,
-                    notifications: notifications,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
-                    method: 'PUT',
-                    headers: JSONBIN_CONFIG.headers,
-                    body: JSON.stringify(dataToSave)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Errore HTTP: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('✅ Dati salvati su JSONBin:', result);
-                
-                // Salva anche nel localStorage come backup
-                saveOperators();
-                saveShifts();
-                saveNotifications();
-                
-                return true;
-            } catch (error) {
-                console.error('❌ Errore nel salvataggio su JSONBin:', error);
-                return false;
-            }
-        }
-        
-        
-        // Esporta i dati locali su JSONBin
-        async function exportDataToCloud() {
-            const success = await saveDataToJSONBin();
-            if (success) {
-                UI.notify('Dati esportati sul cloud!', 'success', '☁️ Esportazione');
-            } else {
-                UI.notify('Errore nell\'esportazione.', 'error', '❌ Errore');
-            }
-        }
 
         function loadOperators() {
             // Prima prova sempre a caricare dal file JSON (priorità massima)
@@ -5507,10 +5397,10 @@
                         
                         return true;
                     } else {
-                        // Se anche localStorage è vuoto, usa i dati di esempio
-                        console.log('📝 Nessun dato trovato, uso dati di esempio...');
-                        createSampleOperators();
-                        return true;
+                        // Se anche localStorage è vuoto, mostra errore
+                        console.log('❌ Nessun dato trovato, impossibile caricare operatori');
+                        UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
+                        return false;
                     }
                 }
             });
@@ -5716,18 +5606,17 @@
             }
         }
         
-        // Funzione per caricare gli operatori dal file JSON
+        // Funzione per caricare gli operatori dal file JSON (priorità GitHub)
         async function loadOperatorsFromJSON() {
             try {
                 console.log('🔄 Caricamento operatori dal file JSON...');
                 
-                // Prova diversi percorsi per il file JSON (incluso GitHub)
+                // Prova prima GitHub, poi percorsi locali
                 const possiblePaths = [
                     'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/operatori_reparto.json',
                     './operatori_reparto.json',
                     'operatori_reparto.json',
-                    '/operatori_reparto.json',
-                    './Nuova cartella/operatori_reparto.json'
+                    '/operatori_reparto.json'
                 ];
                 
                 let response = null;
@@ -5752,7 +5641,17 @@
                     throw new Error(`File JSON non trovato. Tentati percorsi: ${possiblePaths.join(', ')}`);
                 }
                 
-                data = await response.json();
+                const text = await response.text();
+                console.log('📄 Testo ricevuto:', text.substring(0, 200) + '...');
+                
+                // Prova a parsare il JSON
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('❌ Errore parsing JSON:', parseError);
+                    throw new Error(`Errore parsing JSON: ${parseError.message}. Controlla che il file sia JSON valido.`);
+                }
+                
                 console.log('✅ Dati caricati dal file JSON:', data);
                 
                 if (data.operators && Array.isArray(data.operators)) {
@@ -5779,65 +5678,6 @@
             }
         }
 
-        // Funzione per creare operatori di esempio (fallback)
-        function createSampleOperators() {
-            operators = [
-                {
-                    id: 1,
-                    name: 'Marco Rossi',
-                    discordTag: 'marco.rossi#1234',
-                    qualification: 'Commissario',
-                    role: 'dirigenziale',
-                    roleName: 'Nucleo Dirigenziale',
-                    status: 'Disponibile',
-                    addedDate: new Date().toLocaleDateString('it-IT')
-                },
-                {
-                    id: 2,
-                    name: 'Giulia Bianchi',
-                    discordTag: 'giulia.bianchi#5678',
-                    qualification: 'Ispettore Capo',
-                    role: 'amministrativo',
-                    roleName: 'Nucleo Amministrativo',
-                    status: 'Disponibile',
-                    addedDate: new Date().toLocaleDateString('it-IT')
-                },
-                {
-                    id: 3,
-                    name: 'Luca Verdi',
-                    discordTag: 'luca.verdi#9012',
-                    qualification: 'Agente Scelto',
-                    role: 'operativo',
-                    roleName: 'Nucleo Operativo',
-                    status: 'Disponibile',
-                    addedDate: new Date().toLocaleDateString('it-IT')
-                },
-                {
-                    id: 4,
-                    name: 'Sofia Neri',
-                    discordTag: 'sofia.neri#3456',
-                    qualification: 'Agente',
-                    role: 'operativo',
-                    roleName: 'Nucleo Operativo',
-                    status: 'In Servizio',
-                    addedDate: new Date().toLocaleDateString('it-IT')
-                },
-                {
-                    id: 5,
-                    name: 'Alessandro Blu',
-                    discordTag: 'alessandro.blu#7890',
-                    qualification: 'Vice Commissario',
-                    role: 'dirigenziale',
-                    roleName: 'Nucleo Dirigenziale',
-                    status: 'Disponibile',
-                    addedDate: new Date().toLocaleDateString('it-IT')
-                }
-            ];
-            
-            // Salva i dati di esempio
-            saveOperators();
-            console.log('✅ Creati', operators.length, 'operatori di esempio');
-        }
 
         function clearOperatorsStorage() {
             return clearStorage(STORAGE_KEYS.OPERATORS);
@@ -6353,12 +6193,8 @@
             localStorage.removeItem('uopi_notifications');
             localStorage.removeItem('uopi_shifts');
             
-            // Ricrea i dati di esempio
-            createSampleOperators();
-            createSampleNotifications();
-            createSampleShifts();
-            
-            UI.notify('Dati di esempio ricreati con successo!', 'success', '🔄 Reset Completato');
+            // Non ricreare dati di esempio, mostra errore
+            UI.notify('❌ Impossibile ricreare dati. Controlla la connessione.', 'error', '❌ Errore');
         }
 
         // Funzione per gestire il callback di ritorno da Discord
@@ -11231,8 +11067,7 @@
                         // Controllo di sicurezza: se non ci sono operatori, creali
                         if (!operators || operators.length === 0) {
                             console.log('⚠️ Nessun operatore trovato, creo dati di esempio...');
-                            createSampleOperators();
-                            UI.notify('📝 Creati operatori di esempio', 'info', '🔄 Dati Iniziali');
+                            UI.notify('❌ Impossibile caricare operatori', 'error', '❌ Errore');
                         }
                         
                         // Controlla il livello di accesso per mostrare la vista appropriata
@@ -11299,9 +11134,8 @@
                 console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, provo a caricare dal file JSON...');
                 const jsonSuccess = await loadOperatorsFromJSON();
                 if (!jsonSuccess) {
-                    console.log('📝 File JSON non disponibile, creo dati di esempio...');
-                    createSampleOperators();
-                    UI.notify('📝 Creati operatori di esempio per sicurezza', 'info', '🔄 Controllo Finale');
+                    console.log('❌ File JSON non disponibile, impossibile caricare operatori');
+                    UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
                 }
             }
             
