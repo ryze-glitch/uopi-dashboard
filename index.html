@@ -1763,8 +1763,7 @@
             background: rgba(30, 41, 59, 0.6);
             border: 1px solid var(--border);
             border-radius: 1.5rem;
-            overflow-x: auto;
-            overflow-y: hidden;
+            overflow: hidden;
             backdrop-filter: blur(24px);
             opacity: 0;
             transform: translateY(30px);
@@ -1808,7 +1807,25 @@
 
         tr:hover {
             background: rgba(255, 255, 255, 0.08);
-            transform: scale(1.01);
+            transform: none;
+        }
+
+        /* Responsive table senza scrollbar */
+        .hierarchical-table {
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .hierarchical-table table {
+            width: 100%;
+            table-layout: fixed;
+        }
+        
+        .hierarchical-table th,
+        .hierarchical-table td {
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* ========== PANORAMICA RIVOLUZIONARIA 2.0 ========== */
@@ -4704,8 +4721,6 @@
 
                 /* Table responsive improvements */
                 .table-container {
-                    overflow-x: auto;
-                    -webkit-overflow-scrolling: touch;
                     border-radius: 0.5rem;
                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
                     margin: 0.25rem 0;
@@ -5393,10 +5408,7 @@
                     operators = savedOperators;
                     console.log('✅ Operatori caricati dal localStorage');
                     
-                    // Aggiorna la gerarchia dopo il caricamento dei dati
-                    setTimeout(() => {
-                        updateOverviewStats();
-                    }, 100);
+                    // Dati caricati dal localStorage
                     
                     return true;
                 } else {
@@ -5465,10 +5477,7 @@
                     // Salva nel localStorage come backup
                     saveOperators();
                     
-                    // Aggiorna la gerarchia dopo il caricamento dei dati
-                    setTimeout(() => {
-                        updateOverviewStats();
-                    }, 500);
+                    // Dati caricati dal JSON
                     
                     return true;
                 } else {
@@ -5499,10 +5508,7 @@
             if (savedNotifications && Array.isArray(savedNotifications)) {
                 notifications = savedNotifications;
                 
-                // Aggiorna la gerarchia dopo il caricamento dei dati
-                setTimeout(() => {
-                    updateOverviewStats();
-                }, 100);
+                // Notifiche caricate
                 
                 return true;
             }
@@ -5559,10 +5565,7 @@
             if (savedShifts && Array.isArray(savedShifts)) {
                 shifts = savedShifts;
                 
-                // Aggiorna la gerarchia dopo il caricamento dei dati
-                setTimeout(() => {
-                    updateOverviewStats();
-                }, 100);
+                // Turni caricati
                 
                 return true;
             }
@@ -6491,18 +6494,83 @@
             }, 1500);
         }
 
+        // ========== FOOTER INFORMATIVO ==========
+        function getFooterDisclaimer() {
+            return `
+                <div class="footer-disclaimer" style="
+                    margin-top: 3rem;
+                    padding: 1.5rem 2rem;
+                    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 1rem;
+                    text-align: center;
+                    backdrop-filter: blur(12px);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                ">
+                    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <div style="
+                            width: 3rem;
+                            height: 3rem;
+                            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-right: 1rem;
+                            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+                        ">
+                            <i class="fas fa-gamepad" style="color: white; font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="color: #e2e8f0; margin: 0; font-size: 1.25rem; font-weight: 600;">
+                            🎮 Disclaimer FiveM Roleplay
+                        </h3>
+                    </div>
+                    
+                    <div style="color: #94a3b8; line-height: 1.6; margin-bottom: 1rem;">
+                        <p style="margin: 0 0 0.5rem 0; font-size: 1rem;">
+                            <strong style="color: #e2e8f0;">⚠️ IMPORTANTE:</strong> Questo sito web è stato sviluppato <strong>unicamente</strong> per un server FiveM roleplay denominato <strong style="color: #3b82f6;">IPRP</strong>.
+                        </p>
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong style="color: #ef4444;">NON è collegato</strong> alle U.O.P.I. reali, alla Polizia di Stato italiana, o a qualsiasi ente governativo. 
+                            È puramente un progetto di intrattenimento per il gioco Grand Theft Auto V.
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                        margin-top: 1rem;
+                        padding-top: 1rem;
+                        border-top: 1px solid rgba(255, 255, 255, 0.1);
+                    ">
+                        <div style="color: #64748b; font-size: 0.85rem;">
+                            <i class="fas fa-code" style="color: #8b5cf6; margin-right: 0.5rem;"></i>
+                            Sviluppato da <strong style="color: #3b82f6;">Ryze</strong>
+                        </div>
+                        <div style="color: #64748b; font-size: 0.85rem;">
+                            <i class="fas fa-server" style="color: #10b981; margin-right: 0.5rem;"></i>
+                            Per server <strong style="color: #10b981;">IPRP</strong>
+                        </div>
+                        <div style="color: #64748b; font-size: 0.85rem;">
+                            <i class="fas fa-calendar" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+                            Versione <strong style="color: #f59e0b;">8.0</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // ========== FUNZIONI UTILITY ==========
         function updateOverviewStats() {
-            // Aggiorna automaticamente la panoramica se è attualmente visualizzata
+            // Aggiorna automaticamente la panoramica SOLO se è attualmente visualizzata
             const currentPage = document.querySelector('.nav-btn.active');
             if (currentPage && currentPage.textContent.includes('Panoramica')) {
                 loadPage('overview');
             }
-            
-            // Aggiorna anche la pagina gerarchia se è attualmente visualizzata
-            if (currentPage && currentPage.textContent.includes('Gerarchia')) {
-                loadPage('personnel');
-            }
+            // NON forzare il ricaricamento della pagina gerarchia per evitare reindirizzamenti indesiderati
         }
 
         function testNotifications() {
@@ -6963,6 +7031,8 @@
                         </div>
                     </div>
                 </div>
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
@@ -7039,6 +7109,8 @@
                         </div>
                     </div>
                 </div>
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
@@ -7219,6 +7291,8 @@
                     ${createHierarchicalSection('amministrativo', amministrativoOps, 'clipboard-list', 'Gestione documentale, amministrazione e supporto logistico alle operazioni. Coordinano le risorse e la documentazione.', '📋 Nucleo Amministrativo', isAdmin)}
                     ${createHierarchicalSection('operativo', operativoOps, 'shield-alt', 'Personale operativo specializzato nell\'esecuzione diretta delle missioni. Eseguono le operazioni sul campo.', '👮 Nucleo Operativo', isAdmin)}
                 `}
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
@@ -7243,6 +7317,8 @@
                             <i class="fas fa-plus"></i> Aggiungi Primo Turno
                         </button>
                     </div>
+                    
+                    ${getFooterDisclaimer()}
                 `;
             }
 
@@ -7373,6 +7449,8 @@
                 <div class="shifts-page-container">
                     ${shiftsHTML}
                 </div>
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
@@ -7449,6 +7527,8 @@
                             <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
                         </div>
                     </div>
+                    
+                    ${getFooterDisclaimer()}
                 `;
             }
 
@@ -7545,6 +7625,8 @@
                             <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
                         </div>
                     </div>
+                    
+                    ${getFooterDisclaimer()}
                 `;
         }
 
@@ -7621,6 +7703,8 @@
                         <p class="countdown-date">🗓️ Disponibile dal ${getUnlockDateFormatted()}</p>
                     </div>
                 </div>
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
@@ -8563,6 +8647,8 @@
                         </button>
                     </div>
                 </div>
+                
+                ${getFooterDisclaimer()}
             `;
         }
 
