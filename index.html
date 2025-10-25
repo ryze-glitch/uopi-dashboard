@@ -5091,6 +5091,7 @@
         const CLIENT_ID = '1387801645743869982';
         const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
         const ADMIN_ID = '1387684968536477756';
+        const AUTHORIZED_USER_ID = '1120070586723483660'; // Nuovo utente autorizzato
 
 
         // ========== SISTEMA COUNTDOWN ==========
@@ -5195,7 +5196,7 @@
                 '989918527257452564', '825835180312887316', '1178771628260331560', 
                 '245914276198350860', '521411586926313473', '677815494366986270', 
                 '691293154137342003', '457974905904824331', '1344355420072050720', 
-                '879338438934011906'
+                '879338438934011906', '1120070586723483660'
             ],
             
             // Verifica se l'ID è autorizzato
@@ -6423,7 +6424,12 @@
             
             // Salva anche su GitHub Gist per sincronizzazione automatica
             setTimeout(async () => {
-                await saveShiftsToGist();
+                const success = await saveShiftsToGist();
+                if (success) {
+                    console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
+                } else {
+                    console.log('⚠️ Errore sincronizzazione GitHub');
+                }
             }, 500);
             
             return true;
@@ -6506,12 +6512,18 @@
             }
         }
         
-        // Funzione per caricare i turni da GitHub Gist (ripristinata)
+        // Funzione per caricare i turni da GitHub Gist (SICURA - non sovrascrive)
         async function loadShiftsFromGist() {
             try {
-                console.log('🔄 Caricamento turni da GitHub Gist...');
+                console.log('🔄 Caricamento turni da GitHub Gist (modalità sicura)...');
                 
-                // Prova a caricare dal Gist reale
+                // NON sovrascrivere mai i dati esistenti
+                if (shifts && shifts.length > 0) {
+                    console.log(`⚠️ Dati locali già presenti (${shifts.length} turni), non sovrascrivo`);
+                    return true;
+                }
+                
+                // Prova a caricare dal Gist solo se non ci sono dati locali
                 const gistUrl = GIST_CONFIG.rawUrl;
                 
                 try {
@@ -6520,19 +6532,9 @@
                     if (response.ok) {
                         const data = await response.json();
                         
-                        if (data && data.shifts && Array.isArray(data.shifts)) {
-                            const currentUserId = localStorage.getItem('authenticatedUserId');
-                            
-                            // Notifica se ci sono aggiornamenti da altri utenti
-                            if (data.updatedBy && data.updatedBy !== currentUserId && shifts.length > 0) {
-                                const newShiftsCount = data.shifts.length - shifts.length;
-                                if (newShiftsCount > 0) {
-                                    UI.notify(`🔄 ${newShiftsCount} nuovi turni da ${data.updatedByName}`, 'info', '📥 Aggiornamento');
-                                }
-                            }
-                            
+                        if (data && data.shifts && Array.isArray(data.shifts) && data.shifts.length > 0) {
                             shifts = data.shifts;
-                            console.log(`✅ Caricati ${shifts.length} turni da Gist`);
+                            console.log(`✅ Caricati ${shifts.length} turni da Gist (solo se vuoto)`);
                             
                             // Salva in localStorage come backup
                             localStorage.setItem('shifts', JSON.stringify(shifts));
@@ -6542,39 +6544,19 @@
                         }
                     }
                 } catch (error) {
-                    console.log('⚠️ Gist non disponibile, uso backup locale');
+                    console.log('⚠️ Gist non disponibile');
                 }
                 
-                // Fallback: carica dal localStorage
-                const localGist = localStorage.getItem('gistShifts');
-                if (localGist) {
-                    const data = JSON.parse(localGist);
-                    if (data && data.shifts) {
-                        shifts = data.shifts;
-                        console.log(`✅ Caricati ${shifts.length} turni dal backup locale`);
-                        return true;
-                    }
+                // Se non ci sono dati da nessuna parte, mantieni array vuoto
+                if (!shifts || shifts.length === 0) {
+                    shifts = [];
+                    console.log('📋 Nessun turno trovato');
                 }
                 
-                // Se non ci sono turni salvati
-                const savedShifts = localStorage.getItem('shifts');
-                if (savedShifts) {
-                    const data = JSON.parse(savedShifts);
-                    if (data && Array.isArray(data)) {
-                        shifts = data;
-                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
-                        return true;
-                    }
-                }
-                
-                // Inizializza array vuoto
-                shifts = [];
-                console.log('📋 Nessun turno trovato');
                 return true;
                 
             } catch (error) {
                 console.error('❌ Errore caricamento Gist:', error);
-                shifts = [];
                 return false;
             }
         }
@@ -6884,21 +6866,86 @@
         async function loadShifts() {
             console.log('🔄 Caricamento turni...');
             
-            // Usa sempre GitHub Gist come fonte principale
+            // PRIORITÀ: Carica sempre dal localStorage per preservare i dati
+            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+            if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
+                shifts = savedShifts;
+                console.log(`✅ Caricati ${shifts.length} turni dal localStorage (PRESERVATI)`);
+                
+                // Dopo aver caricato i dati locali, controlla se ci sono aggiornamenti su GitHub
+                setTimeout(async () => {
+                    console.log('🔄 Controllo aggiornamenti su GitHub...');
+                    await checkForGitHubUpdates();
+                }, 2000);
+                
+                return true;
+            }
+            
+            // Solo se non ci sono dati locali, prova GitHub come fallback
+            console.log('📡 Nessun dato locale, provo GitHub...');
             const gistSuccess = await loadShiftsFromGist();
             
             if (!gistSuccess || shifts.length === 0) {
-                // Se GitHub fallisce, prova localStorage come backup
-                const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
-                if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
-                    shifts = savedShifts;
-                    console.log('✅ Turni caricati dal localStorage (backup)');
-                }
+                // Inizializza array vuoto solo se non ci sono dati da nessuna parte
+                shifts = [];
+                console.log('📋 Nessun turno trovato');
             }
             
             return true;
         }
-
+        
+        // Funzione per controllare aggiornamenti su GitHub senza sovrascrivere
+        async function checkForGitHubUpdates() {
+            try {
+                console.log('🔍 Controllo aggiornamenti GitHub...');
+                
+                const gistUrl = GIST_CONFIG.rawUrl;
+                const response = await fetch(gistUrl + '?t=' + Date.now());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data && data.shifts && Array.isArray(data.shifts)) {
+                        const localCount = shifts.length;
+                        const githubCount = data.shifts.length;
+                        
+                        console.log(`📊 Confronto: Locale ${localCount} vs GitHub ${githubCount}`);
+                        
+                        // Se GitHub ha più turni, significa che altri utenti hanno aggiunto qualcosa
+                        if (githubCount > localCount) {
+                            console.log(`🔄 Trovati ${githubCount - localCount} nuovi turni su GitHub!`);
+                            
+                            // Mostra notifica
+                            UI.notify(`🔄 ${githubCount - localCount} nuovi turni da altri operatori!`, 'info', '📥 Aggiornamento');
+                            
+                            // Aggiorna i dati locali con quelli di GitHub
+                            shifts = data.shifts;
+                            saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                            
+                            // Ricarica la pagina se siamo nella sezione turni
+                            const currentPage = document.querySelector('.nav-btn.active');
+                            if (currentPage && currentPage.textContent.includes('Turni')) {
+                                setTimeout(() => loadPage('shifts'), 1000);
+                            }
+                            
+                            return true;
+                        } else if (githubCount < localCount) {
+                            console.log('📤 I tuoi turni sono più aggiornati di GitHub');
+                            // I dati locali sono più recenti, sincronizza su GitHub
+                            await saveShiftsToGist();
+                        } else {
+                            console.log('✅ Dati sincronizzati');
+                        }
+                    }
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('❌ Errore controllo aggiornamenti:', error);
+                return false;
+            }
+        }
+        
         // Funzione per esportare i turni nel file JSON
 
         // Funzione per creare turni di esempio
@@ -8644,7 +8691,7 @@
                         <p>Programmazione e monitoraggio turni operativi</p>
                         <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                             <div style="width: 0.5rem; height: 0.5rem; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
-                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sincronizzazione automatica attiva</span>
+                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sincronizzazione bidirezionale attiva</span>
                         </div>
                         <div class="actions">
                             <button class="btn btn-primary" onclick="openAddShift()">
@@ -8652,9 +8699,6 @@
                             </button>
                             <button class="btn btn-secondary" onclick="syncShifts()" style="background: linear-gradient(135deg, #10b981, #059669);">
                                 <i class="fas fa-sync"></i> Sincronizza Ora
-                            </button>
-                            <button class="btn btn-info" onclick="debugSync()" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
-                                <i class="fas fa-bug"></i> Debug Sync
                             </button>
                             <button class="btn btn-danger" onclick="clearAllShifts()" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
                                 <i class="fas fa-trash-alt"></i> Cancella Tutti
@@ -12411,9 +12455,9 @@
             // Carica moduli di attivazione
             await loadActivationModules();
             
-            // Riattivato auto-sync in modalità sicura
-            startAutoSync();
-            console.log('🔄 Auto-sync turni riattivato in modalità sicura');
+            // DISABILITATO: Auto-sync che causava cancellazioni
+            // startAutoSync();
+            console.log('⚠️ Auto-sync disabilitato per evitare cancellazioni');
             
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
