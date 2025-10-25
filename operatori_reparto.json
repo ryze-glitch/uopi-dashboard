@@ -390,10 +390,41 @@
         "status": "Disponibile",
         "addedDate": "20/10/2025"
       }
+      {
+        "id": 40,
+        "name": "Leonardo Parodi",
+        "discordTag": "lory26487",
+        "qualification": "🔮・Operatore in Prova",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "25/10/2025"
+      },
+      {
+        "id": 41,
+        "name": "Davide Maranza",
+        "discordTag": "russ0000_",
+        "qualification": "🔮・Operatore in Prova",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "25/10/2025"
+      },
+      {
+        "id": 42,
+        "name": "Raffaele Gargiulo",
+        "discordTag": "he_112.",
+        "qualification": "🔮・Operatore in Prova",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
     ],
     "shifts": [],
     "notifications": [],
     "lastUpdated": "2025-10-22T15:35:21.855Z"
 }
+
 
 
