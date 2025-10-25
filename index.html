@@ -6483,7 +6483,7 @@
                     if (response.ok) {
                         console.log('✅ Gist aggiornato con successo!');
                         UI.notify('✅ Turni sincronizzati su GitHub!', 'success', '☁️ Sincronizzato');
-                        return true;
+                return true;
                     } else if (response.status === 401) {
                         console.error('❌ Token non valido o scaduto');
                         UI.notify('❌ Token GitHub non valido!', 'error', '🔑 Errore Auth');
@@ -11474,38 +11474,64 @@
         }
 
         function saveShift() {
-            const type = document.getElementById('shType')?.value;
-            const date = document.getElementById('shDate')?.value;
-            const team = document.getElementById('shTeam')?.value;
-            const leader = document.getElementById('shLeader')?.value;
-            const moduleType = document.getElementById('shModuleType')?.value;
+            // Ottieni i valori dai campi del modulo pattuglia
+            const managerId = document.getElementById('patrolManager')?.value;
+            const patrolTime = document.getElementById('patrolTime')?.value;
+            const patrolType = document.getElementById('patrolType')?.value;
+            const patrolVehicle = document.getElementById('patrolVehicle')?.value;
+            const operator1Id = document.getElementById('patrolOperator1')?.value;
+            const operator2Id = document.getElementById('patrolOperator2')?.value;
             
-            if (!type || !date || !team || !leader || !moduleType) {
-                UI.notify('⚠️ Compila tutti i campi!', 'error');
+            // Validazione campi obbligatori
+            if (!managerId || !patrolTime || !patrolType || !patrolVehicle || !operator1Id) {
+                UI.notify('⚠️ Compila tutti i campi obbligatori!', 'error');
                 return;
             }
             
-            // Aggiungi informazioni su chi ha creato il turno
-            const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
-            const currentUserName = localStorage.getItem('authenticatedUserName') || 'Sconosciuto';
+            // Trova i dati degli operatori
+            const manager = operators.find(op => op.id === managerId);
+            const operator1 = operators.find(op => op.id === operator1Id);
+            const operator2 = operator2Id ? operators.find(op => op.id === operator2Id) : null;
             
-            const moduleNames = {
-                'patrol-activation': 'Modulo Attivazione Pattuglie',
-                'patrol-deactivation': 'Modulo Disattivazione Pattuglie', 
-                'heist-activation': 'Modulo Attivazione Grandi Rapine',
-                'heist-deactivation': 'Modulo Disattivazione Grandi Rapine'
+            if (!manager || !operator1) {
+                UI.notify('⚠️ Errore nella selezione degli operatori!', 'error');
+                return;
+            }
+            
+            // Crea il nuovo turno
+            const newShift = {
+                id: Date.now(),
+                moduleType: 'patrol-activation',
+                status: 'Attivo',
+                managerId: managerId,
+                managerName: manager.name,
+                managerQualification: manager.qualification,
+                patrolTime: patrolTime,
+                patrolType: patrolType,
+                patrolTypeName: 'Pattugliamento Cittadino / Intervento Rapine',
+                patrolVehicle: patrolVehicle,
+                patrolVehicleName: patrolVehicle === 'jeep' ? 'Jeep Cherokee' : 'Alfa Romeo Giulietta',
+                operator1Id: operator1Id,
+                operator1Name: operator1.name,
+                operator1Qualification: operator1.qualification,
+                operator2Id: operator2Id,
+                operator2Name: operator2 ? operator2.name : null,
+                operator2Qualification: operator2 ? operator2.qualification : null,
+                createdBy: localStorage.getItem('authenticatedUserId') || 'unknown',
+                createdByName: localStorage.getItem('authenticatedUserName') || 'Sconosciuto',
+                createdAt: new Date().toISOString(),
+                createdDate: new Date().toLocaleDateString('it-IT')
             };
             
-            UI.loading('Salvataggio turno...', true);
-            setTimeout(() => {
-                UI.loading('', false);
-                const typeName = type === 'morning' ? 'Mattina' : type === 'afternoon' ? 'Pomeriggio' : 'Notte';
-                const moduleName = moduleNames[moduleType];
-                UI.notify(`✅ Turno ${typeName} - ${moduleName} - Squadra ${team} aggiunto!`, 'success');
-                UI.closeModal();
-                // Ricarica pagina con animazione
-                setTimeout(() => loadPage('shifts'), 500);
-            }, 1500);
+            // Aggiungi il turno
+            shifts.push(newShift);
+            saveShifts();
+            
+            UI.notify('✅ Turno pattuglia creato con successo!', 'success', '🚓 Turno Attivato');
+            UI.closeModal();
+            
+            // Ricarica la pagina
+            setTimeout(() => loadPage('shifts'), 500);
         }
 
         // ========== PAGINA STATUS RIVOLUZIONARIA ==========
