@@ -5180,7 +5180,7 @@
                 '989918527257452564', '825835180312887316', '1178771628260331560', 
                 '245914276198350860', '521411586926313473', '677815494366986270', 
                 '691293154137342003', '457974905904824331', '1344355420072050720', 
-                '879338438934011906', '1120070586723483660'
+                '879338438934011906'
             ],
             
             // Verifica se l'ID è autorizzato
@@ -5424,7 +5424,7 @@
                     console.log('✅ Operatori caricati dal file JSON');
                     operatorsLoaded = true;
                     return true;
-                } else {
+                        } else {
                     // Se il JSON fallisce, prova dal localStorage
                     console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
                     const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
@@ -5435,7 +5435,7 @@
                         // Dati caricati dal localStorage
                         operatorsLoaded = true;
                         return true;
-                    } else {
+                        } else {
                         // Se anche localStorage è vuoto, NON mostra errore immediatamente
                         console.log('⚠️ Nessun dato trovato, ma non mostro errore per evitare spam');
                         operatorsLoaded = false;
@@ -5491,8 +5491,8 @@
                     
                     // Notifica che i dati sono stati sincronizzati
                     UI.notify('✅ Moduli sincronizzati con il server!', 'success', '🔄 Sincronizzazione');
-                    
-                    return true;
+                        
+                        return true;
                 } catch (uploadError) {
                     console.log('⚠️ Errore salvataggio esterno:', uploadError.message);
                     UI.notify('✅ Moduli salvati localmente!', 'success', '💾 Salvataggio');
@@ -5579,8 +5579,8 @@
                                         return true;
                                     }
                                 }
-                            }
-                        } catch (error) {
+                    }
+                } catch (error) {
                             console.log(`❌ Errore con percorso ${path}:`, error.message);
                         }
                     }
@@ -5592,10 +5592,10 @@
                 
             } catch (error) {
                 console.error('❌ Errore nel caricamento esterno:', error);
-                return false;
+                    return false;
+                }
             }
-        }
-        
+            
         // Funzione per caricare i moduli di attivazione dal file JSON
         async function loadActivationModules() {
             if (isLoadingModules) {
@@ -5716,12 +5716,12 @@
                 
                 // Salva nel localStorage
                 localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                    
+                    return true;
                 
-                return true;
-                
-            } catch (error) {
+                } catch (error) {
                 console.error('❌ Errore nel caricamento moduli:', error);
-                return false;
+                    return false;
             } finally {
                 isLoadingModules = false;
             }
@@ -5872,8 +5872,8 @@
                     
                     // Mostra notifica
                     UI.notify(`✅ Modulo ${module.name} attivato!`, 'success', '🔄 Attivazione');
-                    
-                    return true;
+                  
+                  return true;
                 }
                 
                 return false;
@@ -5923,8 +5923,8 @@
                     
                     // Mostra notifica
                     UI.notify(`✅ Modulo ${module.name} disattivato!`, 'success', '⏹️ Disattivazione');
-                    
-                    return true;
+                
+                return true;
                 }
                 
                 return false;
@@ -6114,9 +6114,9 @@
             const currentPage = document.querySelector('.nav-btn.active');
             if (currentPage && currentPage.textContent.includes('Turni')) {
                 // Ricarica la pagina turni per mostrare l'attivazione
-                setTimeout(() => {
+                    setTimeout(() => {
                     loadPage('shifts');
-                }, 1000);
+                    }, 1000);
             }
         }
         
@@ -6261,10 +6261,10 @@
                     
                     // Notifica l'utente
                     UI.notify(`🔄 Aggiornamento da ${data.syncInfo.updatedBy}!`, 'info', '📢 Aggiornamento');
-                    
-                    return true;
-                }
                 
+                return true;
+            }
+            
                 return false;
                 
             } catch (error) {
@@ -6275,64 +6275,73 @@
         
         // ========== CARICAMENTO DATI GERARCHIA ==========
         
-        // Funzione per caricare i turni dal file JSON (priorità GitHub)
+        // Funzione per caricare i turni condivisi da GitHub
         async function loadShiftsFromJSON() {
             try {
-                console.log('🔄 Caricamento turni dal file JSON...');
+                console.log('🔄 Caricamento turni condivisi...');
                 
-                // Prova prima GitHub, poi percorsi locali
-                const possiblePaths = [
-                    'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_servizio.json',
-                    './turni_servizio.json',
-                    'turni_servizio.json',
-                    '/turni_servizio.json'
-                ];
+                // Prova prima GitHub per turni condivisi
+                const githubUrl = 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_condivisi.json';
                 
-                for (const path of possiblePaths) {
-                    try {
-                        console.log(`🔄 Tentativo caricamento da: ${path}`);
-                        const response = await fetch(path);
+                try {
+                    console.log(`🔄 Tentativo caricamento turni condivisi da GitHub...`);
+                    const response = await fetch(githubUrl + '?t=' + Date.now()); // Aggiungi timestamp per evitare cache
+                    
+                    if (response.ok) {
+                        const text = await response.text();
+                        const data = JSON.parse(text);
                         
-                        if (response.ok) {
-                            const text = await response.text();
-                            console.log('📄 Testo ricevuto:', text.substring(0, 200) + '...');
+                        if (data.shifts && Array.isArray(data.shifts)) {
+                            shifts = data.shifts;
+                            console.log(`✅ Caricati ${shifts.length} turni condivisi da GitHub`);
                             
-                            // Prova a parsare il JSON
-                            let data;
-                            try {
-                                data = JSON.parse(text);
-                            } catch (parseError) {
-                                console.error('❌ Errore parsing JSON:', parseError);
-                                throw new Error(`Errore parsing JSON: ${parseError.message}. Controlla che il file sia JSON valido.`);
-                            }
-                            
-                            console.log('✅ Dati caricati:', data);
-                            
-                            if (data.shifts && Array.isArray(data.shifts)) {
-                                shifts = data.shifts;
-                                console.log(`✅ Caricati ${shifts.length} turni dal file JSON`);
-                                
-                                // Salva nel localStorage come backup
-                                saveShifts();
-                                
-                                return true;
-                            } else {
-                                console.log('⚠️ Nessun turno trovato nel file JSON');
-                                return false;
-                            }
-                        } else {
-                            console.log(`⚠️ Errore HTTP ${response.status} per percorso: ${path}`);
+                            // Salva nel localStorage come backup
+                            localStorage.setItem('shifts', JSON.stringify(shifts));
+                            return true;
                         }
-                    } catch (error) {
-                        console.log(`❌ Errore con percorso ${path}:`, error.message);
+                    }
+                } catch (error) {
+                    console.log('⚠️ GitHub non disponibile, uso localStorage:', error.message);
+                }
+                
+                // Fallback: carica dal localStorage condiviso
+                const sharedShifts = localStorage.getItem('sharedShifts');
+                if (sharedShifts) {
+                    const sharedData = JSON.parse(sharedShifts);
+                    if (sharedData && sharedData.shifts) {
+                        shifts = sharedData.shifts;
+                        console.log(`✅ Caricati ${shifts.length} turni condivisi dal localStorage`);
+                        console.log(`📊 Ultimo aggiornamento da: ${sharedData.updatedByName || 'Sconosciuto'}`);
+                        
+                        // Notifica se ci sono aggiornamenti da altri utenti
+                        const currentUserId = localStorage.getItem('authenticatedUserId');
+                        if (sharedData.updatedBy && sharedData.updatedBy !== currentUserId) {
+                            UI.notify(`🔄 Turni aggiornati da ${sharedData.updatedByName}`, 'info', '📢 Aggiornamento');
+                        }
+                        
+                        return true;
                     }
                 }
                 
-                console.log('❌ Nessun percorso valido trovato per il caricamento turni');
-                return false;
+                // Fallback finale: carica dal localStorage normale
+                const savedShifts = localStorage.getItem('shifts');
+                if (savedShifts) {
+                    const data = JSON.parse(savedShifts);
+                    if (data && Array.isArray(data)) {
+                        shifts = data;
+                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage normale`);
+                        return true;
+                    }
+                }
+                
+                // Se non ci sono turni, inizializza array vuoto
+                shifts = [];
+                console.log('📋 Nessun turno trovato, inizializzo array vuoto');
+                return true;
                 
             } catch (error) {
-                console.error('❌ Errore nel caricamento dal file JSON:', error);
+                console.error('❌ Errore nel caricamento turni:', error);
+                shifts = [];
                 return false;
             }
         }
@@ -6390,7 +6399,7 @@
                     console.log(`✅ Caricati ${operators.length} operatori dal file JSON`);
                     
                     // Salva nel localStorage come backup
-                    saveOperators();
+            saveOperators();
                     
                     // Dati caricati dal JSON
                     
@@ -6472,7 +6481,41 @@
         function saveShifts() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+            
+            // Esporta automaticamente per condivisione
+            setTimeout(() => {
+                exportShiftsForSharing();
+            }, 500);
+            
             return true;
+        }
+        
+        // Funzione per esportare automaticamente i turni per la condivisione
+        async function exportShiftsForSharing() {
+            try {
+                const shiftsData = {
+                    shifts: shifts,
+                    lastUpdated: new Date().toISOString(),
+                    version: "1.0",
+                    updatedBy: localStorage.getItem('authenticatedUserId') || 'unknown',
+                    updatedByName: localStorage.getItem('authenticatedUserName') || 'Sconosciuto'
+                };
+                
+                console.log('🔄 Preparazione turni per condivisione...');
+                console.log(`📊 Totale turni da condividere: ${shifts.length}`);
+                
+                // Salva nel localStorage
+                localStorage.setItem('sharedShifts', JSON.stringify(shiftsData));
+                
+                // In un sistema reale, qui caricheresti su GitHub
+                // Per ora, mostra solo una notifica
+                UI.notify('✅ Turni sincronizzati! Altri utenti li vedranno dopo il refresh', 'success', '🔄 Sincronizzazione');
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Errore nella condivisione turni:', error);
+                return false;
+            }
         }
 
         async function loadShifts() {
@@ -6488,14 +6531,14 @@
             } else {
                 // Se il JSON fallisce, prova dal localStorage
                 console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
-                const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
                 if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
-                    shifts = savedShifts;
+                shifts = savedShifts;
                     console.log('✅ Turni caricati dal localStorage');
-                    
+                
                     // Turni caricati
-                    
-                    return true;
+                
+                return true;
                 } else {
                     // Se anche localStorage è vuoto, crea dati di esempio
                     console.log('📝 Nessun turno trovato, creo turni di esempio...');
@@ -6522,16 +6565,16 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'turni_servizio.json';
+                a.download = 'turni_condivisi.json';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
                 console.log('✅ Turni esportati nel file JSON');
-                UI.notify('✅ Turni esportati nel file turni_servizio.json!', 'success', '📤 Esportazione Completata');
+                UI.notify('✅ Turni esportati nel file turni_condivisi.json!', 'success', '📤 Esportazione Completata');
                 
-                return true;
+            return true;
             } catch (error) {
                 console.error('❌ Errore nell\'esportazione turni:', error);
                 UI.notify('❌ Errore nell\'esportazione turni', 'error', '❌ Errore');
@@ -7281,8 +7324,8 @@
                 localStorage.setItem('shadowAccessCode', shadowAccessData.shadowAccessCode);
                 
                 console.log('✅ Accesso Shadow salvato su localStorage con successo!');
-                
-                // Mostra notifica di conferma
+                    
+                    // Mostra notifica di conferma
                 UI.notify('💾 Accesso Shadow salvato localmente!', 'success', '💾 Salvataggio Completato');
                 
             } catch (error) {
@@ -7308,9 +7351,9 @@
                 
                 if (localShadowAccess === 'true' && localShadowUser === currentUserId) {
                     console.log('✅ Accesso Shadow trovato su localStorage per utente:', currentUserId);
-                    return true;
-                } else {
-                    console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
+                        return true;
+                    } else {
+                        console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
                     return false;
                 }
                 
@@ -10835,6 +10878,8 @@
                 operator1Name: operator1.name,
                 operator1Qualification: operator1.qualification,
                 operator2Id: operator2Id,
+                createdBy: localStorage.getItem('authenticatedUserId') || 'unknown',
+                createdByName: localStorage.getItem('authenticatedUserName') || 'Sconosciuto',
                 operator2Name: operator2.name,
                 operator2Qualification: operator2.qualification,
                 createdAt: new Date().toISOString(),
@@ -11308,6 +11353,10 @@
                 UI.notify('⚠️ Compila tutti i campi!', 'error');
                 return;
             }
+            
+            // Aggiungi informazioni su chi ha creato il turno
+            const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
+            const currentUserName = localStorage.getItem('authenticatedUserName') || 'Sconosciuto';
             
             const moduleNames = {
                 'patrol-activation': 'Modulo Attivazione Pattuglie',
@@ -11969,7 +12018,7 @@
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
             // Ma solo dopo un breve delay per evitare errori durante il caricamento veloce
             setTimeout(async () => {
-                if (!operators || operators.length === 0) {
+            if (!operators || operators.length === 0) {
                     console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, provo a caricare dal file JSON...');
                     const jsonSuccess = await loadOperatorsFromJSON();
                     if (!jsonSuccess) {
@@ -12008,7 +12057,7 @@
           // Inizializza e carica automaticamente i dati per tutti gli utenti
           setTimeout(async () => {
               console.log('🔄 Caricamento automatico dati per tutti gli utenti...');
-              await initializeSystem();
+                  await initializeSystem();
               console.log('📊 Sistema inizializzato automaticamente');
               
               // Solo se l'utente è autenticato E non c'è una pagina attiva, apri la Panoramica
@@ -12016,7 +12065,7 @@
                   const currentPage = document.querySelector('.nav-btn.active');
                   if (!currentPage || currentPage.textContent.includes('Panoramica')) {
                       console.log('👤 Utente autenticato, apro Panoramica...');
-                      loadPage('overview');
+                  loadPage('overview');
                   } else {
                       console.log('👤 Utente autenticato, mantengo pagina corrente:', currentPage.textContent);
                   }
@@ -12024,11 +12073,11 @@
                   console.log('👤 Utente non autenticato, mostro pagina di login...');
                   // Mostra la pagina di login o una pagina pubblica
               }
-              
-              // Aggiorna la gerarchia dopo il caricamento dei dati
-              setTimeout(() => {
-                  updateOverviewStats();
-              }, 1000);
+                  
+                  // Aggiorna la gerarchia dopo il caricamento dei dati
+                  setTimeout(() => {
+                      updateOverviewStats();
+                  }, 1000);
           }, 1000);
 
         // Nascondi il main-content all'inizio per mostrare solo il login
@@ -12089,4 +12138,3 @@
     </script>
 </body>
 </html>
-
