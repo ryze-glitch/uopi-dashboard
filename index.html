@@ -5479,7 +5479,7 @@
             // Token GitHub condiviso per tutti gli operatori IPRP
             // ATTENZIONE: Questo token ha solo permessi 'gist' - non può accedere ad altro
             // In produzione, usa un servizio proxy per nascondere il token
-            token: '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', // Token riattivato per sincronizzazione
+            token: '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', // Nuovo token funzionante
             updateInterval: 5000 // 5 secondi per aggiornamenti più rapidi
         };
         
@@ -6427,8 +6427,10 @@
                 const success = await saveShiftsToGist();
                 if (success) {
                     console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
+                    UI.notify('✅ Turni sincronizzati per tutti!', 'success', '☁️ Cloud Sync');
                 } else {
                     console.log('⚠️ Errore sincronizzazione GitHub');
+                    UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Locale');
                 }
             }, 500);
             
@@ -6512,18 +6514,12 @@
             }
         }
         
-        // Funzione per caricare i turni da GitHub Gist (SICURA - non sovrascrive)
+        // Funzione per caricare i turni da GitHub Gist (ripristinata)
         async function loadShiftsFromGist() {
             try {
-                console.log('🔄 Caricamento turni da GitHub Gist (modalità sicura)...');
+                console.log('🔄 Caricamento turni da GitHub Gist...');
                 
-                // NON sovrascrivere mai i dati esistenti
-                if (shifts && shifts.length > 0) {
-                    console.log(`⚠️ Dati locali già presenti (${shifts.length} turni), non sovrascrivo`);
-                    return true;
-                }
-                
-                // Prova a caricare dal Gist solo se non ci sono dati locali
+                // Prova a caricare dal Gist reale
                 const gistUrl = GIST_CONFIG.rawUrl;
                 
                 try {
@@ -6532,9 +6528,19 @@
                     if (response.ok) {
                         const data = await response.json();
                         
-                        if (data && data.shifts && Array.isArray(data.shifts) && data.shifts.length > 0) {
+                        if (data && data.shifts && Array.isArray(data.shifts)) {
+                            const currentUserId = localStorage.getItem('authenticatedUserId');
+                            
+                            // Notifica se ci sono aggiornamenti da altri utenti
+                            if (data.updatedBy && data.updatedBy !== currentUserId && shifts.length > 0) {
+                                const newShiftsCount = data.shifts.length - shifts.length;
+                                if (newShiftsCount > 0) {
+                                    UI.notify(`🔄 ${newShiftsCount} nuovi turni da ${data.updatedByName}`, 'info', '📥 Aggiornamento');
+                                }
+                            }
+                            
                             shifts = data.shifts;
-                            console.log(`✅ Caricati ${shifts.length} turni da Gist (solo se vuoto)`);
+                            console.log(`✅ Caricati ${shifts.length} turni da Gist`);
                             
                             // Salva in localStorage come backup
                             localStorage.setItem('shifts', JSON.stringify(shifts));
@@ -6544,19 +6550,39 @@
                         }
                     }
                 } catch (error) {
-                    console.log('⚠️ Gist non disponibile');
+                    console.log('⚠️ Gist non disponibile, uso backup locale');
                 }
                 
-                // Se non ci sono dati da nessuna parte, mantieni array vuoto
-                if (!shifts || shifts.length === 0) {
-                    shifts = [];
-                    console.log('📋 Nessun turno trovato');
+                // Fallback: carica dal localStorage
+                const localGist = localStorage.getItem('gistShifts');
+                if (localGist) {
+                    const data = JSON.parse(localGist);
+                    if (data && data.shifts) {
+                        shifts = data.shifts;
+                        console.log(`✅ Caricati ${shifts.length} turni dal backup locale`);
+                        return true;
+                    }
                 }
                 
+                // Se non ci sono turni salvati
+                const savedShifts = localStorage.getItem('shifts');
+                if (savedShifts) {
+                    const data = JSON.parse(savedShifts);
+                    if (data && Array.isArray(data)) {
+                        shifts = data;
+                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
+                        return true;
+                    }
+                }
+                
+                // Inizializza array vuoto
+                shifts = [];
+                console.log('📋 Nessun turno trovato');
                 return true;
                 
             } catch (error) {
                 console.error('❌ Errore caricamento Gist:', error);
+                shifts = [];
                 return false;
             }
         }
@@ -6738,6 +6764,145 @@
             }
         }
         
+        // Funzione per condividere i turni tramite codice
+        function shareShiftsCode() {
+            if (shifts.length === 0) {
+                UI.notify('⚠️ Nessun turno da condividere!', 'warning');
+                return;
+            }
+            
+            const shareData = {
+                shifts: shifts,
+                timestamp: new Date().toISOString(),
+                sharedBy: localStorage.getItem('authenticatedUserName') || 'Sconosciuto',
+                version: '2.0'
+            };
+            
+            const shareCode = btoa(JSON.stringify(shareData));
+            
+            const form = `
+                <div style="padding: 1rem;">
+                    <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid #06b6d4; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <p style="color: #06b6d4; margin: 0 0 1rem 0;">
+                            <strong>📤 Codice Condivisione Pronto!</strong>
+                        </p>
+                        <p style="color: #94a3b8; margin: 0; font-size: 0.875rem;">
+                            Copia questo codice e condividilo con gli altri operatori su Discord/WhatsApp.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #e2e8f0; margin-bottom: 0.5rem;">
+                            Codice Condivisione (${shifts.length} turni)
+                        </label>
+                        <textarea id="shareCode" readonly 
+                            style="width: 100%; height: 100px; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); 
+                            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; 
+                            color: white; font-family: monospace; font-size: 0.875rem; resize: vertical;">${shareCode}</textarea>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; padding: 1rem;">
+                        <p style="color: #10b981; margin: 0; font-size: 0.875rem;">
+                            <strong>📋 Istruzioni:</strong><br>
+                            1. Copia il codice sopra<br>
+                            2. Condividilo su Discord/WhatsApp<br>
+                            3. Gli altri operatori lo incollano nel pulsante "Importa Codice"
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="UI.closeModal()">Chiudi</button>
+                <button class="btn btn-primary" onclick="copyShareCode()">
+                    <i class="fas fa-copy"></i> Copia Codice
+                </button>
+            `;
+            
+            UI.modal('📤 Condividi Turni', form, footer);
+        }
+        
+        function copyShareCode() {
+            const textarea = document.getElementById('shareCode');
+            textarea.select();
+            document.execCommand('copy');
+            UI.notify('✅ Codice copiato negli appunti!', 'success', '📋 Copiato');
+        }
+        
+        // Funzione per importare turni da codice
+        function importShiftsCode() {
+            const form = `
+                <div style="padding: 1rem;">
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <p style="color: #f59e0b; margin: 0 0 1rem 0;">
+                            <strong>📥 Importa Turni Condivisi</strong>
+                        </p>
+                        <p style="color: #94a3b8; margin: 0; font-size: 0.875rem;">
+                            Incolla il codice ricevuto da un altro operatore per sincronizzare i turni.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; color: #e2e8f0; margin-bottom: 0.5rem;">
+                            Codice Condivisione
+                        </label>
+                        <textarea id="importCode" placeholder="Incolla qui il codice ricevuto..."
+                            style="width: 100%; height: 100px; padding: 0.75rem; background: rgba(255, 255, 255, 0.1); 
+                            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; 
+                            color: white; font-family: monospace; font-size: 0.875rem; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 0.5rem; padding: 1rem;">
+                        <p style="color: #ef4444; margin: 0; font-size: 0.875rem;">
+                            <strong>⚠️ Attenzione:</strong> L'importazione sostituirà tutti i turni attuali con quelli del codice.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            const footer = `
+                <button class="btn btn-secondary" onclick="UI.closeModal()">Annulla</button>
+                <button class="btn btn-primary" onclick="processImportCode()">
+                    <i class="fas fa-download"></i> Importa Turni
+                </button>
+            `;
+            
+            UI.modal('📥 Importa da Codice', form, footer);
+        }
+        
+        function processImportCode() {
+            const code = document.getElementById('importCode').value.trim();
+            
+            if (!code) {
+                UI.notify('⚠️ Inserisci un codice valido!', 'warning');
+                return;
+            }
+            
+            try {
+                // Decodifica il codice
+                const decodedData = JSON.parse(atob(code));
+                
+                if (!decodedData.shifts || !Array.isArray(decodedData.shifts)) {
+                    UI.notify('❌ Codice non valido!', 'error');
+                    return;
+                }
+                
+                // Sostituisci i turni
+                shifts = decodedData.shifts;
+                saveShifts();
+                
+                UI.notify(`✅ Importati ${shifts.length} turni da ${decodedData.sharedBy}!`, 'success', '📥 Importato');
+                UI.closeModal();
+                
+                // Ricarica la pagina
+                setTimeout(() => loadPage('shifts'), 500);
+                
+            } catch (error) {
+                console.error('❌ Errore importazione:', error);
+                UI.notify('❌ Codice non valido o corrotto!', 'error');
+            }
+        }
+        
         // Funzione per sincronizzare i turni
         async function syncShifts() {
             console.log('🔄 Sincronizzazione turni...');
@@ -6755,6 +6920,8 @@
             if (currentPage && currentPage.textContent.includes('Turni')) {
                 loadPage('shifts');
             }
+            
+            UI.notify('✅ Turni sincronizzati!', 'success', '🔄 Sync');
         }
         
         // Auto-sync ogni 30 secondi
@@ -8691,7 +8858,7 @@
                         <p>Programmazione e monitoraggio turni operativi</p>
                         <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                             <div style="width: 0.5rem; height: 0.5rem; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
-                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sincronizzazione bidirezionale attiva</span>
+                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sincronizzazione GitHub attiva</span>
                         </div>
                         <div class="actions">
                             <button class="btn btn-primary" onclick="openAddShift()">
@@ -11802,7 +11969,7 @@
             saveShifts();
             
             UI.notify('✅ Turno pattuglia creato con successo!', 'success', '🚓 Turno Attivato');
-            UI.closeModal();
+                UI.closeModal();
             
             // Notifica sincronizzazione
             setTimeout(() => {
@@ -11810,7 +11977,7 @@
             }, 1000);
             
             // Ricarica la pagina
-            setTimeout(() => loadPage('shifts'), 500);
+                setTimeout(() => loadPage('shifts'), 500);
         }
 
         // ========== PAGINA STATUS RIVOLUZIONARIA ==========
@@ -12455,9 +12622,9 @@
             // Carica moduli di attivazione
             await loadActivationModules();
             
-            // DISABILITATO: Auto-sync che causava cancellazioni
-            // startAutoSync();
-            console.log('⚠️ Auto-sync disabilitato per evitare cancellazioni');
+            // Riattivato auto-sync con nuovo token
+            startAutoSync();
+            console.log('🔄 Auto-sync turni riattivato con nuovo token');
             
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
