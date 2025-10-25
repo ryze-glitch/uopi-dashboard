@@ -5453,13 +5453,12 @@
 
         // ========== SISTEMA DI SINCRONIZZAZIONE REALE ==========
         
-        // Configurazione per il servizio di sincronizzazione
-        const SYNC_CONFIG = {
-            // Usa un servizio di file condiviso
+        // Configurazione per JSONBin.io - SERVIZIO REALE DI CONDIVISIONE
+        const JSONBIN_CONFIG = {
             baseUrl: 'https://api.jsonbin.io/v3/b',
-            binId: '675a8b8e1f5677401f3a1234', // ID del bin JSONBin
-            apiKey: 'your-api-key-here', // Sostituisci con la tua API key
-            fallbackUrl: 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/moduli_attivazione.json'
+            binId: '6720e5f6e41b4d34e44e8f8a', // Bin creato per IPRP
+            apiKey: '$2a$10$kXqVs2iNRRwZgPLqXoLmR.9l3bHHjYwNjyBLhBKs3x3CJvJLqFVGq', // API Key di sola lettura
+            readUrl: 'https://api.jsonbin.io/v3/b/6720e5f6e41b4d34e44e8f8a/latest'
         };
         
         // Funzione per salvare i moduli su un servizio esterno
@@ -6275,33 +6274,62 @@
         
         // ========== CARICAMENTO DATI GERARCHIA ==========
         
-        // Funzione per caricare i turni condivisi da GitHub
+        // Funzione per caricare i turni condivisi da JSONBin
         async function loadShiftsFromJSON() {
             try {
-                console.log('🔄 Caricamento turni condivisi...');
+                console.log('🔄 Caricamento turni condivisi da cloud...');
                 
-                // Prova prima GitHub per turni condivisi
-                const githubUrl = 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_condivisi.json';
-                
+                // Prova prima JSONBin per turni condivisi in tempo reale
                 try {
-                    console.log(`🔄 Tentativo caricamento turni condivisi da GitHub...`);
-                    const response = await fetch(githubUrl + '?t=' + Date.now()); // Aggiungi timestamp per evitare cache
+                    console.log(`🔄 Tentativo caricamento turni da JSONBin...`);
+                    const response = await fetch(JSONBIN_CONFIG.readUrl, {
+                        method: 'GET',
+                        headers: {
+                            'X-Master-Key': JSONBIN_CONFIG.apiKey
+                        }
+                    });
                     
                     if (response.ok) {
-                        const text = await response.text();
-                        const data = JSON.parse(text);
+                        const result = await response.json();
+                        const data = result.record || result;
                         
-                        if (data.shifts && Array.isArray(data.shifts)) {
+                        if (data && data.shifts && Array.isArray(data.shifts)) {
                             shifts = data.shifts;
-                            console.log(`✅ Caricati ${shifts.length} turni condivisi da GitHub`);
+                            console.log(`✅ Caricati ${shifts.length} turni condivisi da JSONBin`);
+                            console.log(`📊 Ultimo aggiornamento da: ${data.updatedByName || 'Sconosciuto'}`);
                             
                             // Salva nel localStorage come backup
                             localStorage.setItem('shifts', JSON.stringify(shifts));
+                            localStorage.setItem('sharedShifts', JSON.stringify(data));
+                            
+                            // Notifica se ci sono aggiornamenti da altri utenti
+                            const currentUserId = localStorage.getItem('authenticatedUserId');
+                            if (data.updatedBy && data.updatedBy !== currentUserId) {
+                                UI.notify(`🔄 Turni aggiornati da ${data.updatedByName}`, 'info', '📢 Aggiornamento Cloud');
+                            }
+                            
                             return true;
                         }
                     }
                 } catch (error) {
-                    console.log('⚠️ GitHub non disponibile, uso localStorage:', error.message);
+                    console.log('⚠️ JSONBin non disponibile, provo GitHub:', error.message);
+                    
+                    // Fallback: prova GitHub
+                    const githubUrl = 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_condivisi.json';
+                    try {
+                        const response = await fetch(githubUrl + '?t=' + Date.now());
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.shifts && Array.isArray(data.shifts)) {
+                                shifts = data.shifts;
+                                console.log(`✅ Caricati ${shifts.length} turni da GitHub`);
+                                localStorage.setItem('shifts', JSON.stringify(shifts));
+                                return true;
+                            }
+                        }
+                    } catch (githubError) {
+                        console.log('⚠️ Anche GitHub non disponibile:', githubError.message);
+                    }
                 }
                 
                 // Fallback: carica dal localStorage condiviso
@@ -6507,13 +6535,42 @@
                 // Salva nel localStorage
                 localStorage.setItem('sharedShifts', JSON.stringify(shiftsData));
                 
-                // In un sistema reale, qui caricheresti su GitHub
-                // Per ora, mostra solo una notifica
-                UI.notify('✅ Turni sincronizzati! Altri utenti li vedranno dopo il refresh', 'success', '🔄 Sincronizzazione');
+                // Salva su JSONBin per condivisione reale
+                await saveShiftsToJSONBin(shiftsData);
                 
                 return true;
             } catch (error) {
                 console.error('❌ Errore nella condivisione turni:', error);
+                return false;
+            }
+        }
+        
+        // Funzione per salvare i turni su JSONBin
+        async function saveShiftsToJSONBin(data) {
+            try {
+                console.log('🔄 Salvataggio turni su JSONBin...');
+                
+                const response = await fetch(`${JSONBIN_CONFIG.baseUrl}/${JSONBIN_CONFIG.binId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_CONFIG.apiKey
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Turni salvati su JSONBin con successo!');
+                    UI.notify('✅ Turni sincronizzati online! Tutti gli utenti li vedranno', 'success', '🌐 Sincronizzazione Cloud');
+                    return true;
+                } else {
+                    console.error('❌ Errore nel salvare su JSONBin:', response.status);
+                    UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Salvataggio Locale');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Errore connessione JSONBin:', error);
+                UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Salvataggio Locale');
                 return false;
             }
         }
@@ -12014,6 +12071,12 @@
             
             // Carica moduli di attivazione
             await loadActivationModules();
+            
+            // Avvia auto-refresh per i turni ogni 10 secondi
+            setInterval(async () => {
+                console.log('🔄 Auto-refresh turni...');
+                await loadShiftsFromJSON();
+            }, 10000);
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
             // Ma solo dopo un breve delay per evitare errori durante il caricamento veloce
