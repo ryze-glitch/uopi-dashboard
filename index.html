@@ -5451,14 +5451,17 @@
             }
         }
 
-        // ========== SISTEMA DI SINCRONIZZAZIONE REALE ==========
+        // ========== SISTEMA DI SINCRONIZZAZIONE GITHUB GIST ==========
         
-        // Configurazione per JSONBin.io - SERVIZIO REALE DI CONDIVISIONE
-        const JSONBIN_CONFIG = {
-            baseUrl: 'https://api.jsonbin.io/v3/b',
-            binId: '6720e5f6e41b4d34e44e8f8a', // Bin creato per IPRP
-            apiKey: '$2a$10$kXqVs2iNRRwZgPLqXoLmR.9l3bHHjYwNjyBLhBKs3x3CJvJLqFVGq', // API Key di sola lettura
-            readUrl: 'https://api.jsonbin.io/v3/b/6720e5f6e41b4d34e44e8f8a/latest'
+        // Configurazione GitHub Gist per sincronizzazione automatica
+        const GIST_CONFIG = {
+            // Gist pubblico per i turni IPRP
+            gistId: '07d8df63489c44b95f78d9eaed15f4f1', // ID reale del Gist
+            filename: 'iprp_turni.json',
+            rawUrl: 'https://gist.githubusercontent.com/ryze-glitch/07d8df63489c44b95f78d9eaed15f4f1/raw/iprp_turni.json',
+            // Token di sola lettura per sicurezza
+            token: null, // Non necessario per lettura di gist pubblici
+            updateInterval: 30000 // 30 secondi
         };
         
         // Funzione per salvare i moduli su un servizio esterno
@@ -6152,46 +6155,7 @@
             }
         }
         
-        // Funzione per esportare i moduli di attivazione come file JSON
-        function exportActivationModules() {
-            try {
-                if (!activationModules || !activationModules.modules) {
-                    UI.notify('❌ Nessun modulo da esportare', 'error', '❌ Errore');
-                    return false;
-                }
-                
-                const dataToExport = {
-                    ...activationModules,
-                    system: {
-                        ...activationModules.system,
-                        lastExported: new Date().toISOString(),
-                        exportedBy: localStorage.getItem('authenticatedUserId') || 'unknown'
-                    }
-                };
-                
-                const jsonString = JSON.stringify(dataToExport, null, 2);
-                
-                // Crea e scarica il file
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'moduli_attivazione.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                console.log('✅ Moduli di attivazione esportati');
-                UI.notify('✅ File moduli_attivazione.json scaricato!', 'success', '📤 Esportazione');
-                
-                return true;
-            } catch (error) {
-                console.error('❌ Errore nell\'esportazione moduli:', error);
-                UI.notify('❌ Errore nell\'esportazione', 'error', '❌ Errore');
-                return false;
-            }
-        }
+        // Funzione per rimuovere tutte le funzioni di sincronizzazione esterne
         
         // Funzione per implementare sincronizzazione tramite localStorage condiviso
         async function implementSharedLocalStorage() {
@@ -6277,95 +6241,23 @@
         // Funzione per caricare i turni condivisi da JSONBin
         async function loadShiftsFromJSON() {
             try {
-                console.log('🔄 Caricamento turni condivisi da cloud...');
+                console.log('🔄 Caricamento turni dal localStorage...');
                 
-                // Prova prima JSONBin per turni condivisi in tempo reale
-                try {
-                    console.log(`🔄 Tentativo caricamento turni da JSONBin...`);
-                    const response = await fetch(JSONBIN_CONFIG.readUrl, {
-                        method: 'GET',
-                        headers: {
-                            'X-Master-Key': JSONBIN_CONFIG.apiKey
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        const data = result.record || result;
-                        
-                        if (data && data.shifts && Array.isArray(data.shifts)) {
-                            shifts = data.shifts;
-                            console.log(`✅ Caricati ${shifts.length} turni condivisi da JSONBin`);
-                            console.log(`📊 Ultimo aggiornamento da: ${data.updatedByName || 'Sconosciuto'}`);
-                            
-                            // Salva nel localStorage come backup
-                            localStorage.setItem('shifts', JSON.stringify(shifts));
-                            localStorage.setItem('sharedShifts', JSON.stringify(data));
-                            
-                            // Notifica se ci sono aggiornamenti da altri utenti
-                            const currentUserId = localStorage.getItem('authenticatedUserId');
-                            if (data.updatedBy && data.updatedBy !== currentUserId) {
-                                UI.notify(`🔄 Turni aggiornati da ${data.updatedByName}`, 'info', '📢 Aggiornamento Cloud');
-                            }
-                            
-                            return true;
-                        }
-                    }
-                } catch (error) {
-                    console.log('⚠️ JSONBin non disponibile, provo GitHub:', error.message);
-                    
-                    // Fallback: prova GitHub
-                    const githubUrl = 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_condivisi.json';
-                    try {
-                        const response = await fetch(githubUrl + '?t=' + Date.now());
-                        if (response.ok) {
-                            const data = await response.json();
-                            if (data.shifts && Array.isArray(data.shifts)) {
-                                shifts = data.shifts;
-                                console.log(`✅ Caricati ${shifts.length} turni da GitHub`);
-                                localStorage.setItem('shifts', JSON.stringify(shifts));
-                                return true;
-                            }
-                        }
-                    } catch (githubError) {
-                        console.log('⚠️ Anche GitHub non disponibile:', githubError.message);
-                    }
-                }
-                
-                // Fallback: carica dal localStorage condiviso
-                const sharedShifts = localStorage.getItem('sharedShifts');
-                if (sharedShifts) {
-                    const sharedData = JSON.parse(sharedShifts);
-                    if (sharedData && sharedData.shifts) {
-                        shifts = sharedData.shifts;
-                        console.log(`✅ Caricati ${shifts.length} turni condivisi dal localStorage`);
-                        console.log(`📊 Ultimo aggiornamento da: ${sharedData.updatedByName || 'Sconosciuto'}`);
-                        
-                        // Notifica se ci sono aggiornamenti da altri utenti
-                        const currentUserId = localStorage.getItem('authenticatedUserId');
-                        if (sharedData.updatedBy && sharedData.updatedBy !== currentUserId) {
-                            UI.notify(`🔄 Turni aggiornati da ${sharedData.updatedByName}`, 'info', '📢 Aggiornamento');
-                        }
-                        
-                        return true;
-                    }
-                }
-                
-                // Fallback finale: carica dal localStorage normale
+                // Carica dal localStorage
                 const savedShifts = localStorage.getItem('shifts');
                 if (savedShifts) {
                     const data = JSON.parse(savedShifts);
                     if (data && Array.isArray(data)) {
                         shifts = data;
-                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage normale`);
-                        return true;
+                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
+                return true;
                     }
                 }
                 
                 // Se non ci sono turni, inizializza array vuoto
-                shifts = [];
+                    shifts = [];
                 console.log('📋 Nessun turno trovato, inizializzo array vuoto');
-                return true;
+            return true;
                 
             } catch (error) {
                 console.error('❌ Errore nel caricamento turni:', error);
@@ -6507,137 +6399,208 @@
 
         // Funzioni per turni
         function saveShifts() {
-            // Salva nel localStorage come backup
+            // Salva nel localStorage
             saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+            console.log(`💾 ${shifts.length} turni salvati nel localStorage`);
             
-            // Esporta automaticamente per condivisione
-            setTimeout(() => {
-                exportShiftsForSharing();
+            // Salva anche su Gist per sincronizzazione
+            setTimeout(async () => {
+                await saveShiftsToGist();
             }, 500);
             
             return true;
         }
+
+        // Funzione per cancellare tutti i turni
+        function clearAllShifts() {
+            if (confirm('⚠️ Sei sicuro di voler cancellare TUTTI i turni? Questa azione è irreversibile!')) {
+                shifts = [];
+                saveShifts();
+                UI.notify('✅ Tutti i turni sono stati cancellati', 'success', '🗑️ Pulizia Completata');
+                loadPage('shifts');
+            }
+        }
         
-        // Funzione per esportare automaticamente i turni per la condivisione
-        async function exportShiftsForSharing() {
+        // Funzione per salvare i turni su GitHub Gist
+        async function saveShiftsToGist() {
             try {
+                console.log('🔄 Salvataggio turni su GitHub Gist...');
+                
                 const shiftsData = {
                     shifts: shifts,
                     lastUpdated: new Date().toISOString(),
-                    version: "1.0",
                     updatedBy: localStorage.getItem('authenticatedUserId') || 'unknown',
-                    updatedByName: localStorage.getItem('authenticatedUserName') || 'Sconosciuto'
+                    updatedByName: localStorage.getItem('authenticatedUserName') || 'Sconosciuto',
+                    version: '2.0'
                 };
                 
-                console.log('🔄 Preparazione turni per condivisione...');
-                console.log(`📊 Totale turni da condividere: ${shifts.length}`);
+                // Salva in localStorage come backup
+                localStorage.setItem('gistShifts', JSON.stringify(shiftsData));
                 
-                // Salva nel localStorage
-                localStorage.setItem('sharedShifts', JSON.stringify(shiftsData));
+                // NOTA: Per aggiornare il Gist in produzione:
+                // 1. Usa un webhook serverless (Vercel, Netlify Functions)
+                // 2. O chiedi agli utenti di aggiornare manualmente il Gist
+                // 3. O usa un servizio proxy che gestisce il token in modo sicuro
                 
-                // Salva su JSONBin per condivisione reale
-                await saveShiftsToJSONBin(shiftsData);
+                console.log('✅ Turni salvati localmente');
+                console.log('📋 Per aggiornare il Gist:', GIST_CONFIG.rawUrl);
+                
+                // Crea JSON da copiare
+                const jsonString = JSON.stringify(shiftsData, null, 2);
+                
+                // Mostra pulsante per copiare i dati
+                if (shifts.length > 0 && Math.random() < 0.1) { // Mostra solo 10% delle volte per non essere invasivo
+                    setTimeout(() => {
+                        if (confirm('📤 Vuoi aggiornare il Gist con i nuovi turni?')) {
+                            navigator.clipboard.writeText(jsonString);
+                            UI.notify('✅ JSON copiato! Incolla nel Gist', 'info', '📋 Copiato');
+                            window.open(`https://gist.github.com/ryze-glitch/${GIST_CONFIG.gistId}`, '_blank');
+                        }
+                    }, 2000);
+                }
                 
                 return true;
             } catch (error) {
-                console.error('❌ Errore nella condivisione turni:', error);
+                console.error('❌ Errore salvataggio:', error);
+                UI.notify('⚠️ Errore sincronizzazione', 'warning');
                 return false;
             }
         }
         
-        // Funzione per salvare i turni su JSONBin
-        async function saveShiftsToJSONBin(data) {
+        // Funzione per caricare i turni da GitHub Gist
+        async function loadShiftsFromGist() {
             try {
-                console.log('🔄 Salvataggio turni su JSONBin...');
+                console.log('🔄 Caricamento turni da GitHub Gist...');
                 
-                const response = await fetch(`${JSONBIN_CONFIG.baseUrl}/${JSONBIN_CONFIG.binId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_CONFIG.apiKey
-                    },
-                    body: JSON.stringify(data)
-                });
+                // Prova a caricare dal Gist reale
+                const gistUrl = GIST_CONFIG.rawUrl;
                 
-                if (response.ok) {
-                    console.log('✅ Turni salvati su JSONBin con successo!');
-                    UI.notify('✅ Turni sincronizzati online! Tutti gli utenti li vedranno', 'success', '🌐 Sincronizzazione Cloud');
-                    return true;
-                } else {
-                    console.error('❌ Errore nel salvare su JSONBin:', response.status);
-                    UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Salvataggio Locale');
-                    return false;
+                try {
+                    const response = await fetch(gistUrl + '?t=' + Date.now());
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        if (data && data.shifts && Array.isArray(data.shifts)) {
+                            const currentUserId = localStorage.getItem('authenticatedUserId');
+                            
+                            // Notifica se ci sono aggiornamenti da altri utenti
+                            if (data.updatedBy && data.updatedBy !== currentUserId && shifts.length > 0) {
+                                const newShiftsCount = data.shifts.length - shifts.length;
+                                if (newShiftsCount > 0) {
+                                    UI.notify(`🔄 ${newShiftsCount} nuovi turni da ${data.updatedByName}`, 'info', '📥 Aggiornamento');
+                                }
+                            }
+                            
+                            shifts = data.shifts;
+                            console.log(`✅ Caricati ${shifts.length} turni da Gist`);
+                            
+                            // Salva in localStorage come backup
+                            localStorage.setItem('shifts', JSON.stringify(shifts));
+                            localStorage.setItem('gistShifts', JSON.stringify(data));
+                            
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    console.log('⚠️ Gist non disponibile, uso backup locale');
                 }
+                
+                // Fallback: carica dal localStorage
+                const localGist = localStorage.getItem('gistShifts');
+                if (localGist) {
+                    const data = JSON.parse(localGist);
+                    if (data && data.shifts) {
+                        shifts = data.shifts;
+                        console.log(`✅ Caricati ${shifts.length} turni dal backup locale`);
+                        return true;
+                    }
+                }
+                
+                // Se non ci sono turni salvati
+                const savedShifts = localStorage.getItem('shifts');
+                if (savedShifts) {
+                    const data = JSON.parse(savedShifts);
+                    if (data && Array.isArray(data)) {
+                        shifts = data;
+                        console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
+                        return true;
+                    }
+                }
+                
+                // Inizializza array vuoto
+                shifts = [];
+                console.log('📋 Nessun turno trovato');
+                return true;
+                
             } catch (error) {
-                console.error('❌ Errore connessione JSONBin:', error);
-                UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Salvataggio Locale');
+                console.error('❌ Errore caricamento Gist:', error);
+                shifts = [];
                 return false;
+            }
+        }
+        
+        // Funzione per sincronizzare i turni
+        async function syncShifts() {
+            console.log('🔄 Sincronizzazione turni...');
+            
+            // Prima carica gli ultimi dati
+            await loadShiftsFromGist();
+            
+            // Poi salva eventuali modifiche locali
+            if (shifts.length > 0) {
+                await saveShiftsToGist();
+            }
+            
+            // Aggiorna la UI
+            const currentPage = document.querySelector('.nav-btn.active');
+            if (currentPage && currentPage.textContent.includes('Turni')) {
+                loadPage('shifts');
+            }
+        }
+        
+        // Auto-sync ogni 30 secondi
+        let syncInterval = null;
+        
+        function startAutoSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
+            
+            syncInterval = setInterval(async () => {
+                await syncShifts();
+            }, GIST_CONFIG.updateInterval);
+            
+            console.log('✅ Auto-sync avviato (ogni 30 secondi)');
+        }
+        
+        function stopAutoSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+                console.log('⏹️ Auto-sync fermato');
             }
         }
 
         async function loadShifts() {
             console.log('🔄 Caricamento turni...');
             
-            // Prima prova sempre a caricare dal file JSON (priorità massima)
-            console.log('🔄 Tentativo di caricamento dal file JSON...');
-            const jsonSuccess = await loadShiftsFromJSON();
+            // Usa sempre Gist come fonte principale
+            const gistSuccess = await loadShiftsFromGist();
             
-            if (jsonSuccess) {
-                console.log('✅ Turni caricati dal file JSON');
-                return true;
-            } else {
-                // Se il JSON fallisce, prova dal localStorage
-                console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
-            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+            if (!gistSuccess || shifts.length === 0) {
+                // Se Gist fallisce, prova localStorage come backup
+                const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
                 if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
-                shifts = savedShifts;
-                    console.log('✅ Turni caricati dal localStorage');
-                
-                    // Turni caricati
-                
-                return true;
-                } else {
-                    // Se anche localStorage è vuoto, crea dati di esempio
-                    console.log('📝 Nessun turno trovato, creo turni di esempio...');
-                    createSampleShifts();
-                    return true;
+                    shifts = savedShifts;
+                    console.log('✅ Turni caricati dal localStorage (backup)');
                 }
             }
+            
+            return true;
         }
 
         // Funzione per esportare i turni nel file JSON
-        function exportShiftsToJSON() {
-            try {
-                const shiftsData = {
-                    shifts: shifts,
-                    lastUpdated: new Date().toISOString(),
-                    version: "1.0",
-                    description: "Turni di servizio condivisi per il server IPRP FiveM roleplay"
-                };
-                
-                const jsonString = JSON.stringify(shiftsData, null, 2);
-                
-                // Crea e scarica il file
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'turni_condivisi.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                console.log('✅ Turni esportati nel file JSON');
-                UI.notify('✅ Turni esportati nel file turni_condivisi.json!', 'success', '📤 Esportazione Completata');
-                
-            return true;
-            } catch (error) {
-                console.error('❌ Errore nell\'esportazione turni:', error);
-                UI.notify('❌ Errore nell\'esportazione turni', 'error', '❌ Errore');
-                return false;
-            }
-        }
 
         // Funzione per creare turni di esempio
         function createSampleShifts() {
@@ -8384,17 +8347,11 @@
                             <button class="btn btn-primary" onclick="openAddShift()">
                                 <i class="fas fa-plus"></i> Aggiungi Nuovo Turno
                             </button>
-                            <button class="btn btn-secondary" onclick="exportShiftsToJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
-                                <i class="fas fa-download"></i> Esporta Turni
+                            <button class="btn btn-secondary" onclick="syncShifts()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                <i class="fas fa-sync"></i> Sincronizza Ora
                             </button>
-                            <button class="btn btn-secondary" onclick="loadShiftsFromJSON()" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
-                                <i class="fas fa-sync-alt"></i> Ricarica da GitHub
-                            </button>
-                            <button class="btn btn-secondary" onclick="exportActivationModules()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-                                <i class="fas fa-download"></i> Esporta Moduli
-                            </button>
-                            <button class="btn btn-secondary" onclick="forceSyncModules()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                                <i class="fas fa-sync"></i> Sincronizza
+                            <button class="btn btn-danger" onclick="clearAllShifts()" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                                <i class="fas fa-trash-alt"></i> Cancella Tutti
                             </button>
                         </div>
                     </div>
@@ -8554,17 +8511,11 @@
                         <button class="btn btn-primary" onclick="openAddShift()">
                             <i class="fas fa-plus"></i> Aggiungi Nuovo Turno
                         </button>
-                        <button class="btn btn-secondary" onclick="exportShiftsToJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
-                            <i class="fas fa-download"></i> Esporta Turni
+                        <button class="btn btn-secondary" onclick="syncShifts()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-sync"></i> Sincronizza Ora
                         </button>
-                        <button class="btn btn-secondary" onclick="loadShiftsFromJSON()" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
-                            <i class="fas fa-sync-alt"></i> Ricarica da GitHub
-                        </button>
-                        <button class="btn btn-secondary" onclick="exportActivationModules()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-                            <i class="fas fa-download"></i> Esporta Moduli
-                        </button>
-                        <button class="btn btn-secondary" onclick="forceSyncModules()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                            <i class="fas fa-sync"></i> Sincronizza
+                        <button class="btn btn-danger" onclick="clearAllShifts()" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <i class="fas fa-trash-alt"></i> Cancella Tutti
                         </button>
                     </div>
                 </div>
@@ -9157,7 +9108,7 @@
                         color: white;
                         border: none;
                         padding: 1rem;
-                        border-radius: 0.75rem;
+                        border-radius: 0 0 0.75rem 0.75rem;
                         font-weight: 600;
                         font-size: 1rem;
                         cursor: pointer;
@@ -12072,11 +12023,10 @@
             // Carica moduli di attivazione
             await loadActivationModules();
             
-            // Avvia auto-refresh per i turni ogni 10 secondi
-            setInterval(async () => {
-                console.log('🔄 Auto-refresh turni...');
-                await loadShiftsFromJSON();
-            }, 10000);
+            // Avvia sincronizzazione automatica dei turni
+            startAutoSync();
+            console.log('🔄 Auto-sync turni avviato');
+            
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
             // Ma solo dopo un breve delay per evitare errori durante il caricamento veloce
@@ -12200,4 +12150,5 @@
         console.log('✅ Sistema caricato - VERSIONE PULITA');
     </script>
 </body>
+</html>
 </html>
