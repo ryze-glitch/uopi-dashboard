@@ -5464,6 +5464,31 @@
             console.log('🔄 Caricamento moduli di attivazione...');
             
             try {
+                // Prima prova a caricare dal localStorage
+                const localModules = localStorage.getItem('activationModules');
+                if (localModules) {
+                    try {
+                        const data = JSON.parse(localModules);
+                        if (data.modules) {
+                            activationModules = data;
+                            modulesLoaded = true;
+                            console.log('✅ Caricati moduli di attivazione dal localStorage');
+                            
+                            // Sincronizza con il sistema di countdown esistente
+                            try {
+                                syncModulesWithCountdown();
+                            } catch (syncError) {
+                                console.error('❌ Errore nella sincronizzazione countdown:', syncError);
+                            }
+                            
+                            return true;
+                        }
+                    } catch (parseError) {
+                        console.log('❌ Errore nel parsing localStorage moduli:', parseError);
+                    }
+                }
+                
+                // Se non c'è nel localStorage, prova i percorsi esterni
                 const possiblePaths = [
                     'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/moduli_attivazione.json',
                     './moduli_attivazione.json',
@@ -5485,22 +5510,15 @@
                                 modulesLoaded = true;
                                 console.log(`✅ Caricati moduli di attivazione da: ${path}`);
                                 
+                                // Salva nel localStorage per il prossimo caricamento
+                                localStorage.setItem('activationModules', JSON.stringify(data));
+                                
                                 // Sincronizza con il sistema di countdown esistente
                                 try {
                                     syncModulesWithCountdown();
                                 } catch (syncError) {
                                     console.error('❌ Errore nella sincronizzazione countdown:', syncError);
                                 }
-                                
-                                // Avvia auto-refresh GitHub ogni 15 secondi per sincronizzazione real-time
-                                // Solo se i moduli sono stati caricati con successo
-                                setTimeout(() => {
-                                    try {
-                                        startAutoRefresh(15);
-                                    } catch (refreshError) {
-                                        console.error('❌ Errore nell\'avvio auto-refresh:', refreshError);
-                                    }
-                                }, 2000); // Aspetta 2 secondi prima di avviare l'auto-refresh
                                 
                                 return true;
                             }
@@ -5510,8 +5528,53 @@
                     }
                 }
                 
-                console.log('❌ Nessun percorso valido trovato per i moduli');
-                return false;
+                // Se nessun percorso funziona, crea moduli di default
+                console.log('⚠️ Nessun percorso valido trovato, creo moduli di default');
+                activationModules = {
+                    modules: {
+                        shifts: {
+                            id: "shifts",
+                            name: "Gestione Turni",
+                            description: "Programmazione e monitoraggio turni operativi",
+                            status: "unlocked",
+                            isUnlocked: true,
+                            lastActivatedBy: null,
+                            lastActivatedAt: null,
+                            lastDeactivatedBy: null,
+                            lastDeactivatedAt: null,
+                            currentOperator: null,
+                            activationHistory: [],
+                            icon: "🕐",
+                            category: "operativo",
+                            unlockDate: "2025-10-20T00:00:00Z"
+                        }
+                    },
+                    system: {
+                        lastUpdated: new Date().toISOString(),
+                        version: "1.0",
+                        autoRefreshInterval: 15,
+                        description: "Sistema moduli di attivazione dinamico per IPRP FiveM roleplay",
+                        totalActivations: 0,
+                        activeModules: 0
+                    },
+                    statistics: {
+                        totalActivations: 0,
+                        totalDeactivations: 0,
+                        mostActiveOperator: null,
+                        mostUsedModule: null,
+                        averageSessionTime: 0,
+                        unlockedModules: 1,
+                        lockedModules: 0
+                    }
+                };
+                
+                modulesLoaded = true;
+                console.log('✅ Creati moduli di default');
+                
+                // Salva nel localStorage
+                localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                
+                return true;
                 
             } catch (error) {
                 console.error('❌ Errore nel caricamento moduli:', error);
@@ -7978,10 +8041,18 @@
                 shiftsByDay[date].push(shift);
             });
 
-            // Ordina le date
-            const sortedDates = Object.keys(shiftsByDay).sort((a, b) => new Date(b) - new Date(a));
+            // Ordina le date, filtrando quelle undefined o null
+            const sortedDates = Object.keys(shiftsByDay)
+                .filter(date => date && date !== 'undefined' && date !== 'null')
+                .sort((a, b) => new Date(b) - new Date(a));
 
             const shiftsHTML = sortedDates.map(date => {
+                // Controllo iniziale per date undefined o null
+                if (!date || date === 'undefined' || date === 'null') {
+                    console.error('❌ Data undefined o null:', date);
+                    return `<div class="card"><p>❌ Errore: Data non valida</p></div>`;
+                }
+                
                 const dayShifts = shiftsByDay[date];
                 // Converte la data italiana (dd/mm/yyyy) in formato ISO per il parsing
                 const dateParts = date.split('/');
