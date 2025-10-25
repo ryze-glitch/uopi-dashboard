@@ -1,0 +1,399 @@
+{
+    "operators": [
+      {
+        "id": 1,
+        "name": "Tonino Frasca",
+        "discordTag": "_frascones_",
+        "qualification": "✨・Comandante Generale",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 2,
+        "name": "Gabriel Martinelli",
+        "discordTag": "dxrk.ryze",
+        "qualification": "💎・Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 3,
+        "name": "Matteo Rossi",
+        "discordTag": "0_matte_0",
+        "qualification": "💎・Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 4,
+        "name": "Simone Sottaceto",
+        "discordTag": "estensione",
+        "qualification": "💎・Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 5,
+        "name": "Simone Brighella",
+        "discordTag": "fastweb.mvp",
+        "qualification": "🥏・Vice Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 6,
+        "name": "Franco Costa",
+        "discordTag": "kekkozalone89",
+        "qualification": "🥏・Vice Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 7,
+        "name": "Francesco Vanni",
+        "discordTag": "ghostfede",
+        "qualification": "🪁・Sostituto Vice Comandante",
+        "role": "dirigenziale",
+        "roleName": "🏅・Nucleo Dirigenziale",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 8,
+        "name": "Diego Bianchi",
+        "discordTag": "gavonet",
+        "qualification": "⚜️・Capitano",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 9,
+        "name": "Marco Alessis",
+        "discordTag": "marcucx",
+        "qualification": "🪖・Caposquadra",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 10,
+        "name": "Rocco Zecca",
+        "discordTag": "zeccast",
+        "qualification": "🪖・Vice Caposquadra",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 11,
+        "name": "Fabio Lupix",
+        "discordTag": "lupix.14",
+        "qualification": "🪖・Vice Caposquadra",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 12,
+        "name": "Rodolfo Vespa",
+        "discordTag": "fluca20",
+        "qualification": "🔱・Coordinatore",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 13,
+        "name": "Giorgio Moretti",
+        "discordTag": "il_lingio",
+        "qualification": "🔱・Coordinatore",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 14,
+        "name": "Mattia Gomez",
+        "discordTag": "fakeghost_",
+        "qualification": "🔱・Coordinatore",
+        "role": "amministrativo",
+        "roleName": "📋・Nucleo Amministrativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 15,
+        "name": "Costantino Toscano",
+        "discordTag": "arnobio350",
+        "qualification": "🔐・Tecnico Esperto",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 16,
+        "name": "Marco Carpentieri",
+        "discordTag": "grankio99",
+        "qualification": "🔏・Tecnico Specializzato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 17,
+        "name": "Jolen Nathan",
+        "discordTag": "jolen._.",
+        "qualification": "🔏・Tecnico Specializzato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 18,
+        "name": "Giulio Bellino",
+        "discordTag": "giulsza",
+        "qualification": "🔒・Tecnico",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 19,
+        "name": "Denna Conti",
+        "discordTag": "dennaonfire",
+        "qualification": "🔒・Tecnico",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 20,
+        "name": "Alessyo Taviglia",
+        "discordTag": "7aviglia.gg",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 21,
+        "name": "Alex Ferrari",
+        "discordTag": "alexx__",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 22,
+        "name": "Tommy Manero",
+        "discordTag": "peppose98",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 23,
+        "name": "Alessandro Moro",
+        "discordTag": "ildioanubi.1",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 24,
+        "name": "Matteo Corona",
+        "discordTag": "lightywolf_",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 25,
+        "name": "Lucas Garcia",
+        "discordTag": "salvo115",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 26,
+        "name": "Claudio Bisonzio",
+        "discordTag": "didyouknow.",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 27,
+        "name": "Damiano Scofield",
+        "discordTag": "damy_97",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 28,
+        "name": "Gabriele De Simone",
+        "discordTag": "gabrieleliderdelladgg",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 29,
+        "name": "Samuelino Bellino",
+        "discordTag": "samuele_yt",
+        "qualification": "💠・Operatore Qualificato",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 30,
+        "name": "Marco Ferri",
+        "discordTag": "the_real_king_29",
+        "qualification": "🔰・Operatore Scelto",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 31,
+        "name": "Derek Morgan",
+        "discordTag": "bomberhino",
+        "qualification": "🔰・Operatore Scelto",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 32,
+        "name": "Ethan Larkin",
+        "discordTag": "gessux",
+        "qualification": "🔰・Operatore Scelto",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 33,
+        "name": "Lori Ciapopo",
+        "discordTag": "peppe2528",
+        "qualification": "🔰・Operatore Scelto",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 34,
+        "name": "Lorenz Mengoni",
+        "discordTag": "lorenzogef8171",
+        "qualification": "🌐・Operatore",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 35,
+        "name": "Giorgio Conti",
+        "discordTag": "_tfall",
+        "qualification": "🌐・Operatore",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 36,
+        "name": "Andrea Ferrari",
+        "discordTag": "andrea_pacifico",
+        "qualification": "🌐・Operatore",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 37,
+        "name": "Flavio Bianchi",
+        "discordTag": "whitecontrol__",
+        "qualification": "🌐・Operatore",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 38,
+        "name": "Sbirr Caram",
+        "discordTag": "mirco_85314",
+        "qualification": "🔮・Operatore in Prova",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      },
+      {
+        "id": 39,
+        "name": "Pasquale Rossi",
+        "discordTag": ".ilgiocatore",
+        "qualification": "🔮・Operatore in Prova",
+        "role": "operativo",
+        "roleName": "👮・Nucleo Operativo",
+        "status": "Disponibile",
+        "addedDate": "20/10/2025"
+      }
+    ],
+    "shifts": [],
+    "notifications": [],
+    "lastUpdated": "2025-10-22T15:35:21.855Z"
+  }'::jsonb,
+  NOW()
+);
