@@ -5375,36 +5375,37 @@
 
         
 
-        function loadOperators() {
+        async function loadOperators() {
+            console.log('🔄 Caricamento operatori...');
+            
             // Prima prova sempre a caricare dal file JSON (priorità massima)
             console.log('🔄 Tentativo di caricamento dal file JSON...');
-            loadOperatorsFromJSON().then(success => {
-                if (success) {
-                    console.log('✅ Operatori caricati dal file JSON');
+            const jsonSuccess = await loadOperatorsFromJSON();
+            
+            if (jsonSuccess) {
+                console.log('✅ Operatori caricati dal file JSON');
+                return true;
+            } else {
+                // Se il JSON fallisce, prova dal localStorage
+                console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
+                const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
+                if (savedOperators && Array.isArray(savedOperators) && savedOperators.length > 0) {
+                    operators = savedOperators;
+                    console.log('✅ Operatori caricati dal localStorage');
+                    
+                    // Aggiorna la gerarchia dopo il caricamento dei dati
+                    setTimeout(() => {
+                        updateOverviewStats();
+                    }, 100);
+                    
                     return true;
                 } else {
-                    // Se il JSON fallisce, prova dal localStorage
-                    console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
-                    const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
-                    if (savedOperators && Array.isArray(savedOperators) && savedOperators.length > 0) {
-                        operators = savedOperators;
-                        console.log('✅ Operatori caricati dal localStorage');
-                        
-                        // Aggiorna la gerarchia dopo il caricamento dei dati
-                        setTimeout(() => {
-                            updateOverviewStats();
-                        }, 100);
-                        
-                        return true;
-                    } else {
-                        // Se anche localStorage è vuoto, mostra errore
-                        console.log('❌ Nessun dato trovato, impossibile caricare operatori');
-                        UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
-                        return false;
-                    }
+                    // Se anche localStorage è vuoto, mostra errore
+                    console.log('❌ Nessun dato trovato, impossibile caricare operatori');
+                    UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
+                    return false;
                 }
-            });
-            return true;
+            }
         }
 
         // ========== CARICAMENTO DATI GERARCHIA ==========
@@ -10913,7 +10914,7 @@
             console.log('🔄 Inizializzazione sistema...');
             
             // Carica dati dal localStorage prima
-            loadOperators();
+            await loadOperators();
             loadShifts();
             loadNotifications();
             
@@ -10955,10 +10956,15 @@
               await initializeSystem();
               console.log('📊 Sistema inizializzato automaticamente');
               
-              // Se l'utente è autenticato, apri la Panoramica
+              // Solo se l'utente è autenticato E non c'è una pagina attiva, apri la Panoramica
               if (isUserAuthenticated()) {
-                  console.log('👤 Utente autenticato, apro Panoramica...');
-                  loadPage('overview');
+                  const currentPage = document.querySelector('.nav-btn.active');
+                  if (!currentPage || currentPage.textContent.includes('Panoramica')) {
+                      console.log('👤 Utente autenticato, apro Panoramica...');
+                      loadPage('overview');
+                  } else {
+                      console.log('👤 Utente autenticato, mantengo pagina corrente:', currentPage.textContent);
+                  }
               } else {
                   console.log('👤 Utente non autenticato, mostro pagina di login...');
                   // Mostra la pagina di login o una pagina pubblica
