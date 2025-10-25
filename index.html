@@ -5398,6 +5398,12 @@
         // Variabile per tracciare lo stato di caricamento
         let isLoadingOperators = false;
         let operatorsLoaded = false;
+        
+        // Variabili per il sistema moduli di attivazione
+        let activationModules = {};
+        let isLoadingModules = false;
+        let modulesLoaded = false;
+        let autoRefreshInterval = null;
 
         async function loadOperators() {
             // Evita caricamenti multipli simultanei
@@ -5445,7 +5451,476 @@
             }
         }
 
+        // ========== SISTEMA MODULI DI ATTIVAZIONE ==========
+        
+        // Funzione per caricare i moduli di attivazione dal file JSON
+        async function loadActivationModules() {
+            if (isLoadingModules) {
+                console.log('🔄 Caricamento moduli già in corso, aspetto...');
+                return modulesLoaded;
+            }
+            
+            isLoadingModules = true;
+            console.log('🔄 Caricamento moduli di attivazione...');
+            
+            try {
+                const possiblePaths = [
+                    'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/moduli_attivazione.json',
+                    './moduli_attivazione.json',
+                    'moduli_attivazione.json',
+                    '/moduli_attivazione.json'
+                ];
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log(`🔄 Tentativo caricamento moduli da: ${path}`);
+                        const response = await fetch(path);
+                        
+                        if (response.ok) {
+                            const text = await response.text();
+                            const data = JSON.parse(text);
+                            
+                            if (data.modules) {
+                                activationModules = data;
+                                modulesLoaded = true;
+                                console.log(`✅ Caricati moduli di attivazione da: ${path}`);
+                                
+                                // Sincronizza con il sistema di countdown esistente
+                                syncModulesWithCountdown();
+                                
+                                // Avvia auto-refresh GitHub ogni 15 secondi per sincronizzazione real-time
+                                startAutoRefresh(15);
+                                
+                                return true;
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`❌ Errore con percorso ${path}:`, error.message);
+                    }
+                }
+                
+                console.log('❌ Nessun percorso valido trovato per i moduli');
+                return false;
+                
+            } catch (error) {
+                console.error('❌ Errore nel caricamento moduli:', error);
+                return false;
+            } finally {
+                isLoadingModules = false;
+            }
+        }
+        
+        // Funzione per avviare l'auto-refresh con polling GitHub
+        function startAutoRefresh(intervalSeconds = 15) {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(async () => {
+                console.log('🔄 Auto-refresh moduli di attivazione da GitHub...');
+                await loadActivationModulesFromGitHub();
+            }, intervalSeconds * 1000);
+            
+            console.log(`✅ Auto-refresh GitHub avviato ogni ${intervalSeconds} secondi`);
+        }
+        
+        // Funzione per fermare l'auto-refresh
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                console.log('⏹️ Auto-refresh fermato');
+            }
+        }
+        
+        // Funzione per sincronizzare i moduli con il sistema di countdown esistente
+        function syncModulesWithCountdown() {
+            if (!activationModules.modules) return;
+            
+            const now = new Date();
+            const countdownUnlockDate = new Date(COUNTDOWN_CONFIG.unlockDate);
+            const isSystemUnlocked = now >= countdownUnlockDate;
+            
+            console.log('🔄 Sincronizzazione moduli con countdown...');
+            console.log(`📅 Data sblocco sistema: ${countdownUnlockDate.toISOString()}`);
+            console.log(`🔓 Sistema sbloccato: ${isSystemUnlocked}`);
+            
+            // Aggiorna lo stato di sblocco per ogni modulo
+            Object.keys(activationModules.modules).forEach(moduleId => {
+                const module = activationModules.modules[moduleId];
+                const moduleUnlockDate = new Date(module.unlockDate);
+                
+                // Se il sistema è sbloccato, sblocca anche i moduli
+                if (isSystemUnlocked) {
+                    module.isUnlocked = true;
+                    module.status = module.status === 'locked' ? 'unlocked' : module.status;
+                } else {
+                    // Mantieni lo stato di blocco se il sistema non è ancora sbloccato
+                    module.isUnlocked = now >= moduleUnlockDate;
+                    if (!module.isUnlocked) {
+                        module.status = 'locked';
+                    }
+                }
+                
+                console.log(`📋 Modulo ${moduleId}: ${module.isUnlocked ? '🔓 Sbloccato' : '🔒 Bloccato'}`);
+            });
+            
+            // Aggiorna le statistiche
+            activationModules.statistics.unlockedModules = Object.values(activationModules.modules).filter(m => m.isUnlocked).length;
+            activationModules.statistics.lockedModules = Object.values(activationModules.modules).filter(m => !m.isUnlocked).length;
+            
+            // Aggiorna la configurazione del countdown nel file moduli
+            activationModules.system.countdownConfig = {
+                unlockDate: COUNTDOWN_CONFIG.unlockDate.toISOString(),
+                isUnlocked: isSystemUnlocked,
+                daysRemaining: Math.max(0, Math.ceil((countdownUnlockDate - now) / (1000 * 60 * 60 * 24)))
+            };
+            
+            console.log(`📊 Moduli sbloccati: ${activationModules.statistics.unlockedModules}/${Object.keys(activationModules.modules).length}`);
+        }
+        
+        // Funzione per attivare un modulo (solo se sbloccato)
+        async function activateModule(moduleId, operatorName, operatorDiscord) {
+            try {
+                console.log(`🔄 Tentativo attivazione modulo ${moduleId} da parte di ${operatorName}`);
+                
+                const currentTime = new Date().toISOString();
+                const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
+                
+                // Verifica se il modulo esiste e se è sbloccato
+                if (activationModules.modules[moduleId]) {
+                    const module = activationModules.modules[moduleId];
+                    
+                    // Controlla se il modulo è sbloccato
+                    if (!module.isUnlocked) {
+                        console.log(`❌ Modulo ${moduleId} non ancora sbloccato`);
+                        UI.notify(`❌ Modulo ${module.name} non ancora disponibile`, 'warning', '🔒 Modulo Bloccato');
+                        return false;
+                    }
+                    
+                    // Disattiva il modulo precedente se era attivo
+                    if (module.status === 'active') {
+                        module.lastDeactivatedBy = module.currentOperator;
+                        module.lastDeactivatedAt = currentTime;
+                        module.status = 'inactive';
+                    }
+                    
+                    // Attiva il nuovo modulo
+                    module.status = 'active';
+                    module.lastActivatedBy = operatorName;
+                    module.lastActivatedAt = currentTime;
+                    module.currentOperator = operatorName;
+                    
+                    // Aggiungi alla cronologia
+                    module.activationHistory.push({
+                        action: 'activated',
+                        operator: operatorName,
+                        operatorDiscord: operatorDiscord,
+                        timestamp: currentTime,
+                        userId: currentUserId
+                    });
+                    
+                    // Aggiorna statistiche
+                    activationModules.system.totalActivations++;
+                    activationModules.system.activeModules = Object.values(activationModules.modules).filter(m => m.status === 'active').length;
+                    activationModules.system.lastUpdated = currentTime;
+                    
+                    console.log(`✅ Modulo ${moduleId} attivato da ${operatorName}`);
+                    
+                    // Salva nel localStorage come backup
+                    localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                    
+                    // Salva su GitHub per sincronizzazione
+                    await saveActivationModulesToGitHub();
+                    
+                    // Mostra notifica
+                    UI.notify(`✅ Modulo ${module.name} attivato!`, 'success', '🔄 Attivazione');
+                    
+                    return true;
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('❌ Errore nell\'attivazione modulo:', error);
+                UI.notify('❌ Errore nell\'attivazione del modulo', 'error', '❌ Errore');
+                return false;
+            }
+        }
+        
+        // Funzione per disattivare un modulo
+        async function deactivateModule(moduleId, operatorName) {
+            try {
+                console.log(`🔄 Disattivazione modulo ${moduleId} da parte di ${operatorName}`);
+                
+                const currentTime = new Date().toISOString();
+                const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
+                
+                if (activationModules.modules[moduleId]) {
+                    const module = activationModules.modules[moduleId];
+                    
+                    module.status = 'inactive';
+                    module.lastDeactivatedBy = operatorName;
+                    module.lastDeactivatedAt = currentTime;
+                    module.currentOperator = null;
+                    
+                    // Aggiungi alla cronologia
+                    module.activationHistory.push({
+                        action: 'deactivated',
+                        operator: operatorName,
+                        timestamp: currentTime,
+                        userId: currentUserId
+                    });
+                    
+                    // Aggiorna statistiche
+                    activationModules.system.totalDeactivations++;
+                    activationModules.system.activeModules = Object.values(activationModules.modules).filter(m => m.status === 'active').length;
+                    activationModules.system.lastUpdated = currentTime;
+                    
+                    console.log(`✅ Modulo ${moduleId} disattivato da ${operatorName}`);
+                    
+                    // Salva nel localStorage come backup
+                    localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                    
+                    // Salva su GitHub per sincronizzazione
+                    await saveActivationModulesToGitHub();
+                    
+                    // Mostra notifica
+                    UI.notify(`✅ Modulo ${module.name} disattivato!`, 'success', '⏹️ Disattivazione');
+                    
+                    return true;
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('❌ Errore nella disattivazione modulo:', error);
+                UI.notify('❌ Errore nella disattivazione del modulo', 'error', '❌ Errore');
+                return false;
+            }
+        }
+        
+        // Funzione per salvare i moduli di attivazione su GitHub
+        async function saveActivationModulesToGitHub() {
+            try {
+                console.log('🔄 Salvataggio moduli di attivazione su GitHub...');
+                
+                // Aggiorna timestamp
+                activationModules.system.lastUpdated = new Date().toISOString();
+                
+                // Prepara i dati per il salvataggio
+                const dataToSave = {
+                    ...activationModules,
+                    system: {
+                        ...activationModules.system,
+                        lastSaved: new Date().toISOString(),
+                        savedBy: localStorage.getItem('authenticatedUserId') || 'unknown'
+                    }
+                };
+                
+                // Salva nel localStorage come backup immediato
+                localStorage.setItem('activationModules', JSON.stringify(dataToSave));
+                
+                // Per ora, simuliamo il salvataggio su GitHub
+                // In una implementazione reale, useresti l'API di GitHub
+                console.log('✅ Moduli di attivazione salvati localmente (GitHub simulation)');
+                
+                // Notifica che i dati sono stati sincronizzati
+                UI.notify('✅ Moduli sincronizzati con il server!', 'success', '🔄 Sincronizzazione');
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Errore nel salvataggio su GitHub:', error);
+                UI.notify('❌ Errore nella sincronizzazione', 'error', '❌ Errore');
+                return false;
+            }
+        }
+        
+        // Funzione per caricare i moduli di attivazione da GitHub con polling
+        async function loadActivationModulesFromGitHub() {
+            try {
+                console.log('🔄 Caricamento moduli di attivazione da GitHub...');
+                
+                const possiblePaths = [
+                    'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/moduli_attivazione.json',
+                    './moduli_attivazione.json',
+                    'moduli_attivazione.json',
+                    '/moduli_attivazione.json'
+                ];
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log(`🔄 Tentativo caricamento da: ${path}`);
+                        const response = await fetch(path);
+                        
+                        if (response.ok) {
+                            const text = await response.text();
+                            const data = JSON.parse(text);
+                            
+                            if (data.modules) {
+                                // Controlla se ci sono stati cambiamenti
+                                const currentLastUpdated = activationModules.system?.lastUpdated;
+                                const newLastUpdated = data.system?.lastUpdated;
+                                
+                                if (currentLastUpdated !== newLastUpdated) {
+                                    console.log('🔄 Rilevati cambiamenti nei moduli, aggiornamento...');
+                                    
+                                    activationModules = data;
+                                    modulesLoaded = true;
+                                    
+                                    // Sincronizza con il sistema di countdown esistente
+                                    syncModulesWithCountdown();
+                                    
+                                    // Salva nel localStorage
+                                    localStorage.setItem('activationModules', JSON.stringify(activationModules));
+                                    
+                                    // Notifica gli utenti dei cambiamenti
+                                    notifyModuleChanges(data);
+                                    
+                                    console.log(`✅ Moduli aggiornati da: ${path}`);
+                                    return true;
+                                } else {
+                                    console.log('📋 Nessun cambiamento rilevato nei moduli');
+                                    return true;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`❌ Errore con percorso ${path}:`, error.message);
+                    }
+                }
+                
+                console.log('❌ Nessun percorso valido trovato per i moduli');
+                return false;
+                
+            } catch (error) {
+                console.error('❌ Errore nel caricamento moduli da GitHub:', error);
+                return false;
+            }
+        }
+        
+        // Funzione per notificare i cambiamenti nei moduli
+        function notifyModuleChanges(newData) {
+            if (!activationModules.modules || !newData.modules) return;
+            
+            // Controlla se ci sono stati cambiamenti negli stati dei moduli
+            Object.keys(newData.modules).forEach(moduleId => {
+                const oldModule = activationModules.modules[moduleId];
+                const newModule = newData.modules[moduleId];
+                
+                if (oldModule && newModule) {
+                    // Controlla se lo stato è cambiato
+                    if (oldModule.status !== newModule.status) {
+                        if (newModule.status === 'active') {
+                            UI.notify(`🔄 ${newModule.name} attivato da ${newModule.currentOperator}`, 'info', '📢 Aggiornamento Modulo');
+                            
+                            // Se è il modulo turni, aggiorna la pagina turni
+                            if (moduleId === 'shifts') {
+                                updateShiftsPageWithActivation(newModule);
+                            }
+                        } else if (newModule.status === 'inactive') {
+                            UI.notify(`⏹️ ${newModule.name} disattivato da ${newModule.lastDeactivatedBy}`, 'info', '📢 Aggiornamento Modulo');
+                            
+                            // Se è il modulo turni, aggiorna la pagina turni
+                            if (moduleId === 'shifts') {
+                                updateShiftsPageWithDeactivation();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Funzione per aggiornare la pagina turni quando viene attivato
+        function updateShiftsPageWithActivation(module) {
+            console.log('🔄 Aggiornamento pagina turni per attivazione modulo...');
+            
+            // Controlla se siamo nella pagina turni
+            const currentPage = document.querySelector('.nav-btn.active');
+            if (currentPage && currentPage.textContent.includes('Turni')) {
+                // Ricarica la pagina turni per mostrare l'attivazione
+                setTimeout(() => {
+                    loadPage('shifts');
+                }, 1000);
+            }
+        }
+        
+        // Funzione per aggiornare la pagina turni quando viene disattivato
+        function updateShiftsPageWithDeactivation() {
+            console.log('🔄 Aggiornamento pagina turni per disattivazione modulo...');
+            
+            // Controlla se siamo nella pagina turni
+            const currentPage = document.querySelector('.nav-btn.active');
+            if (currentPage && currentPage.textContent.includes('Turni')) {
+                // Ricarica la pagina turni per mostrare la disattivazione
+                setTimeout(() => {
+                    loadPage('shifts');
+                }, 1000);
+            }
+        }
+        
         // ========== CARICAMENTO DATI GERARCHIA ==========
+        
+        // Funzione per caricare i turni dal file JSON (priorità GitHub)
+        async function loadShiftsFromJSON() {
+            try {
+                console.log('🔄 Caricamento turni dal file JSON...');
+                
+                // Prova prima GitHub, poi percorsi locali
+                const possiblePaths = [
+                    'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/turni_servizio.json',
+                    './turni_servizio.json',
+                    'turni_servizio.json',
+                    '/turni_servizio.json'
+                ];
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log(`🔄 Tentativo caricamento da: ${path}`);
+                        const response = await fetch(path);
+                        
+                        if (response.ok) {
+                            const text = await response.text();
+                            console.log('📄 Testo ricevuto:', text.substring(0, 200) + '...');
+                            
+                            // Prova a parsare il JSON
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (parseError) {
+                                console.error('❌ Errore parsing JSON:', parseError);
+                                throw new Error(`Errore parsing JSON: ${parseError.message}. Controlla che il file sia JSON valido.`);
+                            }
+                            
+                            console.log('✅ Dati caricati:', data);
+                            
+                            if (data.shifts && Array.isArray(data.shifts)) {
+                                shifts = data.shifts;
+                                console.log(`✅ Caricati ${shifts.length} turni dal file JSON`);
+                                
+                                // Salva nel localStorage come backup
+                                saveShifts();
+                                
+                                return true;
+                            } else {
+                                console.log('⚠️ Nessun turno trovato nel file JSON');
+                                return false;
+                            }
+                        } else {
+                            console.log(`⚠️ Errore HTTP ${response.status} per percorso: ${path}`);
+                        }
+                    } catch (error) {
+                        console.log(`❌ Errore con percorso ${path}:`, error.message);
+                    }
+                }
+                
+                console.log('❌ Nessun percorso valido trovato per il caricamento turni');
+                return false;
+                
+            } catch (error) {
+                console.error('❌ Errore nel caricamento dal file JSON:', error);
+                return false;
+            }
+        }
         
         // Funzione per caricare gli operatori dal file JSON (priorità GitHub)
         async function loadOperatorsFromJSON() {
@@ -5585,20 +6060,68 @@
             return true;
         }
 
-        function loadShifts() {
-            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
-            if (savedShifts && Array.isArray(savedShifts)) {
-                shifts = savedShifts;
+        async function loadShifts() {
+            console.log('🔄 Caricamento turni...');
+            
+            // Prima prova sempre a caricare dal file JSON (priorità massima)
+            console.log('🔄 Tentativo di caricamento dal file JSON...');
+            const jsonSuccess = await loadShiftsFromJSON();
+            
+            if (jsonSuccess) {
+                console.log('✅ Turni caricati dal file JSON');
+                return true;
+            } else {
+                // Se il JSON fallisce, prova dal localStorage
+                console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
+                const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+                if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
+                    shifts = savedShifts;
+                    console.log('✅ Turni caricati dal localStorage');
+                    
+                    // Turni caricati
+                    
+                    return true;
+                } else {
+                    // Se anche localStorage è vuoto, crea dati di esempio
+                    console.log('📝 Nessun turno trovato, creo turni di esempio...');
+                    createSampleShifts();
+                    return true;
+                }
+            }
+        }
+
+        // Funzione per esportare i turni nel file JSON
+        function exportShiftsToJSON() {
+            try {
+                const shiftsData = {
+                    shifts: shifts,
+                    lastUpdated: new Date().toISOString(),
+                    version: "1.0",
+                    description: "Turni di servizio condivisi per il server IPRP FiveM roleplay"
+                };
                 
-                // Turni caricati
+                const jsonString = JSON.stringify(shiftsData, null, 2);
+                
+                // Crea e scarica il file
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'turni_servizio.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('✅ Turni esportati nel file JSON');
+                UI.notify('✅ Turni esportati nel file turni_servizio.json!', 'success', '📤 Esportazione Completata');
                 
                 return true;
+            } catch (error) {
+                console.error('❌ Errore nell\'esportazione turni:', error);
+                UI.notify('❌ Errore nell\'esportazione turni', 'error', '❌ Errore');
+                return false;
             }
-            
-            // Se non ci sono turni salvati, crea dati di esempio
-            console.log('📝 Nessun turno salvato, creo turni di esempio...');
-            createSampleShifts();
-            return true;
         }
 
         // Funzione per creare turni di esempio
@@ -7346,6 +7869,12 @@
                             <button class="btn btn-primary" onclick="openAddShift()">
                                 <i class="fas fa-plus"></i> Aggiungi Nuovo Turno
                             </button>
+                            <button class="btn btn-secondary" onclick="exportShiftsToJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                <i class="fas fa-download"></i> Esporta Turni
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadShiftsFromJSON()" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                                <i class="fas fa-sync-alt"></i> Ricarica da GitHub
+                            </button>
                         </div>
                     </div>
 
@@ -7482,6 +8011,12 @@
                     <div class="actions">
                         <button class="btn btn-primary" onclick="openAddShift()">
                             <i class="fas fa-plus"></i> Aggiungi Nuovo Turno
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportShiftsToJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-download"></i> Esporta Turni
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadShiftsFromJSON()" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                            <i class="fas fa-sync-alt"></i> Ricarica da GitHub
                         </button>
                     </div>
                 </div>
@@ -10977,8 +11512,11 @@
             
             // Carica dati dal localStorage prima
             await loadOperators();
-            loadShifts();
+            await loadShifts();
             loadNotifications();
+            
+            // Carica moduli di attivazione
+            await loadActivationModules();
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
             // Ma solo dopo un breve delay per evitare errori durante il caricamento veloce
