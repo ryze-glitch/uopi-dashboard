@@ -7985,8 +7985,21 @@
                 const dayShifts = shiftsByDay[date];
                 // Converte la data italiana (dd/mm/yyyy) in formato ISO per il parsing
                 const dateParts = date.split('/');
+                
+                // Controlli di sicurezza per evitare errori padStart
+                if (!dateParts || dateParts.length !== 3 || !dateParts[0] || !dateParts[1] || !dateParts[2]) {
+                    console.error('❌ Formato data non valido:', date);
+                    return `<div class="card"><p>❌ Errore formato data: ${date}</p></div>`;
+                }
+                
                 const isoDate = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
                 const dateObj = new Date(isoDate);
+                
+                // Controlla se la data è valida
+                if (isNaN(dateObj.getTime())) {
+                    console.error('❌ Data non valida:', isoDate);
+                    return `<div class="card"><p>❌ Errore data non valida: ${date}</p></div>`;
+                }
                 
                 const dayNameRaw = dateObj.toLocaleDateString('it-IT', { 
                     weekday: 'long', 
@@ -7998,9 +8011,9 @@
                 // Capitalizza la prima lettera del giorno e del mese
                 const dayName = dayNameRaw.replace(/\b\w/g, l => l.toUpperCase());
 
-                // Separa attivazioni e disattivazioni
-                const activations = dayShifts.filter(shift => shift.moduleType === 'patrol-activation');
-                const deactivations = dayShifts.filter(shift => shift.moduleType === 'patrol-deactivation');
+                // Separa attivazioni e disattivazioni con controlli di sicurezza
+                const activations = dayShifts.filter(shift => shift && shift.moduleType === 'patrol-activation');
+                const deactivations = dayShifts.filter(shift => shift && shift.moduleType === 'patrol-deactivation');
             
                 return `
                     <div class="shifts-day-container">
@@ -8011,8 +8024,8 @@
                                     <i class="fas fa-calendar-day"></i>
                                 </div>
                                 <div class="day-details">
-                                    <h2 class="day-title">${dayName}</h2>
-                                    <p class="day-subtitle">${dayShifts.length} turno${dayShifts.length !== 1 ? 'i' : ''} attivat${dayShifts.length !== 1 ? 'i' : 'o'}</p>
+                                    <h2 class="day-title">${dayName || 'Data non valida'}</h2>
+                                    <p class="day-subtitle">${dayShifts ? dayShifts.length : 0} turno${(dayShifts ? dayShifts.length : 0) !== 1 ? 'i' : ''} attivat${(dayShifts ? dayShifts.length : 0) !== 1 ? 'i' : 'o'}</p>
                                 </div>
                             </div>
                             <div class="day-stats">
@@ -8021,7 +8034,7 @@
                                         <i class="fas fa-play-circle"></i>
                                     </div>
                                     <div class="stat-content">
-                                        <span class="stat-number">${activations.length}</span>
+                                        <span class="stat-number">${activations ? activations.length : 0}</span>
                                         <span class="stat-label">Attivi</span>
                                     </div>
                                 </div>
@@ -8030,7 +8043,7 @@
                                         <i class="fas fa-stop-circle"></i>
                                     </div>
                                     <div class="stat-content">
-                                        <span class="stat-number">${deactivations.length}</span>
+                                        <span class="stat-number">${deactivations ? deactivations.length : 0}</span>
                                         <span class="stat-label">Completati</span>
                                     </div>
                                 </div>
@@ -8039,7 +8052,7 @@
 
                         <!-- Contenuto Turni -->
                         <div class="shifts-content">
-                            ${activations.length > 0 ? `
+                            ${activations && activations.length > 0 ? `
                                 <div class="shifts-section">
                                     <div class="section-header">
                                         <div class="section-title">
@@ -8053,12 +8066,12 @@
                                         </div>
                                     </div>
                                     <div class="shifts-grid">
-                                        ${activations.map(shift => createModernShiftCard(shift, false)).join('')}
+                                        ${activations.map(shift => shift ? createModernShiftCard(shift, false) : '').join('')}
                                     </div>
                                 </div>
                             ` : ''}
                             
-                            ${deactivations.length > 0 ? `
+                            ${deactivations && deactivations.length > 0 ? `
                                 <div class="shifts-section">
                                     <div class="section-header">
                                         <div class="section-title">
@@ -8072,7 +8085,7 @@
                                         </div>
                                     </div>
                                     <div class="shifts-grid">
-                                        ${deactivations.map(shift => createModernShiftCard(shift, true)).join('')}
+                                        ${deactivations.map(shift => shift ? createModernShiftCard(shift, true) : '').join('')}
                                     </div>
                                 </div>
                             ` : ''}
