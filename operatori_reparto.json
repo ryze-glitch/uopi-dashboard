@@ -394,6 +394,4 @@
     "shifts": [],
     "notifications": [],
     "lastUpdated": "2025-10-22T15:35:21.855Z"
-  }'::jsonb,
-  NOW()
-);
+}
