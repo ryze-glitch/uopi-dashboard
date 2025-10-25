@@ -5558,7 +5558,17 @@
                     throw new Error(`Errore HTTP: ${response.status}`);
                 }
                 
-                const data = await response.json();
+                const text = await response.text();
+                console.log('📄 Testo ricevuto da GitHub:', text.substring(0, 200) + '...');
+                
+                // Prova a parsare il JSON
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('❌ Errore parsing JSON:', parseError);
+                    throw new Error(`Errore parsing JSON: ${parseError.message}. Controlla che il file GitHub sia JSON valido.`);
+                }
                 console.log('✅ Dati caricati da GitHub:', data);
                 
                 if (data.operators && Array.isArray(data.operators)) {
@@ -5589,6 +5599,34 @@
                 console.error('❌ Errore nel caricamento da GitHub:', error);
                 UI.notify(`❌ Errore nel caricamento da GitHub: ${error.message}`, 'error', '❌ Errore');
                 return false;
+            }
+        }
+        
+        // Funzione per caricare dal file JSON locale
+        async function loadFromLocalJSON() {
+            console.log('🔄 Caricamento dal file JSON locale...');
+            
+            try {
+                // Pulisci il localStorage degli operatori
+                localStorage.removeItem('uopi_operators');
+                console.log('🗑️ localStorage operatori pulito');
+                
+                // Carica dal file locale usando la funzione esistente
+                const success = await loadOperatorsFromJSON();
+                if (success) {
+                    UI.notify('✅ Operatori caricati dal file locale!', 'success', '📁 Locale');
+                    
+                    // Ricarica la pagina corrente se siamo nella sezione gerarchia
+                    const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                    if (currentPage === 'personnel') {
+                        loadPage('personnel');
+                    }
+                } else {
+                    UI.notify('❌ Errore nel caricamento dal file locale', 'error', '❌ Errore');
+                }
+            } catch (error) {
+                console.error('❌ Errore nel caricamento locale:', error);
+                UI.notify(`❌ Errore nel caricamento locale: ${error.message}`, 'error', '❌ Errore');
             }
         }
         
@@ -7611,6 +7649,9 @@
                             </button>
                             <button class="btn btn-secondary" onclick="loadFromGitHub()" style="background: linear-gradient(135deg, #24292e, #1a1e22);">
                                 <i class="fab fa-github"></i> Carica da GitHub
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadFromLocalJSON()" style="background: linear-gradient(135deg, #059669, #047857);">
+                                <i class="fas fa-file-code"></i> Carica Locale
                             </button>
                             <button class="btn btn-secondary" onclick="debugJSONLoading()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
                                 <i class="fas fa-bug"></i> Debug JSON
