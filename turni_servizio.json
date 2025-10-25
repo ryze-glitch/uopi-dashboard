@@ -1,91 +1,107 @@
 {
-  "shifts": [
-    {
-      "id": 1,
-      "title": "Turno Mattutino",
-      "date": "20/10/2025",
-      "startTime": "08:00",
-      "endTime": "16:00",
-      "assignedOperators": [
-        {
-          "id": 1,
-          "name": "Tonino Frasca",
-          "discord": "tonino.frasca",
-          "qualification": "Comandante Generale"
-        },
-        {
-          "id": 2,
-          "name": "Gabriel Martinelli",
-          "discord": "gabriel.martinelli",
-          "qualification": "Comandante"
-        }
-      ],
-      "status": "Attivo",
-      "description": "Turno di servizio mattutino per operazioni di routine",
-      "createdDate": "20/10/2025",
-      "createdBy": "Admin",
-      "priority": "Normale",
-      "location": "Sede Centrale",
-      "notes": "Turno standard con personale dirigenziale"
+  "modules": {
+    "shifts": {
+      "id": "shifts",
+      "name": "Gestione Turni",
+      "description": "Programmazione e monitoraggio turni operativi",
+      "status": "unlocked",
+      "lastActivatedBy": null,
+      "lastActivatedAt": null,
+      "lastDeactivatedBy": null,
+      "lastDeactivatedAt": null,
+      "currentOperator": null,
+      "activationHistory": [],
+      "icon": "🕐",
+      "category": "operativo",
+      "unlockDate": "2025-10-20T00:00:00Z",
+      "isUnlocked": true
     },
-    {
-      "id": 2,
-      "title": "Turno Pomeridiano",
-      "date": "20/10/2025",
-      "startTime": "16:00",
-      "endTime": "00:00",
-      "assignedOperators": [
-        {
-          "id": 3,
-          "name": "Matteo Rossi",
-          "discord": "0_matte_0",
-          "qualification": "Comandante"
-        },
-        {
-          "id": 4,
-          "name": "Simone Sottaceto",
-          "discord": "estensione",
-          "qualification": "Comandante"
-        }
-      ],
-      "status": "Attivo",
-      "description": "Turno di servizio pomeridiano per operazioni speciali",
-      "createdDate": "20/10/2025",
-      "createdBy": "Admin",
-      "priority": "Alta",
-      "location": "Sede Centrale",
-      "notes": "Turno con personale esperto per operazioni delicate"
+    "announcements": {
+      "id": "announcements",
+      "name": "Comunicati Ufficiali",
+      "description": "Centro comunicazioni e annunci ufficiali della U.O.P.I.",
+      "status": "locked",
+      "lastActivatedBy": null,
+      "lastActivatedAt": null,
+      "lastDeactivatedBy": null,
+      "lastDeactivatedAt": null,
+      "currentOperator": null,
+      "activationHistory": [],
+      "icon": "📢",
+      "category": "amministrativo",
+      "unlockDate": "2025-11-19T00:00:00Z",
+      "isUnlocked": false
     },
-    {
-      "id": 3,
-      "title": "Turno Notturno",
-      "date": "20/10/2025",
-      "startTime": "00:00",
-      "endTime": "08:00",
-      "assignedOperators": [
-        {
-          "id": 5,
-          "name": "Simone Brighella",
-          "discord": "fastweb.mvp",
-          "qualification": "Vice Comandante"
-        },
-        {
-          "id": 6,
-          "name": "Franco Costa",
-          "discord": "kekkozalone89",
-          "qualification": "Vice Comandante"
-        }
-      ],
-      "status": "Attivo",
-      "description": "Turno di servizio notturno per sorveglianza",
-      "createdDate": "20/10/2025",
-      "createdBy": "Admin",
-      "priority": "Normale",
-      "location": "Sede Centrale",
-      "notes": "Turno notturno con personale specializzato"
+    "status": {
+      "id": "status",
+      "name": "Status Reparto",
+      "description": "Monitoraggio stato del sistema U.O.P.I.",
+      "status": "locked",
+      "lastActivatedBy": null,
+      "lastActivatedAt": null,
+      "lastDeactivatedBy": null,
+      "lastDeactivatedAt": null,
+      "currentOperator": null,
+      "activationHistory": [],
+      "icon": "⚡",
+      "category": "dirigenziale",
+      "unlockDate": "2025-11-19T00:00:00Z",
+      "isUnlocked": false
+    },
+    "operations": {
+      "id": "operations",
+      "name": "Gestione Operazioni",
+      "description": "Gestione e monitoraggio delle operazioni U.O.P.I.",
+      "status": "locked",
+      "lastActivatedBy": null,
+      "lastActivatedAt": null,
+      "lastDeactivatedBy": null,
+      "lastDeactivatedAt": null,
+      "currentOperator": null,
+      "activationHistory": [],
+      "icon": "🚁",
+      "category": "operativo",
+      "unlockDate": "2025-11-19T00:00:00Z",
+      "isUnlocked": false
+    },
+    "shadow": {
+      "id": "shadow",
+      "name": "Sistema Shadow",
+      "description": "Sezione riservata per operatori con accesso speciale",
+      "status": "locked",
+      "lastActivatedBy": null,
+      "lastActivatedAt": null,
+      "lastDeactivatedBy": null,
+      "lastDeactivatedAt": null,
+      "currentOperator": null,
+      "activationHistory": [],
+      "icon": "🥷",
+      "category": "riservato",
+      "unlockDate": "2025-11-19T00:00:00Z",
+      "isUnlocked": false,
+      "requiresSpecialAccess": true
     }
-  ],
-  "lastUpdated": "2025-10-20T10:00:00Z",
-  "version": "1.0",
-  "description": "Turni di servizio condivisi per il server IPRP FiveM roleplay"
+  },
+  "system": {
+    "lastUpdated": "2025-10-20T10:00:00Z",
+    "version": "1.0",
+    "autoRefreshInterval": 30,
+    "description": "Sistema moduli di attivazione dinamico per IPRP FiveM roleplay",
+    "totalActivations": 0,
+    "activeModules": 0,
+    "countdownConfig": {
+      "unlockDate": "2025-11-19T00:00:00Z",
+      "isUnlocked": false,
+      "daysRemaining": 30
+    }
+  },
+  "statistics": {
+    "totalActivations": 0,
+    "totalDeactivations": 0,
+    "mostActiveOperator": null,
+    "mostUsedModule": null,
+    "averageSessionTime": 0,
+    "unlockedModules": 1,
+    "lockedModules": 4
+  }
 }
