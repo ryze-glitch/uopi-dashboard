@@ -1828,6 +1828,11 @@
             text-overflow: ellipsis;
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* ========== PANORAMICA RIVOLUZIONARIA 2.0 ========== */
         
         /* Revolutionary Overview Container */
@@ -5390,33 +5395,53 @@
 
         
 
+        // Variabile per tracciare lo stato di caricamento
+        let isLoadingOperators = false;
+        let operatorsLoaded = false;
+
         async function loadOperators() {
+            // Evita caricamenti multipli simultanei
+            if (isLoadingOperators) {
+                console.log('🔄 Caricamento operatori già in corso, aspetto...');
+                return operatorsLoaded;
+            }
+            
+            isLoadingOperators = true;
             console.log('🔄 Caricamento operatori...');
             
-            // Prima prova sempre a caricare dal file JSON (priorità massima)
-            console.log('🔄 Tentativo di caricamento dal file JSON...');
-            const jsonSuccess = await loadOperatorsFromJSON();
-            
-            if (jsonSuccess) {
-                console.log('✅ Operatori caricati dal file JSON');
-                return true;
-            } else {
-                // Se il JSON fallisce, prova dal localStorage
-                console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
-                const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
-                if (savedOperators && Array.isArray(savedOperators) && savedOperators.length > 0) {
-                    operators = savedOperators;
-                    console.log('✅ Operatori caricati dal localStorage');
-                    
-                    // Dati caricati dal localStorage
-                    
+            try {
+                // Prima prova sempre a caricare dal file JSON (priorità massima)
+                console.log('🔄 Tentativo di caricamento dal file JSON...');
+                const jsonSuccess = await loadOperatorsFromJSON();
+                
+                if (jsonSuccess) {
+                    console.log('✅ Operatori caricati dal file JSON');
+                    operatorsLoaded = true;
                     return true;
                 } else {
-                    // Se anche localStorage è vuoto, mostra errore
-                    console.log('❌ Nessun dato trovato, impossibile caricare operatori');
-                    UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
-                    return false;
+                    // Se il JSON fallisce, prova dal localStorage
+                    console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
+                    const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
+                    if (savedOperators && Array.isArray(savedOperators) && savedOperators.length > 0) {
+                        operators = savedOperators;
+                        console.log('✅ Operatori caricati dal localStorage');
+                        
+                        // Dati caricati dal localStorage
+                        operatorsLoaded = true;
+                        return true;
+                    } else {
+                        // Se anche localStorage è vuoto, NON mostra errore immediatamente
+                        console.log('⚠️ Nessun dato trovato, ma non mostro errore per evitare spam');
+                        operatorsLoaded = false;
+                        return false;
+                    }
                 }
+            } catch (error) {
+                console.error('❌ Errore nel caricamento operatori:', error);
+                operatorsLoaded = false;
+                return false;
+            } finally {
+                isLoadingOperators = false;
             }
         }
 
@@ -6561,6 +6586,21 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Funzione per ricaricare automaticamente la pagina quando il caricamento è completato
+        function checkAndReloadPage() {
+            if (isLoadingOperators) {
+                // Se stiamo ancora caricando, ricontrolla tra 500ms
+                setTimeout(checkAndReloadPage, 500);
+            } else if (operatorsLoaded && operators && operators.length > 0) {
+                // Se il caricamento è completato e abbiamo operatori, ricarica la pagina corrente
+                const currentPage = document.querySelector('.nav-btn.active');
+                if (currentPage && currentPage.textContent.includes('Gerarchia')) {
+                    console.log('🔄 Caricamento completato, ricarico pagina Gerarchia...');
+                    loadPage('personnel');
+                }
+            }
         }
 
         // ========== FUNZIONI UTILITY ==========
@@ -10853,11 +10893,32 @@
                         console.log('  - getCurrentAccessLevel():', getCurrentAccessLevel());
                         console.log('  - operators array:', operators);
                         console.log('  - operators.length:', operators.length);
+                        console.log('  - isLoadingOperators:', isLoadingOperators);
+                        console.log('  - operatorsLoaded:', operatorsLoaded);
                         
-                        // Controllo di sicurezza: se non ci sono operatori, creali
+                        // Se il caricamento è ancora in corso, mostra loading invece di errore
+                        if (isLoadingOperators) {
+                            console.log('⏳ Caricamento operatori in corso, mostro loading...');
+                            content.innerHTML = `
+                                <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+                                    <h1>🏅 Gestione Gerarchia di Reparto</h1>
+                                    <p>Amministrazione completa degli operatori U.O.P.I. organizzati per gerarchia</p>
+                                </div>
+                                <div class="card" style="text-align: center; padding: 3rem;">
+                                    <div style="font-size: 3rem; margin-bottom: 1rem; animation: spin 2s linear infinite;">⏳</div>
+                                    <h3 style="color: #e2e8f0; margin-bottom: 1rem;">Caricamento in corso...</h3>
+                                    <p style="color: #94a3b8;">Stiamo caricando gli operatori dal server. Attendi un momento.</p>
+                                </div>
+                            `;
+                            // Avvia il controllo automatico per ricaricare quando il caricamento è completato
+                            setTimeout(checkAndReloadPage, 500);
+                            break;
+                        }
+                        
+                        // Controllo di sicurezza: se non ci sono operatori e non stiamo caricando
                         if (!operators || operators.length === 0) {
-                            console.log('⚠️ Nessun operatore trovato, creo dati di esempio...');
-                            UI.notify('❌ Impossibile caricare operatori', 'error', '❌ Errore');
+                            console.log('⚠️ Nessun operatore trovato, ma non mostro errore immediato');
+                            // Non mostrare errore immediatamente per evitare spam durante switching veloce
                         }
                         
                         // Controlla il livello di accesso per mostrare la vista appropriata
@@ -10920,14 +10981,21 @@
             loadNotifications();
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
-            if (!operators || operators.length === 0) {
-                console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, provo a caricare dal file JSON...');
-                const jsonSuccess = await loadOperatorsFromJSON();
-                if (!jsonSuccess) {
-                    console.log('❌ File JSON non disponibile, impossibile caricare operatori');
-                    UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
+            // Ma solo dopo un breve delay per evitare errori durante il caricamento veloce
+            setTimeout(async () => {
+                if (!operators || operators.length === 0) {
+                    console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, provo a caricare dal file JSON...');
+                    const jsonSuccess = await loadOperatorsFromJSON();
+                    if (!jsonSuccess) {
+                        console.log('❌ File JSON non disponibile, impossibile caricare operatori');
+                        // Mostra errore solo se siamo ancora sulla pagina dopo il delay
+                        const currentPage = document.querySelector('.nav-btn.active');
+                        if (currentPage && currentPage.textContent.includes('Gerarchia')) {
+                            UI.notify('❌ Impossibile caricare operatori. Controlla la connessione.', 'error', '❌ Errore');
+                        }
+                    }
                 }
-            }
+            }, 2000); // Delay di 2 secondi per evitare errori durante switching veloce
             
             console.log('📊 Stato finale sistema:', {
                 operators: operators.length,
