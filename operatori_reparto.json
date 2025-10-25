@@ -7,7 +7,7 @@
         "qualification": "✨・Comandante Generale",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -17,7 +17,7 @@
         "qualification": "💎・Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -27,7 +27,7 @@
         "qualification": "💎・Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -37,7 +37,7 @@
         "qualification": "💎・Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -47,7 +47,7 @@
         "qualification": "🥏・Vice Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -57,7 +57,7 @@
         "qualification": "🥏・Vice Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -67,7 +67,7 @@
         "qualification": "🪁・Sostituto Vice Comandante",
         "role": "dirigenziale",
         "roleName": "🏅・Nucleo Dirigenziale",
-        "status": "Disponibile",
+        "status": "✅・Disponibile",
         "addedDate": "20/10/2025"
       },
       {
@@ -395,3 +395,4 @@
     "notifications": [],
     "lastUpdated": "2025-10-22T15:35:21.855Z"
 }
+
