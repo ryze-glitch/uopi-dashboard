@@ -6418,11 +6418,10 @@
 
         // Funzioni per turni
         function saveShifts() {
-            // Salva nel localStorage
-            saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
-            console.log(`💾 ${shifts.length} turni salvati nel localStorage`);
+            // Salva SOLO su GitHub Gist - niente localStorage
+            console.log(`💾 ${shifts.length} turni da salvare su GitHub`);
             
-            // Salva anche su GitHub Gist per sincronizzazione automatica
+            // Salva su GitHub Gist
             setTimeout(async () => {
                 try {
                     const success = await saveShiftsToGist();
@@ -6430,12 +6429,12 @@
                         console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
                         UI.notify('✅ Turni sincronizzati per tutti!', 'success', '☁️ Cloud Sync');
                     } else {
-                        console.log('⚠️ Errore sincronizzazione GitHub');
-                        UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Locale');
+                        console.log('❌ Errore sincronizzazione GitHub');
+                        UI.notify('❌ Errore sincronizzazione!', 'error', '☁️ Cloud Error');
                     }
                 } catch (error) {
                     console.error('❌ Errore salvataggio GitHub:', error);
-                    UI.notify('⚠️ Salvato solo localmente', 'warning', '💾 Locale');
+                    UI.notify('❌ Errore sincronizzazione!', 'error', '☁️ Cloud Error');
                 }
             }, 500);
             
@@ -6981,33 +6980,30 @@
             };
             
             shifts.push(testShift);
+            
+            // Salva su GitHub
             saveShifts();
             
-            UI.notify('✅ Turno di test creato!', 'success', '🧪 Test');
+            UI.notify('✅ Turno di test creato e sincronizzato!', 'success', '🧪 Test');
             
-            // Ricarica la pagina
-            setTimeout(() => loadPage('shifts'), 500);
+            // NON ricaricare automaticamente per evitare loop
+            // setTimeout(() => loadPage('shifts'), 2000);
         }
         
-        // Funzione per sincronizzare i turni
+        // Funzione per sincronizzare i turni (GitHub Gist)
         async function syncShifts() {
-            console.log('🔄 Sincronizzazione turni...');
+            console.log('🔄 Sincronizzazione turni con GitHub...');
             
-            // Prima carica gli ultimi dati
-            await loadShiftsFromGist();
+            // Carica gli ultimi dati da GitHub
+            await loadShifts();
             
-            // Poi salva eventuali modifiche locali
-            if (shifts.length > 0) {
-                await saveShiftsToGist();
-            }
+            // NON ricaricare automaticamente per evitare loop infiniti
+            // const currentPage = document.querySelector('.nav-btn.active');
+            // if (currentPage && currentPage.textContent.includes('Turni')) {
+            //     loadPage('shifts');
+            // }
             
-            // Aggiorna la UI
-            const currentPage = document.querySelector('.nav-btn.active');
-            if (currentPage && currentPage.textContent.includes('Turni')) {
-                loadPage('shifts');
-            }
-            
-            UI.notify('✅ Turni sincronizzati!', 'success', '🔄 Sync');
+            UI.notify('✅ Turni sincronizzati con GitHub!', 'success', '☁️ Cloud Sync');
         }
         
         // Auto-sync ogni 30 secondi
@@ -7117,18 +7113,8 @@
         }
 
         async function loadShifts() {
-            console.log('🔄 Caricamento turni...');
+            console.log('🔄 Caricamento turni da GitHub Gist...');
             
-            // Carica sempre dal localStorage PRIMA
-            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
-            if (savedShifts && Array.isArray(savedShifts) && savedShifts.length > 0) {
-                shifts = savedShifts;
-                console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
-                return true;
-            }
-            
-            // Se non ci sono dati locali, prova GitHub
-            console.log('📡 Nessun dato locale, provo GitHub...');
             try {
                 const gistUrl = GIST_CONFIG.rawUrl;
                 const response = await fetch(gistUrl + '?t=' + Date.now());
@@ -7137,21 +7123,28 @@
                     const data = await response.json();
                     if (data && data.shifts && Array.isArray(data.shifts)) {
                         shifts = data.shifts;
-                        console.log(`✅ Caricati ${shifts.length} turni da GitHub`);
+                        console.log(`✅ Caricati ${shifts.length} turni da GitHub Gist`);
                         
-                        // Salva in localStorage per la prossima volta
-                        saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                        // Notifica se ci sono aggiornamenti da altri utenti
+                        const currentUserId = localStorage.getItem('authenticatedUserId');
+                        if (data.updatedBy && data.updatedBy !== currentUserId && data.updatedByName) {
+                            UI.notify(`🔄 Turni aggiornati da ${data.updatedByName}`, 'info', '📥 Aggiornamento');
+                        }
+                        
                         return true;
                     }
                 }
+                
+                console.log('⚠️ Nessun dato trovato su GitHub');
+                shifts = [];
+                return true;
+                
             } catch (error) {
-                console.log('⚠️ Errore caricamento GitHub:', error);
+                console.error('❌ Errore caricamento GitHub:', error);
+                shifts = [];
+                UI.notify('❌ Errore caricamento turni!', 'error', '☁️ Cloud Error');
+                return false;
             }
-            
-            // Se tutto fallisce, inizializza vuoto
-            shifts = [];
-            console.log('📋 Nessun turno trovato');
-            return true;
         }
         
         // Funzione per controllare aggiornamenti su GitHub senza sovrascrivere
@@ -7182,11 +7175,11 @@
                             shifts = data.shifts;
                             saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
                             
-                            // Ricarica la pagina se siamo nella sezione turni
-                            const currentPage = document.querySelector('.nav-btn.active');
-                            if (currentPage && currentPage.textContent.includes('Turni')) {
-                                setTimeout(() => loadPage('shifts'), 1000);
-                            }
+                            // NON ricaricare automaticamente per evitare loop infiniti
+                            // const currentPage = document.querySelector('.nav-btn.active');
+                            // if (currentPage && currentPage.textContent.includes('Turni')) {
+                            //     setTimeout(() => loadPage('shifts'), 1000);
+                            // }
                             
                             return true;
                         } else if (githubCount < localCount) {
@@ -8949,22 +8942,22 @@
                     <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
                         <h1>🕐 Gestione Turni</h1>
                         <p>Programmazione e monitoraggio turni operativi</p>
-                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <div style="width: 0.5rem; height: 0.5rem; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
-                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sincronizzazione GitHub attiva</span>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(6, 182, 212, 0.1); border: 1px solid #06b6d4; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 0.5rem; height: 0.5rem; background: #06b6d4; border-radius: 50%;"></div>
+                            <span style="color: #06b6d4; font-size: 0.875rem; font-weight: 600;">GitHub Gist - Sincronizzazione manuale</span>
                         </div>
                         <div class="actions">
                             <button class="btn btn-primary" onclick="openAddShift()">
                                 <i class="fas fa-plus"></i> Aggiungi Nuovo Turno
                             </button>
                             <button class="btn btn-secondary" onclick="syncShifts()" style="background: linear-gradient(135deg, #10b981, #059669);">
-                                <i class="fas fa-sync"></i> Sincronizza Ora
+                                <i class="fas fa-sync"></i> Sincronizza
                             </button>
-                            <button class="btn btn-info" onclick="debugShifts()" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
-                                <i class="fas fa-bug"></i> Debug
+                            <button class="btn btn-info" onclick="loadPage('shifts')" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                                <i class="fas fa-refresh"></i> Ricarica Pagina
                             </button>
-                            <button class="btn btn-warning" onclick="createTestShift()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                                <i class="fas fa-plus"></i> Test Turno
+                            <button class="btn btn-success" onclick="createTestShift()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                <i class="fas fa-flask"></i> Test Turno
                             </button>
                             <button class="btn btn-danger" onclick="clearAllShifts()" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
                                 <i class="fas fa-trash-alt"></i> Cancella Tutti
@@ -12648,8 +12641,8 @@
                                     <p style="color: #94a3b8;">Stiamo caricando gli operatori dal server. Attendi un momento.</p>
                                 </div>
                             `;
-                            // Avvia il controllo automatico per ricaricare quando il caricamento è completato
-                            setTimeout(checkAndReloadPage, 500);
+                            // DISABILITATO: Controllo automatico che causa loop infiniti
+                            // setTimeout(checkAndReloadPage, 500);
                             break;
                         }
                         
@@ -12721,9 +12714,9 @@
             // Carica moduli di attivazione
             await loadActivationModules();
             
-            // Riattivato auto-sync con nuovo token
-            startAutoSync();
-            console.log('🔄 Auto-sync turni riattivato con nuovo token');
+            // DISABILITATO: Auto-sync che causa precaricamenti infiniti
+            // startAutoSync();
+            console.log('⚠️ Auto-sync disabilitato per evitare precaricamenti infiniti');
             
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
