@@ -5541,17 +5541,180 @@
             }
         }
         
-        // Funzione per caricare gli operatori dal file JSON
-        async function loadOperatorsFromJSON() {
+        // Funzione per caricare direttamente da GitHub
+        async function loadFromGitHub() {
+            console.log('🔄 Caricamento diretto da GitHub...');
+            
             try {
-                console.log('🔄 Caricamento operatori dal file JSON...');
+                // Pulisci il localStorage degli operatori
+                localStorage.removeItem('uopi_operators');
+                console.log('🗑️ localStorage operatori pulito');
                 
-                const response = await fetch('./operatori_reparto.json');
+                const githubUrl = 'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/operatori_reparto.json';
+                console.log(`🔄 Caricamento da: ${githubUrl}`);
+                
+                const response = await fetch(githubUrl);
                 if (!response.ok) {
                     throw new Error(`Errore HTTP: ${response.status}`);
                 }
                 
                 const data = await response.json();
+                console.log('✅ Dati caricati da GitHub:', data);
+                
+                if (data.operators && Array.isArray(data.operators)) {
+                    operators = data.operators;
+                    console.log(`✅ Caricati ${operators.length} operatori da GitHub`);
+                    
+                    // Salva nel localStorage come backup
+                    saveOperators();
+                    
+                    // Aggiorna la gerarchia dopo il caricamento dei dati
+                    setTimeout(() => {
+                        updateOverviewStats();
+                    }, 500);
+                    
+                    UI.notify(`✅ Caricati ${operators.length} operatori da GitHub!`, 'success', '🐙 GitHub');
+                    
+                    // Ricarica la pagina corrente se siamo nella sezione gerarchia
+                    const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                    if (currentPage === 'personnel') {
+                        loadPage('personnel');
+                    }
+                    
+                    return true;
+                } else {
+                    throw new Error('Nessun operatore trovato nel file GitHub');
+                }
+            } catch (error) {
+                console.error('❌ Errore nel caricamento da GitHub:', error);
+                UI.notify(`❌ Errore nel caricamento da GitHub: ${error.message}`, 'error', '❌ Errore');
+                return false;
+            }
+        }
+        
+        // Funzione di debug per testare il caricamento JSON
+        async function debugJSONLoading() {
+            console.log('🐛 DEBUG: Inizio test caricamento JSON...');
+            
+            const possiblePaths = [
+                'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/operatori_reparto.json',
+                './operatori_reparto.json',
+                'operatori_reparto.json',
+                '/operatori_reparto.json',
+                './Nuova cartella/operatori_reparto.json'
+            ];
+            
+            let debugInfo = '🐛 DEBUG JSON Loading:\n\n';
+            
+            for (const path of possiblePaths) {
+                try {
+                    console.log(`🔄 Test percorso: ${path}`);
+                    const response = await fetch(path);
+                    debugInfo += `Percorso: ${path}\n`;
+                    debugInfo += `Status: ${response.status}\n`;
+                    debugInfo += `OK: ${response.ok}\n`;
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        debugInfo += `Operatori trovati: ${data.operators ? data.operators.length : 'N/A'}\n`;
+                        debugInfo += `✅ SUCCESSO!\n\n`;
+                        console.log(`✅ Percorso funzionante: ${path}`);
+                        break;
+                    } else {
+                        debugInfo += `❌ ERRORE\n\n`;
+                    }
+                } catch (error) {
+                    debugInfo += `Errore: ${error.message}\n`;
+                    debugInfo += `❌ ERRORE\n\n`;
+                    console.log(`❌ Errore con percorso ${path}:`, error);
+                }
+            }
+            
+            // Mostra le informazioni di debug
+            UI.modal('🐛 Debug JSON Loading', `<pre style="white-space: pre-wrap; font-family: monospace; background: #1e293b; padding: 1rem; border-radius: 0.5rem; color: #e2e8f0;">${debugInfo}</pre>`, '<button class="btn btn-primary" onclick="UI.closeModal()">Chiudi</button>');
+        }
+        
+        // Funzione per aprire la console del browser
+        function openConsole() {
+            // Prova diversi metodi per aprire la console
+            try {
+                // Metodo 1: Tasto F12
+                const event = new KeyboardEvent('keydown', {
+                    key: 'F12',
+                    code: 'F12',
+                    keyCode: 123,
+                    which: 123,
+                    ctrlKey: false,
+                    altKey: false,
+                    shiftKey: false,
+                    metaKey: false
+                });
+                document.dispatchEvent(event);
+                
+                // Metodo 2: Mostra istruzioni
+                UI.modal('🖥️ Aprire la Console del Browser', `
+                    <div style="text-align: left;">
+                        <h3>Come aprire la Console:</h3>
+                        <ol>
+                            <li><strong>Chrome/Edge:</strong> Premi <kbd>F12</kbd> o <kbd>Ctrl+Shift+I</kbd></li>
+                            <li><strong>Firefox:</strong> Premi <kbd>F12</kbd> o <kbd>Ctrl+Shift+K</kbd></li>
+                            <li><strong>Safari:</strong> Premi <kbd>Cmd+Option+I</kbd></li>
+                        </ol>
+                        <p><strong>Oppure:</strong></p>
+                        <ul>
+                            <li>Clic destro sulla pagina → "Ispeziona elemento"</li>
+                            <li>Menu del browser → "Strumenti per sviluppatori"</li>
+                        </ul>
+                        <p style="color: #10b981; margin-top: 1rem;">
+                            <i class="fas fa-info-circle"></i> 
+                            Una volta aperta la console, clicca su "Debug JSON" per vedere i dettagli del caricamento.
+                        </p>
+                    </div>
+                `, '<button class="btn btn-primary" onclick="UI.closeModal()">Ho Capito</button>');
+                
+            } catch (error) {
+                console.error('Errore nell\'apertura della console:', error);
+                UI.notify('Errore nell\'apertura della console. Prova a premere F12 manualmente.', 'warning');
+            }
+        }
+        
+        // Funzione per caricare gli operatori dal file JSON
+        async function loadOperatorsFromJSON() {
+            try {
+                console.log('🔄 Caricamento operatori dal file JSON...');
+                
+                // Prova diversi percorsi per il file JSON (incluso GitHub)
+                const possiblePaths = [
+                    'https://raw.githubusercontent.com/ryze-glitch/uopi-dashboard/main/operatori_reparto.json',
+                    './operatori_reparto.json',
+                    'operatori_reparto.json',
+                    '/operatori_reparto.json',
+                    './Nuova cartella/operatori_reparto.json'
+                ];
+                
+                let response = null;
+                let data = null;
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log(`🔄 Tentativo con percorso: ${path}`);
+                        response = await fetch(path);
+                        if (response.ok) {
+                            console.log(`✅ File trovato con percorso: ${path}`);
+                            break;
+                        } else {
+                            console.log(`❌ Errore ${response.status} con percorso: ${path}`);
+                        }
+                    } catch (error) {
+                        console.log(`❌ Errore fetch con percorso ${path}:`, error);
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw new Error(`File JSON non trovato. Tentati percorsi: ${possiblePaths.join(', ')}`);
+                }
+                
+                data = await response.json();
                 console.log('✅ Dati caricati dal file JSON:', data);
                 
                 if (data.operators && Array.isArray(data.operators)) {
@@ -5573,7 +5736,7 @@
                 }
             } catch (error) {
                 console.error('❌ Errore nel caricamento dal file JSON:', error);
-                UI.notify('Errore nel caricamento degli operatori dal file JSON', 'error');
+                UI.notify(`Errore nel caricamento degli operatori dal file JSON: ${error.message}`, 'error');
                 return false;
             }
         }
@@ -7445,6 +7608,15 @@
                             </button>
                             <button class="btn btn-secondary" onclick="forceLoadFromJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
                                 <i class="fas fa-sync-alt"></i> Carica da JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="loadFromGitHub()" style="background: linear-gradient(135deg, #24292e, #1a1e22);">
+                                <i class="fab fa-github"></i> Carica da GitHub
+                            </button>
+                            <button class="btn btn-secondary" onclick="debugJSONLoading()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                                <i class="fas fa-bug"></i> Debug JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="openConsole()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                <i class="fas fa-terminal"></i> Console
                             </button>
                             <button class="btn btn-secondary" onclick="createBackup()">
                                 <i class="fas fa-download"></i> Backup Dati
