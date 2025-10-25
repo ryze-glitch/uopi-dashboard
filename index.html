@@ -11161,21 +11161,26 @@
             
         }
 
-          // Inizializza e apri automaticamente la Panoramica dopo il login
+          // Inizializza e carica automaticamente i dati per tutti gli utenti
           setTimeout(async () => {
-              // Controlla se l'utente è già loggato
-              if (isLoggedIn()) {
-                  console.log('🔄 Caricamento dati e apertura Panoramica...');
-                  await initializeSystem();
-                  console.log('📊 Apertura automatica Panoramica...');
+              console.log('🔄 Caricamento automatico dati per tutti gli utenti...');
+              await initializeSystem();
+              console.log('📊 Sistema inizializzato automaticamente');
+              
+              // Se l'utente è autenticato, apri la Panoramica
+              if (isUserAuthenticated()) {
+                  console.log('👤 Utente autenticato, apro Panoramica...');
                   loadPage('overview');
-                  
-                  // Aggiorna la gerarchia dopo il caricamento dei dati
-                  setTimeout(() => {
-                      updateOverviewStats();
-                  }, 1000);
+              } else {
+                  console.log('👤 Utente non autenticato, mostro pagina di login...');
+                  // Mostra la pagina di login o una pagina pubblica
               }
-          }, 3000);
+              
+              // Aggiorna la gerarchia dopo il caricamento dei dati
+              setTimeout(() => {
+                  updateOverviewStats();
+              }, 1000);
+          }, 1000);
 
         // Nascondi il main-content all'inizio per mostrare solo il login
         const mainContent = document.querySelector('.main-content');
