@@ -5491,8 +5491,6 @@
         function saveNotifications() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.NOTIFICATIONS, notifications);
-            // Salva anche su JSONBin (async, non blocca l'UI)
-            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
             return true;
         }
 
@@ -5553,8 +5551,6 @@
         function saveShifts() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
-            // Salva anche su JSONBin (async, non blocca l'UI)
-            saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
             return true;
         }
 
@@ -6261,7 +6257,7 @@
         }
 
         async function closeCodeModalAndSave() {
-            // Salva sia su localStorage che su JSONBin per massima affidabilità
+            // Salva solo su localStorage
             const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
             
             // Salva su localStorage (immediato e affidabile)
@@ -6270,12 +6266,12 @@
             localStorage.setItem('shadowAccessDate', new Date().toISOString());
             console.log('✅ Accesso Shadow salvato su localStorage');
             
-            // Prova anche su JSONBin (opzionale)
+            // Salva anche su cloud per persistenza
             try {
                 await saveShadowAccessToCloud();
-                console.log('✅ Accesso Shadow salvato anche su JSONBin');
+                console.log('✅ Accesso Shadow salvato anche su cloud');
             } catch (error) {
-                console.log('⚠️ Errore JSONBin, ma localStorage salvato:', error);
+                console.log('⚠️ Errore cloud, ma localStorage salvato:', error);
             }
             
             UI.closeModal();
@@ -6294,31 +6290,15 @@
             }, 2000);
         }
 
+        // Funzione per salvare l'accesso Shadow (solo localStorage)
         async function saveShadowAccessToCloud() {
             try {
-                console.log('☁️ Salvataggio accesso Shadow su JSONBin...');
-                console.log('🔍 Config JSONBin:', JSONBIN_CONFIG);
+                console.log('💾 Salvataggio accesso Shadow su localStorage...');
                 
                 const currentUserId = localStorage.getItem('authenticatedUserId') || 'unknown';
                 console.log('👤 User ID:', currentUserId);
                 
-                // Carica i dati esistenti da JSONBin
-                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_CONFIG.secretKey
-                    }
-                });
-                
-                let existingData = {};
-                if (response.ok) {
-                    const data = await response.json();
-                    existingData = data.record || {};
-                    console.log('📥 Dati esistenti caricati:', existingData);
-                } else {
-                    console.log('⚠️ Nessun dato esistente trovato, creo nuovo record');
-                }
-                
-                // Aggiungi l'accesso Shadow ai dati esistenti
+                // Salva solo su localStorage
                 const shadowAccessData = {
                     shadowAccessGranted: true,
                     shadowAccessCode: 'UOPI-6794-2122-5676',
@@ -6328,53 +6308,29 @@
                 
                 console.log('💾 Dati Shadow da salvare:', shadowAccessData);
                 
-                // Merge con i dati esistenti
-                const updatedData = {
-                    ...existingData,
-                    ...shadowAccessData,
-                    operators: existingData.operators || operators,
-                    shifts: existingData.shifts || shifts,
-                    notifications: existingData.notifications || notifications,
-                    lastUpdated: new Date().toISOString()
-                };
+                // Salva su localStorage
+                localStorage.setItem('shadowAccessGranted', 'true');
+                localStorage.setItem('shadowAccessUser', currentUserId);
+                localStorage.setItem('shadowAccessDate', shadowAccessData.shadowAccessDate);
+                localStorage.setItem('shadowAccessCode', shadowAccessData.shadowAccessCode);
                 
-                console.log('📤 Dati completi da salvare:', updatedData);
+                console.log('✅ Accesso Shadow salvato su localStorage con successo!');
                 
-                // Salva su JSONBin
-                const saveResponse = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_CONFIG.secretKey
-                    },
-                    body: JSON.stringify(updatedData)
-                });
-                
-                if (saveResponse.ok) {
-                    const saveResult = await saveResponse.json();
-                    console.log('✅ Accesso Shadow salvato su JSONBin con successo!');
-                    console.log('📋 Risposta JSONBin:', saveResult);
-                    
-                    // Mostra notifica di conferma
-                    UI.notify('☁️ Accesso Shadow salvato permanentemente nel cloud!', 'success', '💾 Salvataggio Completato');
-                } else {
-                    console.error('❌ Errore nel salvataggio su JSONBin:', saveResponse.status);
-                    const errorText = await saveResponse.text();
-                    console.error('❌ Dettagli errore:', errorText);
-                    UI.notify('❌ Errore nel salvataggio cloud. Riprova.', 'error', '☁️ Errore Salvataggio');
-                }
+                // Mostra notifica di conferma
+                UI.notify('💾 Accesso Shadow salvato localmente!', 'success', '💾 Salvataggio Completato');
                 
             } catch (error) {
                 console.error('❌ Errore nel salvataggio accesso Shadow:', error);
-                UI.notify('❌ Errore di connessione al cloud. Riprova.', 'error', '🌐 Errore Connessione');
+                UI.notify('❌ Errore nel salvataggio. Riprova.', 'error', '❌ Errore');
             }
         }
 
+        // Funzione per caricare l'accesso Shadow (solo localStorage)
         async function loadShadowAccessFromCloud() {
             try {
                 const currentUserId = localStorage.getItem('authenticatedUserId');
                 
-                // PRIMA controlla localStorage (più affidabile)
+                // Controlla solo localStorage
                 const localShadowAccess = localStorage.getItem('shadowAccessGranted');
                 const localShadowUser = localStorage.getItem('shadowAccessUser');
                 
@@ -6387,49 +6343,8 @@
                 if (localShadowAccess === 'true' && localShadowUser === currentUserId) {
                     console.log('✅ Accesso Shadow trovato su localStorage per utente:', currentUserId);
                     return true;
-                }
-                
-                // POI prova JSONBin come fallback
-                console.log('☁️ localStorage non trovato, provo JSONBin...');
-                console.log('🔍 Config JSONBin:', JSONBIN_CONFIG);
-                
-                const response = await fetch(`${JSONBIN_CONFIG.apiUrl}${JSONBIN_CONFIG.binId}/latest`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_CONFIG.secretKey
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const cloudData = data.record || {};
-                    
-                    console.log('📥 Dati caricati da JSONBin:', cloudData);
-                    
-                    // Controlla se l'utente corrente ha accesso Shadow
-                    const shadowAccessUser = cloudData.shadowAccessUser;
-                    
-                    console.log('👤 User ID corrente:', currentUserId);
-                    console.log('🥷 User ID con accesso Shadow:', shadowAccessUser);
-                    console.log('🔓 Accesso Shadow concesso:', cloudData.shadowAccessGranted);
-                    
-                    if (cloudData.shadowAccessGranted && shadowAccessUser === currentUserId) {
-                        console.log('✅ Accesso Shadow trovato su JSONBin per utente:', currentUserId);
-                        
-                        // Sincronizza con localStorage per prossime volte
-                        localStorage.setItem('shadowAccessGranted', 'true');
-                        localStorage.setItem('shadowAccessUser', currentUserId);
-                        localStorage.setItem('shadowAccessDate', cloudData.shadowAccessDate || new Date().toISOString());
-                        console.log('✅ Accesso Shadow sincronizzato su localStorage');
-                        
-                        return true;
-                    } else {
-                        console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
-                        return false;
-                    }
                 } else {
-                    console.error('❌ Errore nel caricamento da JSONBin:', response.status);
-                    const errorText = await response.text();
-                    console.error('❌ Dettagli errore:', errorText);
+                    console.log('ℹ️ Nessun accesso Shadow trovato per utente:', currentUserId);
                     return false;
                 }
                 
@@ -6441,8 +6356,8 @@
 
         async function updateNavbarForShadowAccess() {
             try {
-                // Controlla prima localStorage, poi JSONBin come fallback
-                console.log('🔍 Controllo accesso Shadow (localStorage + JSONBin)...');
+                // Controlla solo localStorage
+                console.log('🔍 Controllo accesso Shadow (localStorage)...');
                 console.log('🔍 User ID corrente:', localStorage.getItem('authenticatedUserId'));
                 
                 const shadowAccess = await loadShadowAccessFromCloud();
@@ -6500,16 +6415,16 @@
             const content = document.getElementById('content');
             if (!content) return;
             
-            // Controlla SOLO il cloud per persistenza permanente
-            console.log('☁️ Controllo accesso Shadow da JSONBin...');
+            // Controlla SOLO localStorage
+            console.log('💾 Controllo accesso Shadow da localStorage...');
             const shadowAccess = await loadShadowAccessFromCloud();
             
             if (shadowAccess) {
                 content.innerHTML = getShadowPage();
-                console.log('✅ Accesso Shadow confermato da cloud, caricamento pagina');
+                console.log('✅ Accesso Shadow confermato da localStorage, caricamento pagina');
             } else {
                 content.innerHTML = '<div class="card"><p>❌ Accesso negato. Questa sezione richiede un codice di accesso speciale.</p></div>';
-                console.log('❌ Accesso Shadow negato - non trovato nel cloud');
+                console.log('❌ Accesso Shadow negato - non trovato nel localStorage');
             }
         }
 
