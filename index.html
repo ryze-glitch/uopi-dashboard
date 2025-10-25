@@ -11,7 +11,6 @@
     <link rel="icon" type="image/png" href="https://i.imgur.com/B6E4u1X.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         /* ========== DESIGN SYSTEM PROFESSIONALE ========== */
@@ -5058,40 +5057,6 @@
         const REDIRECT_URI = 'https://ryze-glitch.github.io/uopi-dashboard/';
         const ADMIN_ID = '1387684968536477756';
 
-        // ========== CONFIGURAZIONE SUPABASE ==========
-        const SUPABASE_CONFIG = {
-            url: 'https://tybquupzoltfvmyewdmp.supabase.co',
-            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YnF1dXB6b2x0ZnZteWV3ZG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMzYwMDMsImV4cCI6MjA3NjcxMjAwM30.3i6N_Nise8O3y4Ltj8FbB0wJVrVkyF339w95PORURok',
-            serviceKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5YnF1dXB6b2x0ZnZteWV3ZG1wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTEzNjAwMywiZXhwIjoyMDc2NzEyMDAzfQ.nKuHT-jJKFCuhPI2m1zwzzNEBUl_NgmV9DfzRTZnqFg'
-        };
-
-            // Inizializza Supabase
-            const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-            
-            // Testa la connessione a Supabase
-            async function testSupabaseConnection() {
-                try {
-                    console.log('🔄 Test connessione Supabase...');
-                    const { data, error } = await supabase
-                        .from('uopi_data')
-                        .select('id')
-                        .limit(1);
-                    
-                    if (error) {
-                        console.error('❌ Errore connessione Supabase:', error);
-                        UI.notify('⚠️ Connessione Supabase non disponibile', 'warning', '⚠️ Avviso Cloud');
-                        return false;
-                    } else {
-                        console.log('✅ Connessione Supabase attiva');
-                        UI.notify('☁️ Connessione Supabase ripristinata', 'success', '✅ Cloud Attivo');
-                        return true;
-                    }
-                } catch (error) {
-                    console.error('❌ Errore test connessione Supabase:', error);
-                    UI.notify('⚠️ Connessione Supabase non disponibile', 'warning', '⚠️ Avviso Cloud');
-                    return false;
-                }
-            }
 
         // ========== SISTEMA COUNTDOWN ==========
         const COUNTDOWN_CONFIG = {
@@ -5404,141 +5369,11 @@
         function saveOperators() {
             // Salva nel localStorage come backup
             saveToStorage(STORAGE_KEYS.OPERATORS, operators);
-            // Salva anche su Supabase (async, non blocca l'UI)
-            saveDataToSupabase().catch(error => {
-                console.error('Errore nel salvataggio su Supabase:', error);
-            });
             // Salva anche su JSONBin (async, non blocca l'UI)
             saveDataToJSONBin().catch(err => console.log('⚠️ Salvataggio JSONBin fallito:', err));
             return true;
         }
 
-            // ========== FUNZIONI SUPABASE ==========
-            
-            // Carica tutti i dati da Supabase
-            async function loadDataFromSupabase() {
-                try {
-                    console.log('🔄 Caricamento dati da Supabase...');
-                    
-                    const { data, error } = await supabase
-                        .from('uopi_data')
-                        .select('*')
-                        .order('created_at', { ascending: false })
-                        .limit(1);
-                    
-                    if (error) {
-                        throw new Error(`Errore Supabase: ${error.message}`);
-                    }
-                    
-                    if (data && data.length > 0) {
-                        const cloudData = data[0].data;
-                        console.log('✅ Dati caricati da Supabase:', cloudData);
-                        
-                        // SOVRASCRIVI i dati locali con quelli del cloud
-                        if (cloudData.operators && Array.isArray(cloudData.operators)) {
-                            operators = cloudData.operators;
-                            console.log('✅ Operators caricati:', operators.length, 'operatori');
-                            console.log('📊 DEBUG operators array:', operators);
-                        } else {
-                            operators = []; // Reset se non ci sono operatori nel cloud
-                            console.log('⚠️ Nessun operatore trovato nei dati cloud');
-                        }
-                        
-                        if (cloudData.shifts && Array.isArray(cloudData.shifts)) {
-                            shifts = cloudData.shifts;
-                            console.log(`✅ Caricati ${shifts.length} turni da Supabase`);
-                        } else {
-                            shifts = []; // Reset se non ci sono turni nel cloud
-                            console.log('⚠️ Nessun turno trovato in Supabase, reset dati locali');
-                        }
-                        
-                        if (cloudData.notifications && Array.isArray(cloudData.notifications)) {
-                            notifications = cloudData.notifications;
-                            console.log(`✅ Caricate ${notifications.length} notifiche da Supabase`);
-                        } else {
-                            notifications = []; // Reset se non ci sono notifiche nel cloud
-                            console.log('⚠️ Nessuna notifica trovata in Supabase, reset dati locali');
-                        }
-                        
-                        // Salva nel localStorage come backup
-                        saveOperators();
-                        saveShifts();
-                        saveNotifications();
-                        
-                        // Aggiorna la gerarchia dopo il caricamento dei dati
-                        setTimeout(() => {
-                            updateOverviewStats();
-                        }, 500);
-                        
-                        return true;
-                    } else {
-                        console.log('⚠️ Nessun dato trovato in Supabase, creo dati di esempio...');
-                        // Crea dati di esempio se non ci sono dati nel cloud
-                        createSampleOperators();
-                        createSampleShifts();
-                        createSampleNotifications();
-                        
-                        // Salva immediatamente i dati di esempio su Supabase
-                        setTimeout(() => {
-                            saveDataToSupabase().then(success => {
-                                if (success) {
-                                    console.log('✅ Dati di esempio salvati su Supabase');
-                                    UI.notify('✅ Dati di esempio creati e sincronizzati', 'success', '🔄 Sincronizzazione');
-                                }
-                            });
-                        }, 1000);
-                        
-                        return false; // Indica che non c'erano dati cloud, ma abbiamo creato dati locali
-                    }
-                } catch (error) {
-                    console.error('❌ Errore nel caricamento dati da Supabase:', error);
-                    console.log('⚠️ Creo dati di esempio come fallback...');
-                    // Crea dati di esempio come fallback in caso di errore
-                    createSampleOperators();
-                    createSampleShifts();
-                    createSampleNotifications();
-                    UI.notify('Errore nel caricamento dati dal cloud, utilizzando dati locali', 'warning');
-                    return false;
-                }
-            }
-            
-            // Salva tutti i dati su Supabase
-            async function saveDataToSupabase() {
-                try {
-                    console.log('💾 Salvataggio dati su Supabase...');
-                    
-                    const dataToSave = {
-                        operators: operators,
-                        shifts: shifts,
-                        notifications: notifications,
-                        lastUpdated: new Date().toISOString()
-                    };
-                    
-                    const { data, error } = await supabase
-                        .from('uopi_data')
-                        .upsert({ 
-                            data: dataToSave,
-                            updated_at: new Date().toISOString()
-                        });
-                    
-                    if (error) {
-                        throw new Error(`Errore Supabase: ${error.message}`);
-                    }
-                    
-                    console.log('✅ Dati salvati su Supabase:', data);
-                    
-                    // Salva anche nel localStorage come backup
-                    saveOperators();
-                    saveShifts();
-                    saveNotifications();
-                    
-                    return true;
-                } catch (error) {
-                    console.error('❌ Errore nel salvataggio su Supabase:', error);
-                    UI.notify('Errore nel salvataggio dati sul cloud', 'error');
-                    return false;
-                }
-            }
 
         
         // Carica tutti i dati da JSONBin
@@ -5639,71 +5474,6 @@
             }
         }
         
-        // Sincronizza i dati (carica da Supabase)
-        async function syncDataFromCloud() {
-                console.log('🔄 Forzo sincronizzazione da Supabase...');
-                
-                // Salva i dati di autenticazione prima di pulire
-                const authData = {
-                    authenticatedUserId: localStorage.getItem('authenticatedUserId'),
-                    userData: localStorage.getItem('userData'),
-                    userAccessLevel: localStorage.getItem('userAccessLevel')
-                };
-                
-                // Pulisci solo i dati operativi, mantieni l'autenticazione
-                localStorage.removeItem('uopi_operators');
-                localStorage.removeItem('uopi_shifts');
-                localStorage.removeItem('uopi_notifications');
-                console.log('🗑️ Dati operativi puliti, autenticazione mantenuta');
-                
-            const success = await loadDataFromSupabase();
-            if (success) {
-                    // Ripristina i dati di autenticazione
-                    if (authData.authenticatedUserId) {
-                        localStorage.setItem('authenticatedUserId', authData.authenticatedUserId);
-                    }
-                    if (authData.userData) {
-                        localStorage.setItem('userData', authData.userData);
-                    }
-                    if (authData.userAccessLevel) {
-                        localStorage.setItem('userAccessLevel', authData.userAccessLevel);
-                    }
-                    console.log('✅ Dati di autenticazione ripristinati');
-                    
-                    UI.notify(`✅ Dati caricati dal NUOVO bin! ${operators.length} operatori, ${shifts.length} turni`, 'success', '☁️ Nuovo Bin Attivo');
-                    console.log('✅ Sincronizzazione dal nuovo bin completata:', {
-                        operators: operators.length,
-                        shifts: shifts.length,
-                        notifications: notifications.length
-                    });
-                    
-                    // Controlla accesso Shadow dopo il caricamento
-                    setTimeout(() => {
-                        updateNavbarForShadowAccess();
-                    }, 1000);
-                    
-                    // Ricarica la pagina corrente
-                const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-                if (currentPage) {
-                    loadPage(currentPage);
-                }
-            } else {
-                    // Ripristina i dati di autenticazione anche in caso di fallimento
-                    if (authData.authenticatedUserId) {
-                        localStorage.setItem('authenticatedUserId', authData.authenticatedUserId);
-                    }
-                    if (authData.userData) {
-                        localStorage.setItem('userData', authData.userData);
-                    }
-                    if (authData.userAccessLevel) {
-                        localStorage.setItem('userAccessLevel', authData.userAccessLevel);
-                    }
-                    console.log('✅ Dati di autenticazione ripristinati dopo fallimento');
-                    
-                    UI.notify('❌ Errore nel caricamento dal nuovo bin', 'error', '❌ Errore');
-                    console.error('❌ Fallimento caricamento dal nuovo bin');
-            }
-        }
         
         // Esporta i dati locali su JSONBin
         async function exportDataToCloud() {
@@ -5716,36 +5486,99 @@
         }
 
         function loadOperators() {
-            const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
-            if (savedOperators && Array.isArray(savedOperators)) {
-                operators = savedOperators;
-                
-                // Aggiorna la gerarchia dopo il caricamento dei dati
-                setTimeout(() => {
-                    updateOverviewStats();
-                }, 100);
-                
-                return true;
-            }
-            
-            // Se non ci sono operatori salvati, prova a caricare da Supabase
-            console.log('📝 Nessun operatore salvato localmente, provo a caricare da Supabase...');
-            loadDataFromSupabase().then(success => {
-                if (!success) {
-                    // Se Supabase fallisce, reset completo
-                    console.log('📝 Supabase non disponibile, reset completo...');
-                    operators = [];
-                    shifts = [];
-                    notifications = [];
-                    saveOperators();
-                    saveShifts();
-                    saveNotifications();
+            // Prima prova sempre a caricare dal file JSON (priorità massima)
+            console.log('🔄 Tentativo di caricamento dal file JSON...');
+            loadOperatorsFromJSON().then(success => {
+                if (success) {
+                    console.log('✅ Operatori caricati dal file JSON');
+                    return true;
+                } else {
+                    // Se il JSON fallisce, prova dal localStorage
+                    console.log('⚠️ File JSON non disponibile, provo dal localStorage...');
+                    const savedOperators = loadFromStorage(STORAGE_KEYS.OPERATORS, []);
+                    if (savedOperators && Array.isArray(savedOperators) && savedOperators.length > 0) {
+                        operators = savedOperators;
+                        console.log('✅ Operatori caricati dal localStorage');
+                        
+                        // Aggiorna la gerarchia dopo il caricamento dei dati
+                        setTimeout(() => {
+                            updateOverviewStats();
+                        }, 100);
+                        
+                        return true;
+                    } else {
+                        // Se anche localStorage è vuoto, usa i dati di esempio
+                        console.log('📝 Nessun dato trovato, uso dati di esempio...');
+                        createSampleOperators();
+                        return true;
+                    }
                 }
             });
             return true;
         }
 
-        // Funzione per creare operatori di esempio
+        // ========== CARICAMENTO DATI GERARCHIA ==========
+        
+        // Funzione per forzare il caricamento dal file JSON (pulisce localStorage)
+        async function forceLoadFromJSON() {
+            console.log('🔄 Forzando caricamento dal file JSON...');
+            
+            // Pulisci il localStorage degli operatori
+            localStorage.removeItem('uopi_operators');
+            console.log('🗑️ localStorage operatori pulito');
+            
+            // Carica dal JSON
+            const success = await loadOperatorsFromJSON();
+            if (success) {
+                UI.notify('✅ Operatori caricati dal file JSON!', 'success', '🔄 Aggiornamento');
+                // Ricarica la pagina corrente se siamo nella sezione gerarchia
+                const currentPage = document.querySelector('.nav-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                if (currentPage === 'personnel') {
+                    loadPage('personnel');
+                }
+            } else {
+                UI.notify('❌ Errore nel caricamento dal file JSON', 'error', '❌ Errore');
+            }
+        }
+        
+        // Funzione per caricare gli operatori dal file JSON
+        async function loadOperatorsFromJSON() {
+            try {
+                console.log('🔄 Caricamento operatori dal file JSON...');
+                
+                const response = await fetch('./operatori_reparto.json');
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Dati caricati dal file JSON:', data);
+                
+                if (data.operators && Array.isArray(data.operators)) {
+                    operators = data.operators;
+                    console.log(`✅ Caricati ${operators.length} operatori dal file JSON`);
+                    
+                    // Salva nel localStorage come backup
+                    saveOperators();
+                    
+                    // Aggiorna la gerarchia dopo il caricamento dei dati
+                    setTimeout(() => {
+                        updateOverviewStats();
+                    }, 500);
+                    
+                    return true;
+                } else {
+                    console.log('⚠️ Nessun operatore trovato nel file JSON');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Errore nel caricamento dal file JSON:', error);
+                UI.notify('Errore nel caricamento degli operatori dal file JSON', 'error');
+                return false;
+            }
+        }
+
+        // Funzione per creare operatori di esempio (fallback)
         function createSampleOperators() {
             operators = [
                 {
@@ -7610,6 +7443,9 @@
                             <button class="btn btn-primary" onclick="openAddOperator()">
                                 <i class="fas fa-user-plus"></i> Aggiungi Operatore
                             </button>
+                            <button class="btn btn-secondary" onclick="forceLoadFromJSON()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                                <i class="fas fa-sync-alt"></i> Carica da JSON
+                            </button>
                             <button class="btn btn-secondary" onclick="createBackup()">
                                 <i class="fas fa-download"></i> Backup Dati
                             </button>
@@ -9112,12 +8948,6 @@
             // Salva automaticamente nel localStorage
             saveOperators();
             
-            // Salva anche su Supabase
-            saveDataToSupabase().catch(error => {
-                console.error('Errore nel salvataggio su Supabase:', error);
-                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
-            });
-            
             UI.loading('Salvataggio operatore...', true);
             setTimeout(() => {
                 UI.loading('', false);
@@ -9181,12 +9011,6 @@
             
             // Salva automaticamente nel localStorage
             saveOperators();
-            
-            // Salva anche su Supabase
-            saveDataToSupabase().catch(error => {
-                console.error('Errore nel salvataggio su Supabase:', error);
-                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
-            });
             
             UI.loading('', false);
             UI.notify(`✅ Operatore ${operator.name} rimosso!`, 'success', '🗑️ Rimozione Completata');
@@ -9342,12 +9166,6 @@
             // Salva automaticamente nel localStorage
             saveOperators();
             
-            // Salva anche su Supabase
-            saveDataToSupabase().catch(error => {
-                console.error('Errore nel salvataggio su Supabase:', error);
-                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
-            });
-            
             UI.loading('Salvataggio modifiche...', true);
             setTimeout(() => {
                 UI.loading('', false);
@@ -9406,12 +9224,6 @@
             
             // Salva automaticamente nel localStorage
             saveOperators();
-            
-            // Salva anche su Supabase
-            saveDataToSupabase().catch(error => {
-                console.error('Errore nel salvataggio su Supabase:', error);
-                UI.notify('⚠️ Errore nel salvataggio su cloud, dati salvati localmente', 'warning', '⚠️ Avviso');
-            });
             
             UI.loading('', false);
             UI.notify(`✅ Rimossi ${count} operatori!`, 'success');
@@ -11264,37 +11076,20 @@
         async function initializeSystem() {
             console.log('🔄 Inizializzazione sistema...');
             
-            // Testa la connessione a Supabase
-            const supabaseConnected = await testSupabaseConnection();
-            
-            // Carica SOLO da Supabase (cloud-first)
-            console.log('🌐 Caricamento dati da Supabase...');
-            const cloudSuccess = await loadDataFromSupabase();
-            
-            if (cloudSuccess) {
-                console.log('✅ Dati caricati da Supabase:', {
-                    operators: operators.length,
-                    shifts: shifts.length,
-                    notifications: notifications.length
-                });
-            } else {
-                console.log('⚠️ Supabase non disponibile, creo dati di esempio...');
-                // Crea dati di esempio se Supabase non è disponibile
-                createSampleOperators();
-                createSampleShifts();
-                createSampleNotifications();
-                console.log('✅ Dati di esempio creati:', {
-                    operators: operators.length,
-                    shifts: shifts.length,
-                    notifications: notifications.length
-                });
-            }
+            // Carica dati dal localStorage prima
+            loadOperators();
+            loadShifts();
+            loadNotifications();
             
             // Controllo finale di sicurezza: assicurati che ci siano sempre operatori
             if (!operators || operators.length === 0) {
-                console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, creo dati di esempio...');
-                createSampleOperators();
-                UI.notify('📝 Creati operatori di esempio per sicurezza', 'info', '🔄 Controllo Finale');
+                console.log('🚨 CONTROLLO FINALE: Nessun operatore trovato, provo a caricare dal file JSON...');
+                const jsonSuccess = await loadOperatorsFromJSON();
+                if (!jsonSuccess) {
+                    console.log('📝 File JSON non disponibile, creo dati di esempio...');
+                    createSampleOperators();
+                    UI.notify('📝 Creati operatori di esempio per sicurezza', 'info', '🔄 Controllo Finale');
+                }
             }
             
             console.log('📊 Stato finale sistema:', {
