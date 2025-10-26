@@ -5482,6 +5482,285 @@
             token: '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', // Nuovo token funzionante
             updateInterval: 5000 // 5 secondi per aggiornamenti più rapidi
         };
+
+        // ========== GOOGLE SHEETS API INTEGRATION ==========
+        
+        /*
+         * CONFIGURAZIONE GOOGLE SHEETS API
+         * 
+         * Per utilizzare questa funzione, segui questi passaggi:
+         * 
+         * 1. CREA UN FOGLIO GOOGLE:
+         *    - Vai su https://sheets.google.com
+         *    - Crea un nuovo foglio chiamato "UOPI Turni"
+         *    - Aggiungi una riga header con queste colonne (prima riga):
+         *      ID | Data | Ora Pattuglia | Operatore 1 | Operatore 2 | Gestito da | Veicolo | Tipo | Stato | Modulo | Attivazione | Disattivazione | Durata | Manager Disattivazione | Timestamp
+         *    - Rendi il foglio pubblicamente modificabile (condividi con "Chiunque con il link può modificare")
+         * 
+         * 2. OTTIENI IL SPREADSHEET ID:
+         *    - Apri il tuo foglio Google
+         *    - Guarda l'URL nella barra degli indirizzi
+         *    - Esempio: https://docs.google.com/spreadsheets/d/1abc123xyz.../edit
+         *    - Copia la parte tra /d/ e /edit (es. "1abc123xyz...")
+         *    - Incolla questo ID in "spreadsheetId" qui sotto
+         * 
+         * 3. OTTIENI LA TUA API KEY:
+         *    - Vai su https://console.cloud.google.com/
+         *    - Crea un nuovo progetto (o usa uno esistente)
+         *    - Vai su "APIs & Services" > "Credentials"
+         *    - Clicca "Create Credentials" > "API Key"
+         *    - Copia la chiave API generata
+         *    - Incolla questa chiave in "apiKey" qui sotto
+         *    - (Opzionale) Configura restrizioni HTTP referer per sicurezza
+         * 
+         * 4. ABILITA GOOGLE SHEETS API:
+         *    - Nella stessa pagina "APIs & Services", vai su "Library"
+         *    - Cerca "Google Sheets API"
+         *    - Clicca "Enable"
+         * 
+         * VANTAGGI:
+         * - Dati persistenti nel cloud
+         * - Accesso multi-utente in tempo reale
+         * - Backup automatico
+         * - Facile esportazione in Excel/CSV
+         * 
+         * NOTE:
+         * - I limiti della Google Sheets API sono 100 richieste per 100 secondi per utente
+         * - Per utilizzo intensivo, considera un upgrade a Google Cloud Platform
+         */
+        
+        // Configurazione Google Sheets API
+        const GOOGLE_SHEETS_CONFIG = {
+            // ✅ CONFIGURA QUI - Segui questi 3 SEMPLICI PASSAGGI:
+            //
+            // 1️⃣ Crea un foglio Google: https://sheets.google.com
+            //    - Crea un nuovo foglio chiamato "UOPI Turni"
+            //    - Condividi: "Chiunque con il link può modificare"
+            //
+            // 2️⃣ Ottieni lo Spreadsheet ID:
+            //    - Guarda l'URL del tuo foglio (es: docs.google.com/spreadsheets/d/1ABC123XYZ.../edit)
+            //    - Copia la parte tra "/d/" e "/edit" (es: "1ABC123XYZ...")
+            //    - Incollala in "spreadsheetId" qui sotto ↓
+            //
+            // 3️⃣ Ottieni l'API Key (leggermente più complesso):
+            //    - Vai su: https://console.cloud.google.com/
+            //    - Crea un progetto → Vai su "APIs & Services" → "Library"
+            //    - Cerca "Google Sheets API" → Clicca "Enable"
+            //    - Vai su "Credentials" → "Create Credentials" → "API Key"
+            //    - Copia la chiave che appare e incollala in "apiKey" qui sotto ↓
+            //
+            // 📖 Per una guida dettagliata con SCREENSHOT, leggi: GUIDA_API_KEY_GOOGLE_SHEETS.md
+            //
+            // ✅ CONFIGURAZIONE COMPLETATA!
+            spreadsheetId: '1xoydBmDy46tMHg8MWANBIhx7lZ4UVDznv5EDtGU3fx0',
+            // Nome del foglio dove salvare i turni
+            sheetName: 'Turni',
+            // ✅ API Key configurata!
+            apiKey: 'AIzaSyB3nopSiq9xICIpz4jeCdJ0qlpeYeg-w2s',
+            // Endpoint per appendere dati
+            appendUrl: function() {
+                return `https://sheets.googleapis.com/v4/spreadsheets/${this.spreadsheetId}/values/${this.sheetName}!A:Z:append?valueInputOption=RAW&key=${this.apiKey}`;
+            },
+            // Endpoint per leggere dati
+            readUrl: function() {
+                return `https://sheets.googleapis.com/v4/spreadsheets/${this.spreadsheetId}/values/${this.sheetName}!A:Z?key=${this.apiKey}`;
+            }
+        };
+
+        // Funzione per salvare un turno su Google Sheets
+        async function saveShiftToGoogleSheets(shift) {
+            try {
+                console.log('📊 Invio turno a Google Sheets...', shift);
+                
+                // Prepara i dati in formato array per Google Sheets
+                const rowData = [
+                    shift.id || Date.now().toString(),
+                    shift.createdDate || new Date().toLocaleDateString('it-IT'),
+                    shift.patrolTime || '',
+                    shift.operator1Name || '',
+                    shift.operator2Name || '',
+                    shift.managerName || '',
+                    shift.patrolVehicleName || '',
+                    shift.patrolTypeName || '',
+                    shift.status || 'Nuovo',
+                    shift.moduleType || 'patrol-activation',
+                    shift.activationTime || '',
+                    shift.deactivationTime || '',
+                    shift.duration || '',
+                    shift.deactivationManagerName || '',
+                    new Date().toISOString()
+                ];
+
+                const requestBody = {
+                    values: [rowData]
+                };
+
+                const response = await fetch(GOOGLE_SHEETS_CONFIG.appendUrl(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.ok) {
+                    console.log('✅ Turno salvato su Google Sheets!');
+                    UI.notify('✅ Turno sincronizzato con Google Sheets!', 'success', '📊 Sincronizzazione');
+                    return true;
+                } else {
+                    const errorData = await response.text();
+                    console.error('❌ Errore nel salvataggio su Google Sheets:', errorData);
+                    UI.notify('⚠️ Impossibile sincronizzare con Google Sheets. Dati salvati localmente.', 'warning', '⚠️ Warning');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Errore nel salvataggio turno su Google Sheets:', error);
+                UI.notify('⚠️ Errore nella sincronizzazione. Dati salvati localmente.', 'warning', '⚠️ Warning');
+                return false;
+            }
+        }
+
+        // Funzione per caricare turni da Google Sheets
+        async function loadShiftsFromGoogleSheets() {
+            try {
+                console.log('📊 Caricamento turni da Google Sheets...');
+                
+                const response = await fetch(GOOGLE_SHEETS_CONFIG.readUrl());
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.values || data.values.length === 0) {
+                    console.log('⚠️ Nessun dato trovato su Google Sheets');
+                    return [];
+                }
+
+                // Converte i dati da Google Sheets in array di turni
+                // Skip la prima riga (header) se presente
+                const headerRow = data.values[0];
+                const rows = data.values.slice(1);
+
+                const loadedShifts = rows.map(row => {
+                    return {
+                        id: row[0] || Date.now().toString(),
+                        createdDate: row[1] || '',
+                        patrolTime: row[2] || '',
+                        operator1Name: row[3] || '',
+                        operator2Name: row[4] || '',
+                        managerName: row[5] || '',
+                        patrolVehicleName: row[6] || '',
+                        patrolTypeName: row[7] || '',
+                        status: row[8] || 'Nuovo',
+                        moduleType: row[9] || 'patrol-activation',
+                        activationTime: row[10] || '',
+                        deactivationTime: row[11] || '',
+                        duration: row[12] || '',
+                        deactivationManagerName: row[13] || ''
+                    };
+                });
+
+                console.log(`✅ Caricati ${loadedShifts.length} turni da Google Sheets`);
+                return loadedShifts;
+            } catch (error) {
+                console.error('❌ Errore nel caricamento turni da Google Sheets:', error);
+                UI.notify('⚠️ Impossibile caricare turni da Google Sheets. Uso dati locali.', 'warning', '⚠️ Warning');
+                return [];
+            }
+        }
+
+        // Funzione per caricare i turni (con fallback su localStorage)
+        async function loadShifts() {
+            try {
+                console.log('🔄 Caricamento turni...');
+                
+                // Prima prova a caricare da Google Sheets
+                let loadedShifts = await loadShiftsFromGoogleSheets();
+                
+                if (loadedShifts && loadedShifts.length > 0) {
+                    shifts = loadedShifts;
+                    
+                    // Salva nel localStorage come backup
+                    saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                    
+                    console.log(`✅ Caricati ${shifts.length} turni da Google Sheets`);
+                    return true;
+                }
+                
+                // Se Google Sheets è vuoto o non funziona, prova il localStorage
+                const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+                if (savedShifts && savedShifts.length > 0) {
+                    shifts = savedShifts;
+                    console.log(`✅ Caricati ${shifts.length} turni dal localStorage`);
+                    return true;
+                }
+                
+                console.log('⚠️ Nessun turno trovato');
+                shifts = [];
+                return false;
+            } catch (error) {
+                console.error('❌ Errore nel caricamento turni:', error);
+                return false;
+            }
+        }
+
+        // Funzione per salvare i turni (con invio a Google Sheets)
+        async function saveShifts() {
+            try {
+                console.log('💾 Salvataggio turni...');
+                
+                // Salva nel localStorage come backup
+                saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                
+                console.log(`✅ Salvati ${shifts.length} turni nel localStorage`);
+                
+                // Mostra notifica (opzionale)
+                if (shifts.length > 0) {
+                    UI.notify('✅ Turni salvati con successo!', 'success', '💾 Salvataggio');
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Errore nel salvataggio turni:', error);
+                UI.notify('❌ Errore nel salvataggio turni!', 'error', '❌ Errore');
+                return false;
+            }
+        }
+
+        // Funzione per aggiungere un nuovo turno (con invio a Google Sheets)
+        async function addShift(shiftData) {
+            try {
+                // Crea il nuovo turno
+                const newShift = {
+                    ...shiftData,
+                    id: shiftData.id || Date.now().toString(),
+                    createdDate: new Date().toLocaleDateString('it-IT'),
+                    status: 'Attivo'
+                };
+                
+                // Aggiungi all'array locale
+                shifts.push(newShift);
+                
+                // Salva nel localStorage
+                await saveShifts();
+                
+                // Invia a Google Sheets
+                const googleSheetsSuccess = await saveShiftToGoogleSheets(newShift);
+                
+                if (googleSheetsSuccess) {
+                    console.log('✅ Turno aggiunto e sincronizzato con Google Sheets!');
+                } else {
+                    console.log('⚠️ Turno aggiunto localmente, errore nella sincronizzazione Google Sheets');
+                }
+                
+                return newShift;
+            } catch (error) {
+                console.error('❌ Errore nell\'aggiunta turno:', error);
+                throw error;
+            }
+        }
         
         // Funzione per salvare i moduli su un servizio esterno
         async function saveModulesToExternalService() {
@@ -6418,10 +6697,11 @@
 
         // Funzioni per turni
         function saveShifts() {
-            // Salva SOLO su GitHub Gist - niente localStorage
-            console.log(`💾 ${shifts.length} turni da salvare su GitHub`);
+            // Salva SEMPRE nel localStorage come backup
+            saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+            console.log(`💾 ${shifts.length} turni salvati nel localStorage (backup)`);
             
-            // Salva su GitHub Gist
+            // Prova a salvare su GitHub Gist
             setTimeout(async () => {
                 try {
                     const success = await saveShiftsToGist();
@@ -6429,12 +6709,12 @@
                         console.log('✅ Turni sincronizzati su GitHub per tutti gli utenti');
                         UI.notify('✅ Turni sincronizzati per tutti!', 'success', '☁️ Cloud Sync');
                     } else {
-                        console.log('❌ Errore sincronizzazione GitHub');
-                        UI.notify('❌ Errore sincronizzazione!', 'error', '☁️ Cloud Error');
+                        console.log('⚠️ Errore sincronizzazione GitHub, ma salvato localmente');
+                        UI.notify('⚠️ Salvato localmente (GitHub non disponibile)', 'warning', '💾 Locale');
                     }
                 } catch (error) {
                     console.error('❌ Errore salvataggio GitHub:', error);
-                    UI.notify('❌ Errore sincronizzazione!', 'error', '☁️ Cloud Error');
+                    UI.notify('⚠️ Salvato localmente (GitHub non disponibile)', 'warning', '💾 Locale');
                 }
             }, 500);
             
@@ -6990,6 +7270,70 @@
             // setTimeout(() => loadPage('shifts'), 2000);
         }
         
+        // Funzione per testare la connessione GitHub
+        async function testGitHubConnection() {
+            console.log('🔍 Test connessione GitHub...');
+            
+            try {
+                // Test 1: Controlla se il token è presente
+                if (!GIST_CONFIG.token) {
+                    UI.notify('❌ Token GitHub non configurato!', 'error', '🔑 Token');
+                    return;
+                }
+                
+                // Test 2: Prova a leggere dal Gist
+                const gistUrl = GIST_CONFIG.rawUrl;
+                const response = await fetch(gistUrl + '?t=' + Date.now());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    UI.notify(`✅ Connessione GitHub OK! Turni: ${data.shifts ? data.shifts.length : 0}`, 'success', '🌐 GitHub');
+                } else if (response.status === 401) {
+                    UI.notify('❌ Token GitHub non valido o scaduto!', 'error', '🔑 Auth');
+                } else if (response.status === 404) {
+                    UI.notify('❌ Gist non trovato!', 'error', '📁 Gist');
+                } else {
+                    UI.notify(`❌ Errore GitHub: ${response.status}`, 'error', '🌐 GitHub');
+                }
+                
+                // Test 3: Prova a scrivere sul Gist
+                console.log('🔄 Test scrittura GitHub...');
+                const testData = {
+                    shifts: [],
+                    lastUpdated: new Date().toISOString(),
+                    updatedBy: 'test',
+                    updatedByName: 'Test Connection',
+                    version: '2.0'
+                };
+                
+                const writeResponse = await fetch(GIST_CONFIG.apiUrl, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${GIST_CONFIG.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            [GIST_CONFIG.filename]: {
+                                content: JSON.stringify(testData, null, 2)
+                            }
+                        }
+                    })
+                });
+                
+                if (writeResponse.ok) {
+                    UI.notify('✅ Scrittura GitHub OK!', 'success', '✍️ Write');
+                } else {
+                    UI.notify(`❌ Errore scrittura: ${writeResponse.status}`, 'error', '✍️ Write');
+                }
+                
+            } catch (error) {
+                console.error('❌ Errore test GitHub:', error);
+                UI.notify(`❌ Errore connessione: ${error.message}`, 'error', '🌐 GitHub');
+            }
+        }
+        
         // Funzione per sincronizzare i turni (GitHub Gist)
         async function syncShifts() {
             console.log('🔄 Sincronizzazione turni con GitHub...');
@@ -7113,8 +7457,9 @@
         }
 
         async function loadShifts() {
-            console.log('🔄 Caricamento turni da GitHub Gist...');
+            console.log('🔄 Caricamento turni...');
             
+            // Prima prova GitHub Gist
             try {
                 const gistUrl = GIST_CONFIG.rawUrl;
                 const response = await fetch(gistUrl + '?t=' + Date.now());
@@ -7125,6 +7470,9 @@
                         shifts = data.shifts;
                         console.log(`✅ Caricati ${shifts.length} turni da GitHub Gist`);
                         
+                        // Salva in localStorage come backup
+                        saveToStorage(STORAGE_KEYS.SHIFTS, shifts);
+                        
                         // Notifica se ci sono aggiornamenti da altri utenti
                         const currentUserId = localStorage.getItem('authenticatedUserId');
                         if (data.updatedBy && data.updatedBy !== currentUserId && data.updatedByName) {
@@ -7134,17 +7482,23 @@
                         return true;
                     }
                 }
-                
-                console.log('⚠️ Nessun dato trovato su GitHub');
-                shifts = [];
-                return true;
-                
             } catch (error) {
-                console.error('❌ Errore caricamento GitHub:', error);
-                shifts = [];
-                UI.notify('❌ Errore caricamento turni!', 'error', '☁️ Cloud Error');
-                return false;
+                console.log('⚠️ Errore caricamento GitHub:', error);
             }
+            
+            // Fallback: carica dal localStorage
+            console.log('📡 Fallback: caricamento da localStorage...');
+            const savedShifts = loadFromStorage(STORAGE_KEYS.SHIFTS, []);
+            if (savedShifts && Array.isArray(savedShifts)) {
+                shifts = savedShifts;
+                console.log(`✅ Caricati ${shifts.length} turni dal localStorage (fallback)`);
+                return true;
+            }
+            
+            // Se non ci sono dati da nessuna parte
+            shifts = [];
+            console.log('📋 Nessun turno trovato');
+            return true;
         }
         
         // Funzione per controllare aggiornamenti su GitHub senza sovrascrivere
@@ -8942,9 +9296,9 @@
                     <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
                         <h1>🕐 Gestione Turni</h1>
                         <p>Programmazione e monitoraggio turni operativi</p>
-                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(6, 182, 212, 0.1); border: 1px solid #06b6d4; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <div style="width: 0.5rem; height: 0.5rem; background: #06b6d4; border-radius: 50%;"></div>
-                            <span style="color: #06b6d4; font-size: 0.875rem; font-weight: 600;">GitHub Gist - Sincronizzazione manuale</span>
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 0.5rem; height: 0.5rem; background: #10b981; border-radius: 50%;"></div>
+                            <span style="color: #10b981; font-size: 0.875rem; font-weight: 600;">Sistema ibrido: GitHub + localStorage</span>
                         </div>
                         <div class="actions">
                             <button class="btn btn-primary" onclick="openAddShift()">
@@ -8955,6 +9309,9 @@
                             </button>
                             <button class="btn btn-info" onclick="loadPage('shifts')" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
                                 <i class="fas fa-refresh"></i> Ricarica Pagina
+                            </button>
+                            <button class="btn btn-warning" onclick="testGitHubConnection()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                <i class="fas fa-wifi"></i> Test GitHub
                             </button>
                             <button class="btn btn-success" onclick="createTestShift()" style="background: linear-gradient(135deg, #10b981, #059669);">
                                 <i class="fas fa-flask"></i> Test Turno
