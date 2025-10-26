@@ -2,6 +2,7 @@
   "operators": [
     {
       "id": 1,
+      "matricola": "UOPI-001",
       "name": "Tonino Frasca",
       "discordTag": "_frascones_",
       "qualification": "✨・Comandante Generale",
@@ -12,6 +13,7 @@
     },
     {
       "id": 2,
+      "matricola": "UOPI-002",
       "name": "Gabriel Martinelli",
       "discordTag": "dxrk.ryze",
       "qualification": "💎・Comandante",
@@ -22,6 +24,7 @@
     },
     {
       "id": 3,
+      "matricola": "UOPI-003",
       "name": "Matteo Rossi",
       "discordTag": "0_matte_0",
       "qualification": "💎・Comandante",
@@ -32,6 +35,7 @@
     },
     {
       "id": 4,
+      "matricola": "UOPI-004",
       "name": "Simone Sottaceto",
       "discordTag": "estensione",
       "qualification": "💎・Comandante",
@@ -42,6 +46,7 @@
     },
     {
       "id": 5,
+      "matricola": "UOPI-005",
       "name": "Simone Brighella",
       "discordTag": "fastweb.mvp",
       "qualification": "🥏・Vice Comandante",
@@ -52,6 +57,7 @@
     },
     {
       "id": 6,
+      "matricola": "UOPI-006",
       "name": "Franco Costa",
       "discordTag": "kekkozalone89",
       "qualification": "🥏・Vice Comandante",
@@ -62,6 +68,7 @@
     },
     {
       "id": 7,
+      "matricola": "UOPI-007",
       "name": "Francesco Vanni",
       "discordTag": "ghostfede",
       "qualification": "🪁・Sostituto Vice Comandante",
@@ -72,6 +79,7 @@
     },
     {
       "id": 8,
+      "matricola": "UOPI-008",
       "name": "Diego Bianchi",
       "discordTag": "gavonet",
       "qualification": "⚜️・Capitano",
@@ -82,6 +90,7 @@
     },
     {
       "id": 9,
+      "matricola": "UOPI-009",
       "name": "Marco Alessis",
       "discordTag": "marcucx",
       "qualification": "🪖・Caposquadra",
@@ -92,6 +101,7 @@
     },
     {
       "id": 10,
+      "matricola": "UOPI-010",
       "name": "Rocco Zecca",
       "discordTag": "zeccast",
       "qualification": "🪖・Vice Caposquadra",
@@ -102,6 +112,7 @@
     },
     {
       "id": 11,
+      "matricola": "UOPI-011",
       "name": "Fabio Lupix",
       "discordTag": "lupix.14",
       "qualification": "🪖・Vice Caposquadra",
@@ -112,6 +123,7 @@
     },
     {
       "id": 12,
+      "matricola": "UOPI-012",
       "name": "Rodolfo Vespa",
       "discordTag": "fluca20",
       "qualification": "🔱・Coordinatore",
@@ -122,6 +134,7 @@
     },
     {
       "id": 13,
+      "matricola": "UOPI-013",
       "name": "Giorgio Moretti",
       "discordTag": "il_lingio",
       "qualification": "🔱・Coordinatore",
@@ -132,6 +145,7 @@
     },
     {
       "id": 14,
+      "matricola": "UOPI-014",
       "name": "Mattia Gomez",
       "discordTag": "fakeghost_",
       "qualification": "🔱・Coordinatore",
@@ -142,6 +156,7 @@
     },
     {
       "id": 15,
+      "matricola": "UOPI-015",
       "name": "Costantino Toscano",
       "discordTag": "arnobio350",
       "qualification": "🔐・Tecnico Esperto",
@@ -152,6 +167,7 @@
     },
     {
       "id": 16,
+      "matricola": "UOPI-016",
       "name": "Marco Carpentieri",
       "discordTag": "grankio99",
       "qualification": "🔏・Tecnico Specializzato",
@@ -162,6 +178,7 @@
     },
     {
       "id": 17,
+      "matricola": "UOPI-017",
       "name": "Jolen Nathan",
       "discordTag": "jolen._.",
       "qualification": "🔏・Tecnico Specializzato",
@@ -172,6 +189,7 @@
     },
     {
       "id": 18,
+      "matricola": "UOPI-018",
       "name": "Giulio Bellino",
       "discordTag": "giulsza",
       "qualification": "🔒・Tecnico",
@@ -182,6 +200,7 @@
     },
     {
       "id": 19,
+      "matricola": "UOPI-019",
       "name": "Denna Conti",
       "discordTag": "dennaonfire",
       "qualification": "🔒・Tecnico",
@@ -192,6 +211,7 @@
     },
     {
       "id": 20,
+      "matricola": "UOPI-020",
       "name": "Alessyo Taviglia",
       "discordTag": "7aviglia.gg",
       "qualification": "💠・Operatore Qualificato",
@@ -202,6 +222,7 @@
     },
     {
       "id": 21,
+      "matricola": "UOPI-021",
       "name": "Alex Ferrari",
       "discordTag": "alexx__",
       "qualification": "💠・Operatore Qualificato",
@@ -212,6 +233,7 @@
     },
     {
       "id": 22,
+      "matricola": "UOPI-022",
       "name": "Tommy Manero",
       "discordTag": "peppose98",
       "qualification": "💠・Operatore Qualificato",
@@ -222,6 +244,7 @@
     },
     {
       "id": 23,
+      "matricola": "UOPI-023",
       "name": "Alessandro Moro",
       "discordTag": "ildioanubi.1",
       "qualification": "💠・Operatore Qualificato",
@@ -232,6 +255,7 @@
     },
     {
       "id": 24,
+      "matricola": "UOPI-024",
       "name": "Matteo Corona",
       "discordTag": "lightywolf_",
       "qualification": "💠・Operatore Qualificato",
@@ -242,6 +266,7 @@
     },
     {
       "id": 25,
+      "matricola": "UOPI-025",
       "name": "Lucas Garcia",
       "discordTag": "salvo115",
       "qualification": "💠・Operatore Qualificato",
@@ -252,6 +277,7 @@
     },
     {
       "id": 26,
+      "matricola": "UOPI-026",
       "name": "Claudio Bisonzio",
       "discordTag": "didyouknow.",
       "qualification": "💠・Operatore Qualificato",
@@ -262,6 +288,7 @@
     },
     {
       "id": 27,
+      "matricola": "UOPI-027",
       "name": "Damiano Scofield",
       "discordTag": "damy_97",
       "qualification": "💠・Operatore Qualificato",
@@ -272,6 +299,7 @@
     },
     {
       "id": 28,
+      "matricola": "UOPI-028",
       "name": "Gabriele De Simone",
       "discordTag": "gabrieleliderdelladgg",
       "qualification": "💠・Operatore Qualificato",
@@ -282,6 +310,7 @@
     },
     {
       "id": 29,
+      "matricola": "UOPI-029",
       "name": "Samuelino Bellino",
       "discordTag": "samuele_yt",
       "qualification": "💠・Operatore Qualificato",
@@ -292,6 +321,7 @@
     },
     {
       "id": 30,
+      "matricola": "UOPI-030",
       "name": "Marco Ferri",
       "discordTag": "the_real_king_29",
       "qualification": "🔰・Operatore Scelto",
@@ -302,6 +332,7 @@
     },
     {
       "id": 31,
+      "matricola": "UOPI-031",
       "name": "Derek Morgan",
       "discordTag": "bomberhino",
       "qualification": "🔰・Operatore Scelto",
@@ -312,6 +343,7 @@
     },
     {
       "id": 32,
+      "matricola": "UOPI-032",
       "name": "Ethan Larkin",
       "discordTag": "gessux",
       "qualification": "🔰・Operatore Scelto",
@@ -322,6 +354,7 @@
     },
     {
       "id": 33,
+      "matricola": "UOPI-033",
       "name": "Lori Ciapopo",
       "discordTag": "peppe2528",
       "qualification": "🔰・Operatore Scelto",
@@ -332,6 +365,7 @@
     },
     {
       "id": 34,
+      "matricola": "UOPI-034",
       "name": "Lorenz Mengoni",
       "discordTag": "lorenzogef8171",
       "qualification": "🌐・Operatore",
@@ -342,6 +376,7 @@
     },
     {
       "id": 35,
+      "matricola": "UOPI-035",
       "name": "Giorgio Conti",
       "discordTag": "_tfall",
       "qualification": "🌐・Operatore",
@@ -352,6 +387,7 @@
     },
     {
       "id": 36,
+      "matricola": "UOPI-036",
       "name": "Andrea Ferrari",
       "discordTag": "andrea_pacifico",
       "qualification": "🌐・Operatore",
@@ -362,6 +398,7 @@
     },
     {
       "id": 37,
+      "matricola": "UOPI-037",
       "name": "Flavio Bianchi",
       "discordTag": "whitecontrol__",
       "qualification": "🌐・Operatore",
@@ -372,6 +409,7 @@
     },
     {
       "id": 38,
+      "matricola": "UOPI-038",
       "name": "Sbirr Caram",
       "discordTag": "mirco_85314",
       "qualification": "🔮・Operatore in Prova",
@@ -382,6 +420,7 @@
     },
     {
       "id": 39,
+      "matricola": "UOPI-039",
       "name": "Pasquale Rossi",
       "discordTag": ".ilgiocatore",
       "qualification": "🔮・Operatore in Prova",
@@ -392,6 +431,7 @@
     },
     {
       "id": 40,
+      "matricola": "UOPI-040",
       "name": "Leonardo Parodi",
       "discordTag": "lory26487",
       "qualification": "🔮・Operatore in Prova",
@@ -402,6 +442,7 @@
     },
     {
       "id": 41,
+      "matricola": "UOPI-041",
       "name": "Davide Maranza",
       "discordTag": "russ0000_",
       "qualification": "🔮・Operatore in Prova",
@@ -412,6 +453,7 @@
     },
     {
       "id": 42,
+      "matricola": "UOPI-042",
       "name": "Raffaele Gargiulo",
       "discordTag": "he_112.",
       "qualification": "🔮・Operatore in Prova",
