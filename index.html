@@ -12944,6 +12944,160 @@
             }
         });
 
+        // ========== FUNZIONE PAGINA TURNI ==========
+        function getShiftsPage() {
+            console.log('🕐 Caricamento pagina Turni...');
+            
+            // Carica i turni se non sono già caricati
+            if (!shifts || shifts.length === 0) {
+                loadShifts();
+            }
+            
+            const totalShifts = shifts.length;
+            const activeShifts = shifts.filter(s => s.status === 'Attivo').length;
+            
+            return `
+                <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+                    <h1>🕐 Gestione Turni</h1>
+                    <p>Monitoraggio e amministrazione dei turni operativi U.O.P.I.</p>
+                </div>
+
+                <!-- Statistiche -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); border: 1px solid rgba(59, 130, 246, 0.3);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 800; color: #3b82f6; line-height: 1;">${totalShifts}</div>
+                                <div style="color: #94a3b8; font-size: 0.875rem;">Turni Totali</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #10b981, #059669); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: 800; color: #10b981; line-height: 1;">${activeShifts}</div>
+                                <div style="color: #94a3b8; font-size: 0.875rem;">Turni Attivi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista Turni -->
+                <div class="card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                        <h2 style="color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-list-ul" style="color: #3b82f6;"></i>
+                            Elenco Turni
+                        </h2>
+                        ${requireAdminAccess() ? `
+                        <button class="btn btn-primary" onclick="openAddShift()">
+                            <i class="fas fa-plus"></i> Aggiungi Turno
+                        </button>
+                        ` : ''}
+                    </div>
+
+                    ${shifts && shifts.length > 0 ? `
+                        <div style="display: grid; gap: 1.5rem;">
+                            ${shifts.map(shift => `
+                                <div class="card" style="padding: 1.5rem; border-left: 4px solid ${shift.status === 'Attivo' ? '#10b981' : '#3b82f6'};">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                                <div style="font-size: 1.5rem;">🕐</div>
+                                                <div>
+                                                    <h3 style="margin: 0; color: var(--text-primary);">Turno ${shift.createdDate || 'Nuovo'}</h3>
+                                                    <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.875rem;">${shift.moduleType || 'patrol-activation'}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                                ${shift.operator1Name ? `
+                                                <div style="padding: 0.75rem; background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem;">
+                                                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Operatore 1</div>
+                                                    <div style="font-weight: 700; color: var(--text-primary);">${shift.operator1Name}</div>
+                                                </div>
+                                                ` : ''}
+                                                ${shift.operator2Name ? `
+                                                <div style="padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 0.5rem;">
+                                                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Operatore 2</div>
+                                                    <div style="font-weight: 700; color: var(--text-primary);">${shift.operator2Name}</div>
+                                                </div>
+                                                ` : ''}
+                                                ${shift.patrolTime ? `
+                                                <div style="padding: 0.75rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem;">
+                                                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Orario</div>
+                                                    <div style="font-weight: 700; color: var(--text-primary);">${shift.patrolTime}</div>
+                                                </div>
+                                                ` : ''}
+                                                <div style="padding: 0.75rem; background: ${shift.status === 'Attivo' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)'}; border-radius: 0.5rem;">
+                                                    <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.25rem;">Stato</div>
+                                                    <div style="font-weight: 700; color: ${shift.status === 'Attivo' ? '#10b981' : '#3b82f6'};">${shift.status}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : `
+                        <div style="text-align: center; padding: 3rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📅</div>
+                            <h3 style="color: var(--text-muted); margin-bottom: 0.5rem;">Nessun turno disponibile</h3>
+                            <p style="color: var(--text-muted);">I turni verranno mostrati qui una volta creati</p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function openAddShift() {
+            if (!requireAdminAccess()) {
+                return;
+            }
+            
+            UI.modal('➕ Aggiungi Turno', 
+                '<p>Funzionalità in sviluppo. I turni vengono salvati automaticamente su Google Sheets.</p>',
+                '<button class="btn btn-primary" onclick="UI.closeModal()">OK</button>'
+            );
+        }
+
+        // ========== FUNZIONE PAGINA ANNUNCI ==========
+        function getAnnouncementsPage() {
+            return `
+                <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+                    <h1>📢 Comunicati</h1>
+                    <p>Comunicazioni ufficiali U.O.P.I.</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📢</div>
+                    <h3 style="color: var(--text-muted); margin-bottom: 0.5rem;">Nessun comunicato disponibile</h3>
+                    <p style="color: var(--text-muted);">I comunicati ufficiali appariranno qui</p>
+                </div>
+            `;
+        }
+
+        // ========== FUNZIONE PAGINA STATUS ==========
+        function getStatusPage() {
+            return `
+                <div class="page-header" style="opacity: 0; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+                    <h1>⚡ Status Sistema</h1>
+                    <p>Monitoraggio dello stato operativo U.O.P.I.</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">⚡</div>
+                    <h3 style="color: #10b981; margin-bottom: 0.5rem;">🟢 Sistema Operativo</h3>
+                    <p style="color: var(--text-muted);">Tutti i servizi sono online</p>
+                </div>
+            `;
+        }
+
         // ========== FUNZIONE DI CARICAMENTO PAGINE ==========
         function loadPage(page) {
             console.log('📄 Caricamento pagina:', page);
