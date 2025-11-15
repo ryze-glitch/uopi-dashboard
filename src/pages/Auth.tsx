@@ -228,6 +228,19 @@ const Auth = () => {
       });
       if (error) {
         console.error("Discord auth error:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        
+        // Check if it's a 500 error from Edge Function
+        if (error.message?.includes('500') || error.message?.includes('Internal Server Error') || error.message?.includes('non-2xx')) {
+          toast({
+            title: "Errore del server",
+            description: "Errore 500: Le Edge Functions non sono configurate correttamente. Verifica i secrets su Supabase Dashboard > Edge Functions > Settings > Secrets",
+            variant: "destructive",
+            duration: 15000
+          });
+          return;
+        }
+        
         // Check if it's a configuration error
         if (error.message?.includes('placeholder') || error.message?.includes('ERR_NAME_NOT_RESOLVED')) {
           toast({
@@ -238,6 +251,7 @@ const Auth = () => {
           });
           return;
         }
+        
         // Retry on network errors (might be blocked by adblocker)
         if (retryCount < maxRetries && (
           error.message?.includes('Failed to fetch') ||
@@ -250,11 +264,15 @@ const Auth = () => {
         }
         throw error;
       }
-      if (data.error) {
+      
+      // Check if response has error message
+      if (data?.error) {
+        console.error("Discord auth response error:", data.error, data.message);
         toast({
-          title: data.error === "Accesso Negato" ? "Accesso Negato" : "Errore di autenticazione",
-          description: data.message || data.error,
+          title: data.error === "Accesso Negato" ? "Accesso Negato" : data.error || "Errore di autenticazione",
+          description: data.message || data.error || "Errore sconosciuto durante l'autenticazione",
           variant: "destructive",
+          duration: 10000
         });
         navigate("/auth", { replace: true });
         return;
