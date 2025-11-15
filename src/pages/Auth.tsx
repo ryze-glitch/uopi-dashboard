@@ -85,30 +85,52 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // The redirect_url from Supabase should already be in hash router format
-        // But we'll handle it properly for GitHub Pages
+        // Extract token from magic link URL if possible, or use the redirect URL
         try {
           const url = new URL(data.redirect_url);
-          // If the URL contains a hash, it's already in hash router format, use it directly
-          if (url.hash && url.hash.includes('/dashboard')) {
-            // Extract the hash and navigate
-            const hashPath = url.hash.replace('#', '');
-            navigate(hashPath, { replace: true });
-          } else if (url.pathname.includes('/dashboard')) {
-            // Fallback: navigate to dashboard with hash router
-            navigate('/dashboard', { replace: true });
-          } else {
-            // Use the redirect URL as-is (should work with hash)
-            window.location.href = data.redirect_url;
+          const token = url.searchParams.get('token') || url.hash.match(/access_token=([^&]+)/)?.[1];
+          
+          if (token) {
+            // Set the session directly if we have a token
+            const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+              access_token: token,
+              refresh_token: ''
+            });
+            
+            if (!sessionError && sessionData.session) {
+              // Session set successfully, navigate to dashboard
+              navigate('/dashboard', { replace: true });
+              return;
+            }
           }
         } catch (e) {
-          // If URL parsing fails, just navigate to dashboard
           console.error("Error parsing redirect URL:", e);
-          navigate('/dashboard', { replace: true });
         }
+        
+        // Fallback: use the redirect URL and let Supabase handle it
+        // The redirect URL should already be in hash router format from backend
+        window.location.href = data.redirect_url;
       } else {
-        // No redirect URL, navigate to dashboard directly
-        navigate('/dashboard', { replace: true });
+        // No redirect URL, wait for auth state update and navigate
+        let attempts = 0;
+        const maxAttempts = 20; // 10 seconds max
+        
+        const checkAuth = setInterval(() => {
+          attempts++;
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) {
+              clearInterval(checkAuth);
+              navigate('/dashboard', { replace: true });
+            } else if (attempts >= maxAttempts) {
+              clearInterval(checkAuth);
+              toast({
+                title: "Errore",
+                description: "Impossibile completare l'autenticazione. Riprova.",
+                variant: "destructive"
+              });
+            }
+          });
+        }, 500);
       }
     } catch (error) {
       toast({
