@@ -34,17 +34,23 @@ const Auth = () => {
     }
     
     // Also check if we're returning from a magic link redirect
-    // Supabase magic links might redirect here with hash fragments
+    // Supabase magic links might redirect here with hash fragments containing tokens
     const hash = window.location.hash;
-    if (hash && hash.includes('access_token') && !user) {
-      // Wait a bit for Supabase to process the token
-      setTimeout(() => {
+    if (hash && (hash.includes('access_token') || hash.includes('type=recovery')) && !user) {
+      // Wait for Supabase to process the token from the hash
+      const checkAuth = setInterval(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session?.user) {
+            clearInterval(checkAuth);
+            // Clear the hash and navigate
+            window.history.replaceState({}, document.title, window.location.pathname);
             navigate('/dashboard', { replace: true });
           }
         });
-      }, 1000);
+      }, 500);
+      
+      // Clear after 10 seconds
+      setTimeout(() => clearInterval(checkAuth), 10000);
     }
   }, [searchParams, user, navigate]);
   const handleDiscordLogin = () => {
