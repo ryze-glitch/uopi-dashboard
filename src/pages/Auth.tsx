@@ -184,7 +184,8 @@ const Auth = () => {
     
     window.location.href = discordAuthUrl;
   };
-  const handleDiscordCallback = async (code: string) => {
+  const handleDiscordCallback = async (code: string, retryCount = 0) => {
+    const maxRetries = 3;
     try {
       const {
         data,
@@ -196,6 +197,16 @@ const Auth = () => {
       });
       if (error) {
         console.error("Discord auth error:", error);
+        // Retry on network errors (might be blocked by adblocker)
+        if (retryCount < maxRetries && (
+          error.message?.includes('Failed to fetch') ||
+          error.message?.includes('network') ||
+          error.message?.includes('ERR_BLOCKED')
+        )) {
+          console.log(`Retrying Discord auth (attempt ${retryCount + 1}/${maxRetries})...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+          return handleDiscordCallback(code, retryCount + 1);
+        }
         throw error;
       }
       if (data.error) {
@@ -241,13 +252,28 @@ const Auth = () => {
           });
         }, 500);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Discord callback error:", error);
-      toast({
-        title: "Errore durante l'accesso",
-        description: "Si è verificato un errore durante l'autenticazione con Discord",
-        variant: "destructive"
-      });
+      // Check if it's a network error that might be caused by adblocker
+      const isNetworkError = error?.message?.includes('Failed to fetch') ||
+        error?.message?.includes('network') ||
+        error?.message?.includes('ERR_BLOCKED') ||
+        error?.message?.includes('blocked');
+      
+      if (isNetworkError) {
+        toast({
+          title: "Errore di connessione",
+          description: "Impossibile connettersi al server. Verifica la connessione internet o disabilita temporaneamente l'adblocker se attivo.",
+          variant: "destructive",
+          duration: 5000
+        });
+      } else {
+        toast({
+          title: "Errore durante l'accesso",
+          description: "Si è verificato un errore durante l'autenticazione con Discord",
+          variant: "destructive"
+        });
+      }
     }
   };
   return <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-background via-card to-background">

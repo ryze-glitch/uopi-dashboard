@@ -34,20 +34,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const checkSubscription = async () => {
+  const checkSubscription = async (retryCount = 0) => {
     if (!session) return;
     
+    const maxRetries = 2;
     try {
       const { data, error } = await supabase.functions.invoke("check-subscription");
       
       if (error) {
+        // Retry on network errors (might be blocked by adblocker)
+        if (retryCount < maxRetries && (
+          error.message?.includes('Failed to fetch') ||
+          error.message?.includes('network') ||
+          error.message?.includes('ERR_BLOCKED')
+        )) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+          return checkSubscription(retryCount + 1);
+        }
         // Error logged server-side, silent fail for user
         return;
       }
 
       setSubscribed(data.subscribed || false);
       setSubscriptionEnd(data.subscription_end || null);
-    } catch (error) {
+    } catch (error: any) {
+      // Retry on network errors
+      if (retryCount < maxRetries && (
+        error?.message?.includes('Failed to fetch') ||
+        error?.message?.includes('network') ||
+        error?.message?.includes('ERR_BLOCKED')
+      )) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return checkSubscription(retryCount + 1);
+      }
       // Error logged server-side, silent fail for user
     }
   };
