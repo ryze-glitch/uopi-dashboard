@@ -101,14 +101,23 @@ const Auth = () => {
   
   useEffect(() => {
     // Handle Discord OAuth callback - Discord redirects to /auth?code=... (no hash)
-    const code = searchParams.get("code");
+    // Read code from URL directly (both searchParams and window.location.search as fallback)
+    const codeFromParams = searchParams.get("code");
+    const codeFromUrl = new URLSearchParams(window.location.search).get("code");
+    const code = codeFromParams || codeFromUrl;
+    
     if (code && !user && !redirectHandled.current) {
-      // Clear the URL and convert to hash router format
+      console.log("Discord OAuth code detected:", code.substring(0, 20) + "...");
+      // Clear the URL and convert to hash router format BEFORE processing
       const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
       const hashUrl = `${basePath}/#/auth`;
       window.history.replaceState({}, document.title, hashUrl);
-      // Execute callback
-      handleDiscordCallback(code);
+      // Execute callback - don't set redirectHandled yet, let the callback handle it
+      handleDiscordCallback(code).catch((error) => {
+        console.error("Failed to handle Discord callback:", error);
+        // Reset redirectHandled on error so user can retry
+        redirectHandled.current = false;
+      });
     }
     
     // Also check if we're returning from a magic link redirect
@@ -231,6 +240,8 @@ const Auth = () => {
         console.log("Following magic link:", data.redirect_url.substring(0, 100) + "...");
         // Store a flag in sessionStorage to indicate we're expecting auth
         sessionStorage.setItem('discord_auth_pending', 'true');
+        // Mark that we've handled the redirect
+        redirectHandled.current = true;
         // The magic link will authenticate the user and redirect
         // When the page reloads after the magic link, the useEffect hooks will detect
         // the authenticated user and navigate to dashboard
