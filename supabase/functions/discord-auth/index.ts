@@ -34,7 +34,11 @@ serve(async (req) => {
 
     const clientId = Deno.env.get("DISCORD_CLIENT_ID");
     const clientSecret = Deno.env.get("DISCORD_CLIENT_SECRET");
-    const redirectUri = `${req.headers.get("origin")}/auth`;
+    // Get origin and ensure it matches the redirect URI format
+    const origin = req.headers.get("origin") || "";
+    // Remove trailing slash and ensure exact match with frontend
+    const cleanOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
+    const redirectUri = `${cleanOrigin}/auth`;
 
     if (!clientId || !clientSecret) {
       throw new Error("Discord credentials not configured");

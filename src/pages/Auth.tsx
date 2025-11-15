@@ -45,8 +45,11 @@ const Auth = () => {
     }
     // Use hash router compatible URL for GitHub Pages
     // Discord OAuth doesn't support hash fragments, so we use the path and handle it in the callback
+    // IMPORTANT: This must match EXACTLY the redirect URI configured in Discord Developer Portal
     const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
-    const redirectUri = `${window.location.origin}${basePath}/auth`;
+    // Remove trailing slash if present and ensure exact match
+    const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+    const redirectUri = `${window.location.origin}${cleanBasePath}/auth`;
     const scope = "identify email";
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}`;
     window.location.href = discordAuthUrl;
