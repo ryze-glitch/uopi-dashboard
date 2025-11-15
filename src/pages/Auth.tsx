@@ -85,30 +85,16 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // Extract token from magic link URL if possible, or use the redirect URL
-        try {
-          const url = new URL(data.redirect_url);
-          const token = url.searchParams.get('token') || url.hash.match(/access_token=([^&]+)/)?.[1];
-          
-          if (token) {
-            // Set the session directly if we have a token
-            const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-              access_token: token,
-              refresh_token: ''
-            });
-            
-            if (!sessionError && sessionData.session) {
-              // Session set successfully, navigate to dashboard
-              navigate('/dashboard', { replace: true });
-              return;
-            }
+        // Set up a one-time listener for auth state change
+        const unsubscribe = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session?.user) {
+            unsubscribe.data.subscription.unsubscribe();
+            // Navigate to dashboard once authenticated
+            navigate('/dashboard', { replace: true });
           }
-        } catch (e) {
-          console.error("Error parsing redirect URL:", e);
-        }
+        });
         
-        // Fallback: use the redirect URL and let Supabase handle it
-        // The redirect URL should already be in hash router format from backend
+        // Follow the magic link - this will trigger the auth state change
         window.location.href = data.redirect_url;
       } else {
         // No redirect URL, wait for auth state update and navigate
