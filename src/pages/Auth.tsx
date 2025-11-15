@@ -19,8 +19,27 @@ const Auth = () => {
   useEffect(() => {
     // Immediate redirect if user is logged in
     if (user && !redirectHandled.current) {
+      console.log("User detected, redirecting to dashboard");
       redirectHandled.current = true;
+      sessionStorage.removeItem('discord_auth_pending');
       navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate]);
+  
+  // Check on mount if we're returning from Discord auth
+  useEffect(() => {
+    const isPending = sessionStorage.getItem('discord_auth_pending');
+    if (isPending && !user) {
+      console.log("Pending Discord auth detected, checking session...");
+      // Check session immediately
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user && !redirectHandled.current) {
+          console.log("Session found after Discord auth, redirecting");
+          redirectHandled.current = true;
+          sessionStorage.removeItem('discord_auth_pending');
+          navigate('/dashboard', { replace: true });
+        }
+      });
     }
   }, [user, navigate]);
   
@@ -85,11 +104,20 @@ const Auth = () => {
     // Also check if we're returning from a magic link redirect
     // Supabase magic links might redirect here with hash fragments containing tokens
     const hash = window.location.hash;
-    if (hash && (hash.includes('access_token') || hash.includes('type=recovery') || hash.includes('#access_token=') || hash.includes('#/auth#')) && !user && !redirectHandled.current) {
-      console.log("Detected magic link hash, waiting for authentication");
-      // Wait for Supabase to process the token from the hash
+    const hasAuthToken = hash && (
+      hash.includes('access_token') || 
+      hash.includes('type=recovery') || 
+      hash.includes('#access_token=') ||
+      hash.includes('type=magiclink') ||
+      hash.includes('token=')
+    );
+    
+    if (hasAuthToken && !user && !redirectHandled.current) {
+      console.log("Detected magic link hash:", hash.substring(0, 50) + "...");
+      // Force Supabase to process the hash by triggering a page reload simulation
+      // or wait for it to process automatically
       let attempts = 0;
-      const maxAttempts = 30; // 15 seconds
+      const maxAttempts = 40; // 20 seconds
       
       const checkAuth = setInterval(() => {
         attempts++;
@@ -99,12 +127,30 @@ const Auth = () => {
             clearInterval(checkAuth);
             redirectHandled.current = true;
             // Clear the hash and navigate
-            const cleanUrl = window.location.href.split('#')[0] + '#/auth';
-            window.history.replaceState({}, document.title, cleanUrl);
-            navigate('/dashboard', { replace: true });
+            const baseUrl = window.location.href.split('#')[0];
+            window.history.replaceState({}, document.title, baseUrl + '#/auth');
+            // Small delay to ensure state is updated
+            setTimeout(() => {
+              navigate('/dashboard', { replace: true });
+            }, 200);
           } else if (attempts >= maxAttempts) {
-            console.log("Timeout waiting for magic link authentication");
+            console.log("Timeout waiting for magic link authentication. Current hash:", hash);
             clearInterval(checkAuth);
+            // Try one last time after a longer delay
+            setTimeout(() => {
+              supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session?.user && !redirectHandled.current) {
+                  redirectHandled.current = true;
+                  navigate('/dashboard', { replace: true });
+                } else {
+                  toast({
+                    title: "Errore",
+                    description: "Impossibile completare l'autenticazione. Riprova.",
+                    variant: "destructive"
+                  });
+                }
+              });
+            }, 2000);
           }
         });
       }, 500);
@@ -164,7 +210,9 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        console.log("Following magic link:", data.redirect_url);
+        console.log("Following magic link:", data.redirect_url.substring(0, 100) + "...");
+        // Store a flag in sessionStorage to indicate we're expecting auth
+        sessionStorage.setItem('discord_auth_pending', 'true');
         // The magic link will authenticate the user and redirect
         // When the page reloads after the magic link, the useEffect hooks will detect
         // the authenticated user and navigate to dashboard
