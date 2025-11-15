@@ -249,11 +249,16 @@ serve(async (req) => {
     }
 
     // Generate OTP for instant sign-in
+    // Use hash router format for GitHub Pages compatibility
+    const origin = req.headers.get("origin") || "https://ryze-glitch.github.io";
+    const basePath = "/uopi-dashboard";
+    const redirectTo = `${origin}${basePath}/#/dashboard`;
+    
     const { data: otpData, error: otpError } = await supabaseClient.auth.admin.generateLink({
       type: 'magiclink',
       email: authUser.email || email,
       options: {
-        redirectTo: `${req.headers.get("origin")}/dashboard`
+        redirectTo: redirectTo
       }
     });
 

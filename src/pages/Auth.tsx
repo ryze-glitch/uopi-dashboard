@@ -17,7 +17,10 @@ const Auth = () => {
   useEffect(() => {
     // Immediate redirect if user is logged in
     if (user) {
-      navigate("/dashboard", { replace: true });
+      // Small delay to ensure auth state is fully updated
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 100);
     }
   }, [user, navigate]);
   
@@ -82,14 +85,30 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // Convert to hash router format if needed
-        const url = new URL(data.redirect_url);
-        const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
-        if (url.pathname.includes('/dashboard')) {
+        // The redirect_url from Supabase should already be in hash router format
+        // But we'll handle it properly for GitHub Pages
+        try {
+          const url = new URL(data.redirect_url);
+          // If the URL contains a hash, it's already in hash router format, use it directly
+          if (url.hash && url.hash.includes('/dashboard')) {
+            // Extract the hash and navigate
+            const hashPath = url.hash.replace('#', '');
+            navigate(hashPath, { replace: true });
+          } else if (url.pathname.includes('/dashboard')) {
+            // Fallback: navigate to dashboard with hash router
+            navigate('/dashboard', { replace: true });
+          } else {
+            // Use the redirect URL as-is (should work with hash)
+            window.location.href = data.redirect_url;
+          }
+        } catch (e) {
+          // If URL parsing fails, just navigate to dashboard
+          console.error("Error parsing redirect URL:", e);
           navigate('/dashboard', { replace: true });
-        } else {
-          window.location.replace(data.redirect_url);
         }
+      } else {
+        // No redirect URL, navigate to dashboard directly
+        navigate('/dashboard', { replace: true });
       }
     } catch (error) {
       toast({
