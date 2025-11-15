@@ -1,10 +1,33 @@
-# Welcome to your Lovable project
+# 🚀 U.O.P.I. Dashboard
 
-## Project info
+Sistema di gestione operativa integrato per U.O.P.I. - Gestione personale, comunicazioni e coordinamento.
 
-**URL**: https://lovable.dev/projects/e5ffe78b-1333-4c0c-8032-c9983784cfc8
+## ⚙️ Configurazione Iniziale
 
-## How can I edit this code?
+**⚠️ IMPORTANTE**: Prima di avviare l'applicazione, devi configurare le variabili d'ambiente!
+
+### Setup Rapido
+
+1. **Crea il file `.env`** (copia da `.env.example`):
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Compila le variabili** nel file `.env`:
+   - `VITE_SUPABASE_URL` - URL del tuo progetto Supabase
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` - Chiave pubblica Supabase
+   - `VITE_DISCORD_CLIENT_ID` - Client ID Discord OAuth
+   - `VITE_DISCORD_REDIRECT_URI` - Redirect URI Discord
+
+3. **Per GitHub Pages**: Configura i GitHub Secrets (vedi [SETUP.md](./SETUP.md))
+
+📖 **Guida completa**: Vedi [SETUP.md](./SETUP.md) per istruzioni dettagliate su:
+- Configurazione locale
+- Configurazione GitHub Pages
+- Configurazione Supabase Edge Functions
+- Configurazione Discord OAuth
+
+## 🛠️ Come modificare il codice
 
 There are several ways of editing your application.
 
