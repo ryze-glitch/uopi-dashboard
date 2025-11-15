@@ -28,7 +28,9 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.id);
         if (event === 'SIGNED_IN' && session?.user && !redirectHandled.current) {
+          console.log("User signed in, redirecting to dashboard");
           redirectHandled.current = true;
           // Small delay to ensure state is fully updated
           setTimeout(() => {
@@ -40,6 +42,31 @@ const Auth = () => {
     
     return () => {
       subscription.unsubscribe();
+    };
+  }, [navigate]);
+  
+  // Additional check: continuously monitor auth state as fallback
+  useEffect(() => {
+    if (redirectHandled.current) return;
+    
+    const checkAuthInterval = setInterval(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user && !redirectHandled.current) {
+          console.log("Fallback: User authenticated, redirecting");
+          redirectHandled.current = true;
+          clearInterval(checkAuthInterval);
+          navigate('/dashboard', { replace: true });
+        }
+      });
+    }, 1000);
+    
+    // Stop checking after 30 seconds
+    setTimeout(() => {
+      clearInterval(checkAuthInterval);
+    }, 30000);
+    
+    return () => {
+      clearInterval(checkAuthInterval);
     };
   }, [navigate]);
   
@@ -58,21 +85,25 @@ const Auth = () => {
     // Also check if we're returning from a magic link redirect
     // Supabase magic links might redirect here with hash fragments containing tokens
     const hash = window.location.hash;
-    if (hash && (hash.includes('access_token') || hash.includes('type=recovery')) && !user && !redirectHandled.current) {
+    if (hash && (hash.includes('access_token') || hash.includes('type=recovery') || hash.includes('#access_token=') || hash.includes('#/auth#')) && !user && !redirectHandled.current) {
+      console.log("Detected magic link hash, waiting for authentication");
       // Wait for Supabase to process the token from the hash
       let attempts = 0;
-      const maxAttempts = 20; // 10 seconds
+      const maxAttempts = 30; // 15 seconds
       
       const checkAuth = setInterval(() => {
         attempts++;
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (session?.user && !redirectHandled.current) {
+            console.log("Magic link authentication successful, navigating to dashboard");
             clearInterval(checkAuth);
             redirectHandled.current = true;
             // Clear the hash and navigate
-            window.history.replaceState({}, document.title, window.location.pathname.split('#')[0]);
+            const cleanUrl = window.location.href.split('#')[0] + '#/auth';
+            window.history.replaceState({}, document.title, cleanUrl);
             navigate('/dashboard', { replace: true });
           } else if (attempts >= maxAttempts) {
+            console.log("Timeout waiting for magic link authentication");
             clearInterval(checkAuth);
           }
         });
@@ -117,7 +148,10 @@ const Auth = () => {
           code
         }
       });
-      if (error) throw error;
+      if (error) {
+        console.error("Discord auth error:", error);
+        throw error;
+      }
       if (data.error) {
         toast({
           title: data.error === "Accesso Negato" ? "Accesso Negato" : "Errore di autenticazione",
@@ -130,9 +164,11 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // The magic link will authenticate the user
-        // The onAuthStateChange listener will catch the SIGNED_IN event and navigate
-        // Just follow the magic link - it will handle authentication
+        console.log("Following magic link:", data.redirect_url);
+        // The magic link will authenticate the user and redirect
+        // When the page reloads after the magic link, the useEffect hooks will detect
+        // the authenticated user and navigate to dashboard
+        // Just follow the link - Supabase will handle authentication
         window.location.href = data.redirect_url;
       } else {
         // No redirect URL, wait for auth state update and navigate
@@ -158,6 +194,7 @@ const Auth = () => {
         }, 500);
       }
     } catch (error) {
+      console.error("Discord callback error:", error);
       toast({
         title: "Errore durante l'accesso",
         description: "Si è verificato un errore durante l'autenticazione con Discord",
