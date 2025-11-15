@@ -17,10 +17,7 @@ const Auth = () => {
   useEffect(() => {
     // Immediate redirect if user is logged in
     if (user) {
-      // Small delay to ensure auth state is fully updated
-      setTimeout(() => {
-        navigate("/dashboard", { replace: true });
-      }, 100);
+      navigate("/dashboard", { replace: true });
     }
   }, [user, navigate]);
   
@@ -35,7 +32,21 @@ const Auth = () => {
       // Execute callback
       handleDiscordCallback(code);
     }
-  }, [searchParams, user]);
+    
+    // Also check if we're returning from a magic link redirect
+    // Supabase magic links might redirect here with hash fragments
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token') && !user) {
+      // Wait a bit for Supabase to process the token
+      setTimeout(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            navigate('/dashboard', { replace: true });
+          }
+        });
+      }, 1000);
+    }
+  }, [searchParams, user, navigate]);
   const handleDiscordLogin = () => {
     const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
     if (!clientId) {
@@ -85,17 +96,32 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // Set up a one-time listener for auth state change
-        const unsubscribe = supabase.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_IN' && session?.user) {
-            unsubscribe.data.subscription.unsubscribe();
-            // Navigate to dashboard once authenticated
-            navigate('/dashboard', { replace: true });
-          }
-        });
+        // The magic link will redirect and authenticate the user
+        // After redirect, the useEffect above will check for user and navigate to dashboard
+        // Or we can wait for auth state to update
+        const checkAuthAfterRedirect = () => {
+          let attempts = 0;
+          const maxAttempts = 20;
+          
+          const checkAuth = setInterval(() => {
+            attempts++;
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session?.user) {
+                clearInterval(checkAuth);
+                navigate('/dashboard', { replace: true });
+              } else if (attempts >= maxAttempts) {
+                clearInterval(checkAuth);
+              }
+            });
+          }, 500);
+        };
         
-        // Follow the magic link - this will trigger the auth state change
+        // Follow the magic link - this will authenticate and may redirect
+        // If the redirect doesn't work, we'll check auth state
         window.location.href = data.redirect_url;
+        
+        // Fallback: check auth state after a delay in case redirect doesn't work
+        setTimeout(checkAuthAfterRedirect, 2000);
       } else {
         // No redirect URL, wait for auth state update and navigate
         let attempts = 0;
