@@ -47,7 +47,11 @@ Vai su: Supabase Dashboard > **Edge Functions** > **Settings** > **Secrets**
 ```
 
 ### Secret 2: `DISCORD_CLIENT_SECRET`
-**Valore:** (trovalo su Discord Developer Portal > OAuth2)
+**Valore:**
+```
+3bVYtMbyCn2Ob7C44ALBfJqtxzpkk3HV
+```
+⚠️ **NUOVO SECRET RIGENERATO** - Usa questo valore!
 
 ### Secret 3: `DISCORD_REDIRECT_URI`
 **Valore:**

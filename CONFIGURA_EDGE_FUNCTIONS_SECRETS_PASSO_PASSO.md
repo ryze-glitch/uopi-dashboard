@@ -40,15 +40,10 @@ Clicca su **"Add new secret"** o **"New secret"** e aggiungi questi 5 secrets:
 #### 🔑 SECRET 2: `DISCORD_CLIENT_SECRET`
 1. Clicca **"Add new secret"**
 2. **Name**: `DISCORD_CLIENT_SECRET`
-3. **Value**: (devi trovarlo su Discord Developer Portal)
-   - Vai su: https://discord.com/developers/applications
-   - Seleziona la tua app (quella con Client ID: `1387801645743869982`)
-   - Vai su **"OAuth2"** nel menu laterale
-   - Cerca **"Client Secret"**
-   - Se non lo vedi, clicca su **"Reset Secret"** (⚠️ ATTENZIONE: questo resetta il secret!)
-   - Copia il **Client Secret** (è una stringa lunga)
-4. Incolla il valore nel campo **Value**
-5. Clicca **"Add"** o **"Save"**
+3. **Value**: `3bVYtMbyCn2Ob7C44ALBfJqtxzpkk3HV` ⚠️ **NUOVO SECRET RIGENERATO**
+   - ⚠️ **IMPORTANTE**: Questo è il nuovo secret rigenerato!
+   - Se hai già un secret vecchio, aggiornalo con questo nuovo valore
+4. Clicca **"Add"** o **"Save"**
 
 ---
 
