@@ -49,9 +49,17 @@ const Auth = () => {
     // Use a fixed redirect URI for GitHub Pages to avoid calculation issues
     // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth
     const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI || 
-      `${window.location.origin}/uopi-dashboard/auth`;
+      "https://ryze-glitch.github.io/uopi-dashboard/auth";
+    
+    // Debug: log the redirect URI to console
+    console.log("Discord OAuth Redirect URI:", redirectUri);
+    
     const scope = "identify email";
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}`;
+    
+    // Debug: log the full OAuth URL
+    console.log("Discord OAuth URL:", discordAuthUrl);
+    
     window.location.href = discordAuthUrl;
   };
   const handleDiscordCallback = async (code: string) => {
