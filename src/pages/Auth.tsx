@@ -46,33 +46,16 @@ const Auth = () => {
     // Use hash router compatible URL for GitHub Pages
     // Discord OAuth doesn't support hash fragments, so we use the path and handle it in the callback
     // IMPORTANT: This must match EXACTLY the redirect URI configured in Discord Developer Portal
-    // Use a fixed redirect URI for GitHub Pages to avoid calculation issues
-    // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth
+    // For GitHub Pages with subdirectory, use the full path
     const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI || 
       "https://ryze-glitch.github.io/uopi-dashboard/auth";
     
-    // Trim any whitespace and ensure no trailing slash
-    const cleanRedirectUri = redirectUri.trim().replace(/\/$/, '');
-    
-    // Debug: log the redirect URI to console
-    console.log("=== DISCORD OAUTH DEBUG ===");
-    console.log("Redirect URI (raw):", redirectUri);
-    console.log("Redirect URI (cleaned):", cleanRedirectUri);
-    console.log("Redirect URI length:", cleanRedirectUri.length);
-    console.log("Expected: https://ryze-glitch.github.io/uopi-dashboard/auth");
-    console.log("Match:", cleanRedirectUri === "https://ryze-glitch.github.io/uopi-dashboard/auth");
+    // Ensure exact match - no trailing slash, no spaces, exact casing
+    const cleanRedirectUri = redirectUri.trim().replace(/\/+$/, '');
     
     const scope = "identify email";
     const encodedRedirectUri = encodeURIComponent(cleanRedirectUri);
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodedRedirectUri}&response_type=code&scope=${encodeURIComponent(scope)}`;
-    
-    // Debug: log the full OAuth URL
-    console.log("Encoded Redirect URI:", encodedRedirectUri);
-    console.log("Full OAuth URL:", discordAuthUrl);
-    console.log("========================");
-    
-    // Show alert with the redirect URI for debugging
-    alert(`Redirect URI che verrà inviato a Discord:\n\n${cleanRedirectUri}\n\nAssicurati che questo corrisponda ESATTAMENTE a quello configurato in Discord Developer Portal!`);
     
     window.location.href = discordAuthUrl;
   };
