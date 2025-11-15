@@ -34,11 +34,10 @@ serve(async (req) => {
 
     const clientId = Deno.env.get("DISCORD_CLIENT_ID");
     const clientSecret = Deno.env.get("DISCORD_CLIENT_SECRET");
-    // Get origin and ensure it matches the redirect URI format
-    const origin = req.headers.get("origin") || "";
-    // Remove trailing slash and ensure exact match with frontend
-    const cleanOrigin = origin.endsWith('/') ? origin.slice(0, -1) : origin;
-    const redirectUri = `${cleanOrigin}/auth`;
+    // Use fixed redirect URI to match exactly what's configured in Discord Developer Portal
+    // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth
+    const redirectUri = Deno.env.get("DISCORD_REDIRECT_URI") || 
+      `${req.headers.get("origin") || "https://ryze-glitch.github.io"}/uopi-dashboard/auth`;
 
     if (!clientId || !clientSecret) {
       throw new Error("Discord credentials not configured");
