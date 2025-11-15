@@ -17,19 +17,19 @@ const Auth = () => {
   useEffect(() => {
     // Immediate redirect if user is logged in
     if (user) {
-      window.location.replace("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
-  }, [user]);
+  }, [user, navigate]);
   
   useEffect(() => {
     const code = searchParams.get("code");
     if (code && !user) {
       // Clear the URL immediately to prevent reuse
-      window.history.replaceState({}, document.title, "/auth");
+      navigate("/auth", { replace: true });
       // Execute callback
       handleDiscordCallback(code);
     }
-  }, [searchParams, user]);
+  }, [searchParams, user, navigate]);
   const handleDiscordLogin = () => {
     const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
     if (!clientId) {
@@ -40,7 +40,10 @@ const Auth = () => {
       });
       return;
     }
-    const redirectUri = `${window.location.origin}/auth`;
+    // Use hash router compatible URL for GitHub Pages
+    // Discord OAuth doesn't support hash fragments, so we use the path and handle it in the callback
+    const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
+    const redirectUri = `${window.location.origin}${basePath}/auth`;
     const scope = "identify email";
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}`;
     window.location.href = discordAuthUrl;
@@ -68,7 +71,14 @@ const Auth = () => {
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        window.location.replace(data.redirect_url);
+        // Convert to hash router format if needed
+        const url = new URL(data.redirect_url);
+        const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
+        if (url.pathname.includes('/dashboard')) {
+          navigate('/dashboard', { replace: true });
+        } else {
+          window.location.replace(data.redirect_url);
+        }
       }
     } catch (error) {
       toast({
