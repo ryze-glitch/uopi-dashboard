@@ -51,14 +51,28 @@ const Auth = () => {
     const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI || 
       "https://ryze-glitch.github.io/uopi-dashboard/auth";
     
+    // Trim any whitespace and ensure no trailing slash
+    const cleanRedirectUri = redirectUri.trim().replace(/\/$/, '');
+    
     // Debug: log the redirect URI to console
-    console.log("Discord OAuth Redirect URI:", redirectUri);
+    console.log("=== DISCORD OAUTH DEBUG ===");
+    console.log("Redirect URI (raw):", redirectUri);
+    console.log("Redirect URI (cleaned):", cleanRedirectUri);
+    console.log("Redirect URI length:", cleanRedirectUri.length);
+    console.log("Expected: https://ryze-glitch.github.io/uopi-dashboard/auth");
+    console.log("Match:", cleanRedirectUri === "https://ryze-glitch.github.io/uopi-dashboard/auth");
     
     const scope = "identify email";
-    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}`;
+    const encodedRedirectUri = encodeURIComponent(cleanRedirectUri);
+    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodedRedirectUri}&response_type=code&scope=${encodeURIComponent(scope)}`;
     
     // Debug: log the full OAuth URL
-    console.log("Discord OAuth URL:", discordAuthUrl);
+    console.log("Encoded Redirect URI:", encodedRedirectUri);
+    console.log("Full OAuth URL:", discordAuthUrl);
+    console.log("========================");
+    
+    // Show alert with the redirect URI for debugging
+    alert(`Redirect URI che verrà inviato a Discord:\n\n${cleanRedirectUri}\n\nAssicurati che questo corrisponda ESATTAMENTE a quello configurato in Discord Developer Portal!`);
     
     window.location.href = discordAuthUrl;
   };
