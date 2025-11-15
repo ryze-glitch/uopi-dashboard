@@ -28,19 +28,28 @@ const Auth = () => {
   
   // Check on mount if we're returning from Discord auth
   useEffect(() => {
-    const isPending = sessionStorage.getItem('discord_auth_pending');
-    if (isPending && !user) {
-      console.log("Pending Discord auth detected, checking session...");
-      // Check session immediately
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user && !redirectHandled.current) {
-          console.log("Session found after Discord auth, redirecting");
-          redirectHandled.current = true;
-          sessionStorage.removeItem('discord_auth_pending');
-          navigate('/dashboard', { replace: true });
+    const checkPendingAuth = async () => {
+      const isPending = sessionStorage.getItem('discord_auth_pending');
+      if (isPending) {
+        console.log("Pending Discord auth detected, checking session...");
+        // Check session multiple times with increasing delays
+        for (let i = 0; i < 10; i++) {
+          await new Promise(resolve => setTimeout(resolve, 300 * (i + 1)));
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && !redirectHandled.current) {
+            console.log("Session found after Discord auth, redirecting");
+            redirectHandled.current = true;
+            sessionStorage.removeItem('discord_auth_pending');
+            navigate('/dashboard', { replace: true });
+            return;
+          }
         }
-      });
-    }
+        // If still no session after 15 seconds, clear the flag
+        sessionStorage.removeItem('discord_auth_pending');
+      }
+    };
+    
+    checkPendingAuth();
   }, [user, navigate]);
   
   // Set up auth state listener to catch authentication after magic link
@@ -48,13 +57,12 @@ const Auth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("Auth state changed:", event, session?.user?.id);
-        if (event === 'SIGNED_IN' && session?.user && !redirectHandled.current) {
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user && !redirectHandled.current) {
           console.log("User signed in, redirecting to dashboard");
           redirectHandled.current = true;
-          // Small delay to ensure state is fully updated
-          setTimeout(() => {
-            navigate('/dashboard', { replace: true });
-          }, 100);
+          sessionStorage.removeItem('discord_auth_pending');
+          // Force navigation immediately
+          navigate('/dashboard', { replace: true });
         }
       }
     );
@@ -73,11 +81,13 @@ const Auth = () => {
         if (session?.user && !redirectHandled.current) {
           console.log("Fallback: User authenticated, redirecting");
           redirectHandled.current = true;
+          sessionStorage.removeItem('discord_auth_pending');
           clearInterval(checkAuthInterval);
-          navigate('/dashboard', { replace: true });
+          // Force navigation
+          window.location.href = window.location.origin + window.location.pathname + '#/dashboard';
         }
       });
-    }, 1000);
+    }, 500);
     
     // Stop checking after 30 seconds
     setTimeout(() => {
@@ -114,8 +124,7 @@ const Auth = () => {
     
     if (hasAuthToken && !user && !redirectHandled.current) {
       console.log("Detected magic link hash:", hash.substring(0, 50) + "...");
-      // Force Supabase to process the hash by triggering a page reload simulation
-      // or wait for it to process automatically
+      // Force Supabase to process the hash
       let attempts = 0;
       const maxAttempts = 40; // 20 seconds
       
@@ -126,13 +135,10 @@ const Auth = () => {
             console.log("Magic link authentication successful, navigating to dashboard");
             clearInterval(checkAuth);
             redirectHandled.current = true;
-            // Clear the hash and navigate
-            const baseUrl = window.location.href.split('#')[0];
-            window.history.replaceState({}, document.title, baseUrl + '#/auth');
-            // Small delay to ensure state is updated
-            setTimeout(() => {
-              navigate('/dashboard', { replace: true });
-            }, 200);
+            sessionStorage.removeItem('discord_auth_pending');
+            // Force navigation using window.location for reliability
+            const baseUrl = window.location.origin + window.location.pathname;
+            window.location.href = baseUrl + '#/dashboard';
           } else if (attempts >= maxAttempts) {
             console.log("Timeout waiting for magic link authentication. Current hash:", hash);
             clearInterval(checkAuth);
@@ -141,7 +147,8 @@ const Auth = () => {
               supabase.auth.getSession().then(({ data: { session } }) => {
                 if (session?.user && !redirectHandled.current) {
                   redirectHandled.current = true;
-                  navigate('/dashboard', { replace: true });
+                  sessionStorage.removeItem('discord_auth_pending');
+                  window.location.href = window.location.origin + window.location.pathname + '#/dashboard';
                 } else {
                   toast({
                     title: "Errore",
@@ -153,7 +160,7 @@ const Auth = () => {
             }, 2000);
           }
         });
-      }, 500);
+      }, 300);
       
       return () => clearInterval(checkAuth);
     }
