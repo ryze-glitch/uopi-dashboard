@@ -203,6 +203,19 @@ const Auth = () => {
   const handleDiscordCallback = async (code: string, retryCount = 0) => {
     const maxRetries = 3;
     try {
+      // Check if Supabase is configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+        toast({
+          title: "Errore di configurazione",
+          description: "Supabase non è configurato correttamente. Contatta l'amministratore.",
+          variant: "destructive",
+          duration: 10000
+        });
+        console.error("Supabase URL not configured:", supabaseUrl);
+        return;
+      }
+
       const {
         data,
         error
@@ -213,6 +226,16 @@ const Auth = () => {
       });
       if (error) {
         console.error("Discord auth error:", error);
+        // Check if it's a configuration error
+        if (error.message?.includes('placeholder') || error.message?.includes('ERR_NAME_NOT_RESOLVED')) {
+          toast({
+            title: "Errore di configurazione",
+            description: "Supabase non è configurato correttamente. Verifica le variabili d'ambiente.",
+            variant: "destructive",
+            duration: 10000
+          });
+          return;
+        }
         // Retry on network errors (might be blocked by adblocker)
         if (retryCount < maxRetries && (
           error.message?.includes('Failed to fetch') ||

@@ -8,7 +8,15 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY |
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-// Create a dummy client if env vars are missing to prevent crashes
+// Check if environment variables are configured
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  console.error('⚠️ Supabase environment variables are missing!');
+  console.error('VITE_SUPABASE_URL:', SUPABASE_URL ? '✅ Set' : '❌ Missing');
+  console.error('VITE_SUPABASE_PUBLISHABLE_KEY:', SUPABASE_PUBLISHABLE_KEY ? '✅ Set' : '❌ Missing');
+  console.error('Please configure these in GitHub Secrets for deployment, or in a .env file for local development.');
+}
+
+// Create Supabase client - throw error if env vars are missing in production
 export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
   ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
       auth: {
@@ -17,10 +25,19 @@ export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
         autoRefreshToken: true,
       }
     })
-  : createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
-      auth: {
-        storage: localStorage,
-        persistSession: true,
-        autoRefreshToken: true,
+  : (() => {
+      // In production, show a clear error instead of using placeholder
+      if (import.meta.env.PROD) {
+        console.error('❌ CRITICAL: Supabase environment variables are not configured!');
+        console.error('The application cannot function without these variables.');
+        console.error('Please configure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in GitHub Secrets.');
       }
-    });
+      // Still create a client to prevent crashes, but it won't work
+      return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
+        auth: {
+          storage: localStorage,
+          persistSession: true,
+          autoRefreshToken: true,
+        }
+      });
+    })();
