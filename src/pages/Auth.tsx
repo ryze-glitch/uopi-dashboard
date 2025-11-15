@@ -22,7 +22,8 @@ const Auth = () => {
       console.log("User detected, redirecting to dashboard");
       redirectHandled.current = true;
       sessionStorage.removeItem('discord_auth_pending');
-      navigate("/dashboard", { replace: true });
+      // Use window.location for absolute reliability
+      window.location.href = window.location.origin + window.location.pathname + '#/dashboard';
     }
   }, [user, navigate]);
   
@@ -40,7 +41,8 @@ const Auth = () => {
             console.log("Session found after Discord auth, redirecting");
             redirectHandled.current = true;
             sessionStorage.removeItem('discord_auth_pending');
-            navigate('/dashboard', { replace: true });
+            // Use window.location for absolute reliability
+            window.location.href = window.location.origin + window.location.pathname + '#/dashboard';
             return;
           }
         }
@@ -58,11 +60,11 @@ const Auth = () => {
       async (event, session) => {
         console.log("Auth state changed:", event, session?.user?.id);
         if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user && !redirectHandled.current) {
-          console.log("User signed in, redirecting to dashboard");
+          console.log("User signed in via auth state change, redirecting to dashboard");
           redirectHandled.current = true;
           sessionStorage.removeItem('discord_auth_pending');
-          // Force navigation immediately
-          navigate('/dashboard', { replace: true });
+          // Use window.location for absolute reliability
+          window.location.href = window.location.origin + window.location.pathname + '#/dashboard';
         }
       }
     );
