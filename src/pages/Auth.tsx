@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,39 @@ const Auth = () => {
     toast
   } = useToast();
   const [searchParams] = useSearchParams();
+  const redirectHandled = useRef(false);
+  
   useEffect(() => {
     // Immediate redirect if user is logged in
-    if (user) {
+    if (user && !redirectHandled.current) {
+      redirectHandled.current = true;
       navigate("/dashboard", { replace: true });
     }
   }, [user, navigate]);
   
+  // Set up auth state listener to catch authentication after magic link
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user && !redirectHandled.current) {
+          redirectHandled.current = true;
+          // Small delay to ensure state is fully updated
+          setTimeout(() => {
+            navigate('/dashboard', { replace: true });
+          }, 100);
+        }
+      }
+    );
+    
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+  
   useEffect(() => {
     // Handle Discord OAuth callback - Discord redirects to /auth?code=... (no hash)
     const code = searchParams.get("code");
-    if (code && !user) {
+    if (code && !user && !redirectHandled.current) {
       // Clear the URL and convert to hash router format
       const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
       const hashUrl = `${basePath}/#/auth`;
@@ -36,21 +58,27 @@ const Auth = () => {
     // Also check if we're returning from a magic link redirect
     // Supabase magic links might redirect here with hash fragments containing tokens
     const hash = window.location.hash;
-    if (hash && (hash.includes('access_token') || hash.includes('type=recovery')) && !user) {
+    if (hash && (hash.includes('access_token') || hash.includes('type=recovery')) && !user && !redirectHandled.current) {
       // Wait for Supabase to process the token from the hash
+      let attempts = 0;
+      const maxAttempts = 20; // 10 seconds
+      
       const checkAuth = setInterval(() => {
+        attempts++;
         supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session?.user) {
+          if (session?.user && !redirectHandled.current) {
             clearInterval(checkAuth);
+            redirectHandled.current = true;
             // Clear the hash and navigate
-            window.history.replaceState({}, document.title, window.location.pathname);
+            window.history.replaceState({}, document.title, window.location.pathname.split('#')[0]);
             navigate('/dashboard', { replace: true });
+          } else if (attempts >= maxAttempts) {
+            clearInterval(checkAuth);
           }
         });
       }, 500);
       
-      // Clear after 10 seconds
-      setTimeout(() => clearInterval(checkAuth), 10000);
+      return () => clearInterval(checkAuth);
     }
   }, [searchParams, user, navigate]);
   const handleDiscordLogin = () => {
@@ -96,38 +124,16 @@ const Auth = () => {
           description: data.message || data.error,
           variant: "destructive",
         });
-        navigate("/auth");
+        navigate("/auth", { replace: true });
         return;
       }
 
       // Use the magic link for instant authentication
       if (data.redirect_url) {
-        // The magic link will redirect and authenticate the user
-        // After redirect, the useEffect above will check for user and navigate to dashboard
-        // Or we can wait for auth state to update
-        const checkAuthAfterRedirect = () => {
-          let attempts = 0;
-          const maxAttempts = 20;
-          
-          const checkAuth = setInterval(() => {
-            attempts++;
-            supabase.auth.getSession().then(({ data: { session } }) => {
-              if (session?.user) {
-                clearInterval(checkAuth);
-                navigate('/dashboard', { replace: true });
-              } else if (attempts >= maxAttempts) {
-                clearInterval(checkAuth);
-              }
-            });
-          }, 500);
-        };
-        
-        // Follow the magic link - this will authenticate and may redirect
-        // If the redirect doesn't work, we'll check auth state
+        // The magic link will authenticate the user
+        // The onAuthStateChange listener will catch the SIGNED_IN event and navigate
+        // Just follow the magic link - it will handle authentication
         window.location.href = data.redirect_url;
-        
-        // Fallback: check auth state after a delay in case redirect doesn't work
-        setTimeout(checkAuthAfterRedirect, 2000);
       } else {
         // No redirect URL, wait for auth state update and navigate
         let attempts = 0;
@@ -136,8 +142,9 @@ const Auth = () => {
         const checkAuth = setInterval(() => {
           attempts++;
           supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.user) {
+            if (session?.user && !redirectHandled.current) {
               clearInterval(checkAuth);
+              redirectHandled.current = true;
               navigate('/dashboard', { replace: true });
             } else if (attempts >= maxAttempts) {
               clearInterval(checkAuth);
