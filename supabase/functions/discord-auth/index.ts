@@ -34,13 +34,47 @@ serve(async (req) => {
 
     const clientId = Deno.env.get("DISCORD_CLIENT_ID");
     const clientSecret = Deno.env.get("DISCORD_CLIENT_SECRET");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
     // Use fixed redirect URI to match exactly what's configured in Discord Developer Portal
     // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth
     const redirectUri = Deno.env.get("DISCORD_REDIRECT_URI") || 
       `${req.headers.get("origin") || "https://ryze-glitch.github.io"}/uopi-dashboard/auth`;
 
+    // Check all required environment variables
     if (!clientId || !clientSecret) {
-      throw new Error("Discord credentials not configured");
+      logStep("Missing Discord credentials", { 
+        hasClientId: !!clientId, 
+        hasClientSecret: !!clientSecret 
+      });
+      return new Response(
+        JSON.stringify({ 
+          error: "Configurazione mancante",
+          message: "Le credenziali Discord non sono configurate nelle Edge Functions. Contatta l'amministratore."
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
+    }
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      logStep("Missing Supabase credentials", { 
+        hasUrl: !!supabaseUrl, 
+        hasServiceKey: !!supabaseServiceKey 
+      });
+      return new Response(
+        JSON.stringify({ 
+          error: "Configurazione mancante",
+          message: "Le credenziali Supabase non sono configurate nelle Edge Functions. Contatta l'amministratore."
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
     logStep("Exchanging code for Discord token");
@@ -100,8 +134,8 @@ serve(async (req) => {
 
     // Create Supabase client with service role to check authorization
     const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      supabaseUrl,
+      supabaseServiceKey
     );
 
     // Check if user is authorized by querying user_roles table
@@ -291,11 +325,24 @@ serve(async (req) => {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
-    // Return generic error message to client, log details server-side only
-    return new Response(JSON.stringify({ error: "Si è verificato un errore durante l'autenticazione." }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    logStep("ERROR", { 
+      message: errorMessage,
+      stack: errorStack,
+      type: error?.constructor?.name
     });
+    
+    // Return more detailed error in development, generic in production
+    const isDevelopment = Deno.env.get("ENVIRONMENT") === "development";
+    return new Response(
+      JSON.stringify({ 
+        error: "Si è verificato un errore durante l'autenticazione.",
+        ...(isDevelopment && { details: errorMessage, stack: errorStack })
+      }), 
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      }
+    );
   }
 });
