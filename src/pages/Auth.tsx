@@ -22,14 +22,17 @@ const Auth = () => {
   }, [user, navigate]);
   
   useEffect(() => {
+    // Handle Discord OAuth callback - Discord redirects to /auth?code=... (no hash)
     const code = searchParams.get("code");
     if (code && !user) {
-      // Clear the URL immediately to prevent reuse
-      navigate("/auth", { replace: true });
+      // Clear the URL and convert to hash router format
+      const basePath = window.location.pathname.split('/').slice(0, -1).join('/') || '';
+      const hashUrl = `${basePath}/#/auth`;
+      window.history.replaceState({}, document.title, hashUrl);
       // Execute callback
       handleDiscordCallback(code);
     }
-  }, [searchParams, user, navigate]);
+  }, [searchParams, user]);
   const handleDiscordLogin = () => {
     const clientId = import.meta.env.VITE_DISCORD_CLIENT_ID;
     if (!clientId) {
