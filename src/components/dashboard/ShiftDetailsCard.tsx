@@ -129,7 +129,12 @@ export const ShiftDetailsCard = ({
 
       // Cerca il nome completo nel file JSON degli operatori usando il discord_tag
       const discordTag = profileData?.discord_tag || null;
-      const userName = getUserDisplayName(discordTag);
+      let userName = getUserDisplayName(discordTag);
+      
+      // Fallback a user.email se il nome non è stato trovato o è il tag Discord stesso
+      if (userName === "Utente Sconosciuto" || (userName === discordTag && user.email)) {
+        userName = user.email || "Utente Sconosciuto";
+      }
       
       const newAcknowledgement = {
         userId: user.id,
