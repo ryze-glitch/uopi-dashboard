@@ -46,23 +46,10 @@ const Auth = () => {
     // Use hash router compatible URL for GitHub Pages
     // Discord OAuth doesn't support hash fragments, so we use the path and handle it in the callback
     // IMPORTANT: This must match EXACTLY the redirect URI configured in Discord Developer Portal
-    // Calculate base path from current location, handling both /uopi-dashboard/ and /uopi-dashboard/#/auth cases
-    let basePath = window.location.pathname;
-    // Remove hash and query params from pathname
-    basePath = basePath.split('#')[0].split('?')[0];
-    // Get the base path (everything before the last segment)
-    const pathSegments = basePath.split('/').filter(seg => seg);
-    // For GitHub Pages, we want /uopi-dashboard, so take all segments except the last one
-    if (pathSegments.length > 1) {
-      basePath = '/' + pathSegments.slice(0, -1).join('/');
-    } else if (pathSegments.length === 1) {
-      basePath = '/' + pathSegments[0];
-    } else {
-      basePath = '';
-    }
-    // Ensure no trailing slash
-    basePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-    const redirectUri = `${window.location.origin}${basePath}/auth`;
+    // Use a fixed redirect URI for GitHub Pages to avoid calculation issues
+    // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth
+    const redirectUri = import.meta.env.VITE_DISCORD_REDIRECT_URI || 
+      `${window.location.origin}/uopi-dashboard/auth`;
     const scope = "identify email";
     const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}`;
     window.location.href = discordAuthUrl;
