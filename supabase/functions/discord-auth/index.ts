@@ -34,8 +34,10 @@ serve(async (req) => {
 
     const clientId = Deno.env.get("DISCORD_CLIENT_ID");
     const clientSecret = Deno.env.get("DISCORD_CLIENT_SECRET");
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    // Use PROJECT_URL instead of SUPABASE_URL (Supabase doesn't allow SUPABASE_ prefix)
+    const supabaseUrl = Deno.env.get("PROJECT_URL") || Deno.env.get("SUPABASE_URL");
+    // Use SERVICE_ROLE_KEY instead of SUPABASE_SERVICE_ROLE_KEY
+    const supabaseServiceKey = Deno.env.get("SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     
     // Use fixed redirect URI to match exactly what's configured in Discord Developer Portal
     // This should be: https://ryze-glitch.github.io/uopi-dashboard/auth

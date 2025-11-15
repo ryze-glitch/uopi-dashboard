@@ -55,17 +55,19 @@ Vai su: Supabase Dashboard > **Edge Functions** > **Settings** > **Secrets**
 https://ryze-glitch.github.io/uopi-dashboard/auth
 ```
 
-### Secret 4: `SUPABASE_URL`
+### Secret 4: `PROJECT_URL` ⚠️ IMPORTANTE
 **Valore:**
 ```
 https://jtrysdnbijycermezrrg.supabase.co
 ```
+**⚠️ NOTA**: Supabase non permette nomi che iniziano con `SUPABASE_`, quindi usa `PROJECT_URL` invece di `SUPABASE_URL`!
 
-### Secret 5: `SUPABASE_SERVICE_ROLE_KEY`
+### Secret 5: `SERVICE_ROLE_KEY` ⚠️ IMPORTANTE
 **Valore:**
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0cnlzZG5iaWp5Y2VybWV6cnJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzIwNTkxNywiZXhwIjoyMDc4NzgxOTE3fQ.Er-98vO6bGAVoUbwsWHKrn45GfMFwI4wpiSveIAQBKs
 ```
+**⚠️ NOTA**: Supabase non permette nomi che iniziano con `SUPABASE_`, quindi usa `SERVICE_ROLE_KEY` invece di `SUPABASE_SERVICE_ROLE_KEY`!
 
 ---
 

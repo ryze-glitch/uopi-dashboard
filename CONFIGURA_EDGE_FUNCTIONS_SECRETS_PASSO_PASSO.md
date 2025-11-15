@@ -60,17 +60,17 @@ Clicca su **"Add new secret"** o **"New secret"** e aggiungi questi 5 secrets:
 
 ---
 
-#### 🔑 SECRET 4: `SUPABASE_URL`
+#### 🔑 SECRET 4: `PROJECT_URL` ⚠️ IMPORTANTE
 1. Clicca **"Add new secret"**
-2. **Name**: `SUPABASE_URL`
+2. **Name**: `PROJECT_URL` (⚠️ NON usare `SUPABASE_URL` - Supabase non lo permette!)
 3. **Value**: `https://jtrysdnbijycermezrrg.supabase.co`
 4. Clicca **"Add"** o **"Save"**
 
 ---
 
-#### 🔑 SECRET 5: `SUPABASE_SERVICE_ROLE_KEY`
+#### 🔑 SECRET 5: `SERVICE_ROLE_KEY` ⚠️ IMPORTANTE
 1. Clicca **"Add new secret"**
-2. **Name**: `SUPABASE_SERVICE_ROLE_KEY`
+2. **Name**: `SERVICE_ROLE_KEY` (⚠️ NON usare `SUPABASE_SERVICE_ROLE_KEY` - Supabase non lo permette!)
 3. **Value**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0cnlzZG5iaWp5Y2VybWV6cnJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzIwNTkxNywiZXhwIjoyMDc4NzgxOTE3fQ.Er-98vO6bGAVoUbwsWHKrn45GfMFwI4wpiSveIAQBKs`
 4. Clicca **"Add"** o **"Save"**
 
@@ -82,8 +82,8 @@ Dopo aver aggiunto tutti i 5 secrets, dovresti vedere una lista con:
 - ✅ `DISCORD_CLIENT_ID`
 - ✅ `DISCORD_CLIENT_SECRET`
 - ✅ `DISCORD_REDIRECT_URI`
-- ✅ `SUPABASE_URL`
-- ✅ `SUPABASE_SERVICE_ROLE_KEY`
+- ✅ `PROJECT_URL` (⚠️ NON `SUPABASE_URL`)
+- ✅ `SERVICE_ROLE_KEY` (⚠️ NON `SUPABASE_SERVICE_ROLE_KEY`)
 
 ---
 
